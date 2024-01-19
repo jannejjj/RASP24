@@ -3,7 +3,6 @@
 ## Course project for Running a Software Project
 
 ### Installation:
-
 Go to the directory where you want the project.
 
 HTTPS:
@@ -18,3 +17,7 @@ SSH:
 cd RASP24/
 npm install
 npm run dev:server
+(on another terminal window) npm run dev:client
+```
+
+If you haven't received any error messages on the consoles, everything is working correctly. :D
