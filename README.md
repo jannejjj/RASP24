@@ -3,6 +3,7 @@
 ## Course project for Running a Software Project
 
 ### Installation:
+**(You should have Node.js installed.)**
 Go to the directory where you want the project.
 
 HTTPS:
