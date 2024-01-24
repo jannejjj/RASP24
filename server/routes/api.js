@@ -11,8 +11,23 @@ router.get("/members", async (req, res) => {
     } catch (err) {
         console.error(err);
         res.send("No members.");
-
     }
 });
+
+
+router.post('/newmember', async (req, res) => {
+    const member = new Member({
+        email: req.body.email,
+        password: req.body.password,
+        admin: req.body.admin
+    });
+    member.save()
+        .then(result => {
+            res.json(result);
+        })
+        .catch(err => {
+            console.error(err); 
+        });
+  });
 
 module.exports = router;

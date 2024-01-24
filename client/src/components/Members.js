@@ -5,7 +5,6 @@ function Members() {
 
   const [members, setMembers] = useState([{
     "_id": null,
-    "username": null,
     "email": null,
     "password": null,
     "admin": null
