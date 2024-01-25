@@ -11,13 +11,6 @@ mongoose.Promise = Promise;
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error"));
 
-/*
-connectToDatabase().catch(err => console.log(err));
-
-async function connectToDatabase() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/assoceasedb');
-}
-*/
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
