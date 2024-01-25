@@ -1,0 +1,172 @@
+import React, { useState } from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import "../styles/TopBar.css";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Menu, MenuItem } from "@mui/material";
+// import IconButton from "@mui/material/IconButton";
+// import MenuIcon from "@mui/icons-material/Menu";
+
+export default function TopBar() {
+  const [language, setLanguage] = useState("EN");
+  const [anchorElNav, setAnchorElNav] = useState(null);
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+
+  // These 2 functions are just here to show that the buttons are clickable and do something
+
+  const toggleLanguage = (lan) => {
+    setLanguage(lan);
+  };
+
+  const logout = () => {
+    // Handle logout
+    console.log("Logged out :D");
+  };
+
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={handleOpenNavMenu}
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            id="appbar-menu"
+            anchorEl={anchorElNav}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            keepMounted
+            transformOrigin={{ vertical: "top", horizontal: "left" }}
+            open={Boolean(anchorElNav)}
+            onClose={handleCloseNavMenu}
+            sx={{
+              display: { xs: "block", md: "none" },
+            }}
+          >
+            <MenuItem>Home</MenuItem>
+            <MenuItem>Members</MenuItem>
+            <MenuItem>My Profile</MenuItem>
+            <MenuItem onClick={logout}>Logout</MenuItem>
+          </Menu>
+
+          <Typography
+            variant="h5"
+            noWrap
+            component="span"
+            sx={{
+              mr: 2,
+              display: "flex",
+              fontWeight: 500,
+              letterSpacing: ".2rem",
+              color: "inherit",
+              alignSelf: "center",
+            }}
+          >
+            AssocEase
+          </Typography>
+        </Box>
+
+        <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Typography
+            variant="h5"
+            noWrap
+            component="span"
+            sx={{
+              mr: 2,
+              display: "flex",
+              fontWeight: 500,
+              letterSpacing: ".2rem",
+              color: "inherit",
+            }}
+          >
+            AssocEase
+          </Typography>
+          <Button
+            color="inherit"
+            className="home-button"
+            disableRipple
+            sx={{
+              letterSpacing: ".2rem",
+              paddingLeft: "24px",
+              paddingRight: "12px",
+            }}
+          >
+            Home
+          </Button>
+          <Button
+            color="inherit"
+            className="members-button"
+            disableRipple
+            sx={{
+              letterSpacing: ".1rem",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+            }}
+          >
+            Members
+          </Button>
+          <Button
+            color="inherit"
+            disableRipple
+            sx={{
+              letterSpacing: ".1rem",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+            }}
+          >
+            My profile
+          </Button>
+        </Box>
+
+        <Box sx={{ display: { xs: "none", md: "flex" } }}>
+          <Button
+            color="inherit"
+            className="fi-button"
+            disabled={language === "FI"}
+            sx={{ letterSpacing: ".1rem" }}
+            onClick={() => {
+              toggleLanguage("FI");
+            }}
+          >
+            FI
+          </Button>
+          <Button
+            color="inherit"
+            disabled={language === "EN"}
+            sx={{ letterSpacing: ".1rem" }}
+            onClick={() => {
+              toggleLanguage("EN");
+            }}
+          >
+            EN
+          </Button>
+          <Button
+            color="inherit"
+            onClick={logout}
+            sx={{ minWidth: "8vw" }}
+            disableRipple
+          >
+            Logout
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+}
