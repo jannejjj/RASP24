@@ -10,6 +10,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Menu, MenuItem } from "@mui/material";
 // import IconButton from "@mui/material/IconButton";
 // import MenuIcon from "@mui/icons-material/Menu";
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function TopBar() {
   const [language, setLanguage] = useState("EN");
@@ -60,9 +61,9 @@ export default function TopBar() {
               display: { xs: "block", md: "none" },
             }}
           >
-            <MenuItem>Home</MenuItem>
-            <MenuItem>Members</MenuItem>
-            <MenuItem>My Profile</MenuItem>
+            <MenuItem component={RouterLink} to='/home'>Home</MenuItem>
+            <MenuItem component={RouterLink} to='/members'>Members</MenuItem>
+            <MenuItem component={RouterLink} to='/myprofile'>My Profile</MenuItem>
             <MenuItem onClick={logout}>Logout</MenuItem>
           </Menu>
 
@@ -98,7 +99,7 @@ export default function TopBar() {
           >
             AssocEase
           </Typography>
-          <Button
+          <Button component={RouterLink} to='/home'
             color="inherit"
             className="home-button"
             disableRipple
@@ -110,7 +111,7 @@ export default function TopBar() {
           >
             Home
           </Button>
-          <Button
+          <Button component={RouterLink} to='/members'
             color="inherit"
             className="members-button"
             disableRipple
@@ -122,7 +123,7 @@ export default function TopBar() {
           >
             Members
           </Button>
-          <Button
+          <Button component={RouterLink} to='/myprofile'
             color="inherit"
             disableRipple
             sx={{
