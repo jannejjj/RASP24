@@ -29,7 +29,7 @@ function Members() {
   return (
     <div>
       <h1>Members</h1>
-        {[...members].reverse().map((member) => (
+        {[...members].map((member) => (
             <Member key={member._id} member={member}/>
         ))}
       {!members?.length>0 && "No members."}

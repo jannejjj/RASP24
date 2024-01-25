@@ -17,6 +17,13 @@ router.get("/members", async (req, res) => {
 
 router.post('/newmember', async (req, res) => {
     const member = new Member({
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        phone: req.body.phone,
+        address: req.body.address,
+        postalcode: req.body.postalcode,
+        city: req.body.city,
+        country: req.body.country,
         email: req.body.email,
         password: req.body.password,
         admin: req.body.admin
