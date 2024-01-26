@@ -1,0 +1,4 @@
+.home-button, .members-button, .fi-button {
+    border-radius: 0 !important;
+    box-shadow: 1px 0 0 0 white;
+}
