@@ -36,3 +36,158 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+
+/* Styling for the HomePage that will be moved to the Pages.CSS once the merge is done */
+
+h1 
+{
+  margin: 0;
+}
+
+h2
+{
+  font-size: x-large;
+  margin: 0;
+}
+
+h3
+{
+  font-size: medium;
+  font-weight: 400;
+  margin: 0;
+}
+
+p
+{
+  font-size: small;
+  font-weight: 400;
+  margin: 0;
+}
+
+.HomePageBackground
+{
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.HomeEventsList
+{
+  width: 95vw;
+  max-width: 800px;
+  padding: 10px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.HomeEventItem
+{
+  border-radius: 10px;
+  box-shadow: 0 0 5px #888;
+  padding: 15px;
+  width: 90vw;
+  max-width: 700px;
+  margin: 10px 0 10px 0;
+}
+
+.HomeEventTop
+{
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
+}
+
+.HomeEventPhotoBackground img
+{
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+}
+
+.HomeEventHeaderArea
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.HomeEventHeaderArea p
+{
+  display: flex;
+  align-items: center;
+  height: fit-content
+}
+
+.HomeEventTitleAndLocationArea
+{
+  text-align: start;
+  margin: 0 0 0 10px;
+  padding: 0;
+}
+
+.HomeEventTitleAndLocationArea h2, h3
+{
+  margin: 0 0 5px 0;
+}
+
+.HomeEventDescriptionArea
+{
+  text-align: justify;
+}
+
+.HomeEventAttendanceButtonsArea
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin: 20px 0 0 0;
+}
+
+.HorizontalSeparator
+{
+  height: 1px;
+  background-color: #888;
+  width: 100%;
+  margin: 10px 0 10px 0;
+}
+
+.HomeModalBackground
+{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.HomeModalBackground .TextField
+{
+  width: 100%;
+  margin: 10px 0 10px 0;
+}
+
+.HomeModalBackground div
+{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+
+
+
+
+
