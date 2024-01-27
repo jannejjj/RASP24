@@ -1,0 +1,69 @@
+.Backround {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    box-shadow: 0 0 5px #888;
+    padding: 15px;
+  }
+
+.Header {
+    padding: 0px 0px 10px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Header h2 {
+    margin: 0;
+}
+
+.Header p {
+    margin: 0;
+    align-items: center;
+    display: flex;
+}
+
+.FaUserGroup {
+    padding: 0 0 0 0;
+    margin: 0 5px 0 0;
+}
+
+.HomePageBackground {
+    padding: 10px 20px 0px 20px;
+    max-width: 700px;
+}
+
+.Text {
+    padding: 0;
+    text-align: justify;
+    display: flex;
+    flex-direction: row;
+    align-items:end;
+    justify-content: space-between;
+}
+
+.Text Button {
+    padding: 5px 40px 5px 40px;
+    margin: 10px 0 0 40px;
+}
+
+.Text .Buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.Edit {
+    padding: 0 20px 10px 20px;
+    display: 'flex';
+    justify-content: 'flex-end';
+    
+}
+
+.HorizontalSeparator
+{
+  height: 1px;
+  background-color: #888;
+  width: 100%;
+  margin: 0px 0 10px 0;
+}
