@@ -12,7 +12,11 @@ let memberSchema = new Schema ({
     country: {type: String},
     email: {type: String},
     password: {type: String},
-    admin: {type: Boolean}
+    admin: {type: Boolean},
+    profileImage:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Image'
+      }]
 });
 
-module.exports = mongoose.model("members", memberSchema);
+module.exports = mongoose.model("member", memberSchema);
