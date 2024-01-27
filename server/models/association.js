@@ -6,7 +6,7 @@ let associationSchema = new Schema ({
     name:{type:String},
     description: {type: String},
     paymentDate:{type: Date},
-    description: {type: String},
+    price:{type: Number},
     associationImage:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'

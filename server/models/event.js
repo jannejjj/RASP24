@@ -13,7 +13,7 @@ let eventSchema = new Schema ({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'
       }],
-    price: {type: Float32Array},
+    price: {type: Number},
     paymentDate:{type: Date},
     link: [{
       type: mongoose.Schema.Types.ObjectId,
