@@ -2,10 +2,11 @@ import { React, useState } from 'react';
 import '../styles/HomePage.css';
 import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
 import { FaUserGroup } from "react-icons/fa6";
-import { Typography } from '@mui/material';
+import CancelAttendanceModal from '../models/CancelAttendanceModal';
+import ConfirmAttendanceModal from '../models/ConfirmAttendanceModal';
+import CreateEventModal from '../models/CreateEventModal';
+import EditEventModal from '../models/EditEventModal';
 
 function Details(props) {
   const ManageOnClickManage = () => {
@@ -32,7 +33,7 @@ function Details(props) {
 
   return(
     <div className='Details'>
-      <div className='Backround'>
+      <div className='Background'>
         <div className='Header'>
           <h2>
             Details
@@ -240,62 +241,39 @@ function EventItem(props)
           }
         </div>
       </div>
-      
-      {/* This is the event editing Modal for the admins */}
-      <Modal open={edit} >
-        <Box className='HomeModalBackground' >
-          <h2>
-            Edit the event
-          </h2>
-          <div className='HorizontalSeparator' />
-          <TextField value={editedTitle} onInput={handleTitleChange} className='TextField' fullWidth label="Title" />
-          <TextField value={editedTime} onInput={handleTimeChange} className='TextField' fullWidth label="Time" />
-          <TextField value={editedLocation} onInput={handleLocationChange} className='TextField' fullWidth label="Location" />
-          <TextField multiline value={editedDescription} onInput={handleDescriptionChange}
-            className='TextField' fullWidth label='Description' maxRows={15} />
-          <div>
-            <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={cancelEditOnClick} >Cancel</Button>
-            <Button style={{margin: "10px 0 0 5px"}} color='success' variant='outlined' fullWidth onClick={saveEditOnClick} >Save</Button>
-          </div>
-        </Box>
-      </Modal>
 
-      {/* This is the Modal for accepting the event attendance */}
-      <Modal open={openAttend}>
-          <Box className='HomeModalBackground'>
-            <Typography>
-              TODO: Add the logic to attend events
-            </Typography>
-            <div className='HorizontalSeparator' />
+    <EditEventModal 
+      edit={edit} 
+      editedDescription={editedDescription} 
+      editedLocation={editedLocation}
+      editedTime={editedTime}
+      editedTitle={editedTitle}
+      handleTitleChange={handleTitleChange}
+      handleTimeChange={handleTimeChange}
+      handleLocationChange={handleLocationChange}
+      handleDescriptionChange={handleDescriptionChange}
+      cancelEditOnClick={cancelEditOnClick}
+      saveEditOnClick={saveEditOnClick}
+    />
 
-            <div>
-              <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={() => {setOpenAttend(false)}} >Cancel</Button>
-              <Button style={{margin: "10px 0 0 5px"}} color='success' variant='outlined' fullWidth onClick={handleEventAttendance} >Attend</Button>
-            </div>
-          </Box>
-      </Modal>
+    <ConfirmAttendanceModal 
+      openAttend={openAttend}
+      setOpenAttend={setOpenAttend}
+      handleEventAttendance={handleEventAttendance}
+    />
 
-      {/* This is the Modal for cancelling the event attendance */}
-      <Modal open={openCancelAttendance}>
-        <Box className='HomeModalBackground'>
-          <Typography>
-            TODO: Add the logic to cancel attendance to events
-          </Typography>
-          <div className='HorizontalSeparator' />
-
-          <div>
-            <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={() => {setOpenCancelAttendance(false)}} >Cancel</Button>
-            <Button style={{margin: "10px 0 0 5px"}} color='error' variant='outlined' fullWidth onClick={handleCancelEventAttendance} >Cancel Attendace</Button>
-          </div>
-        </Box>
-      </Modal>
+    <CancelAttendanceModal 
+      openCancelAttendance={openCancelAttendance}
+      setOpenCancelAttendance={setOpenCancelAttendance}
+      handleCancelEventAttendance={handleCancelEventAttendance}
+    />
 
     </div>
   )
 }
 
 function Home() {
-  const [admin, setAdmin] = useState(false);
+  const [admin, setAdmin] = useState(true);
   const [newEvent, setNewEvent] = useState(false);
   const [events, setEvents] = useState([
     {
@@ -402,24 +380,20 @@ function Home() {
         ))}
       </div>
 
-      {/* This is the event editing Modal for creating a new event */}
-      <Modal open={newEvent} >
-        <Box className='HomeModalBackground' >
-          <h2>
-            Create a new event
-          </h2>
-          <div className='HorizontalSeparator' />
-          <TextField value={newTitle} onInput={handleTitleChange} className='TextField' fullWidth label="Title" />
-          <TextField value={newTime} onInput={handleTimeChange} className='TextField' fullWidth label="Time" />
-          <TextField value={newLocation} onInput={handleLocationChange} className='TextField' fullWidth label="Location" />
-          <TextField multiline value={newDescription} onInput={handleDescriptionChange}
-            className='TextField' fullWidth label='Description' maxRows={15} />
-          <div>
-            <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={cancelCreationOnClick} >Cancel</Button>
-            <Button style={{margin: "10px 0 0 5px"}} color='success' variant='outlined' fullWidth onClick={saveNewEventOnClick} >Save</Button>
-          </div>
-        </Box>
-      </Modal>
+      <CreateEventModal 
+        newEvent={newEvent}
+        newTime={newTime}
+        newTitle={newTitle}
+        newLocation={newLocation}
+        newDescription={newDescription}
+        handleTitleChange={handleTitleChange}
+        handleTimeChange={handleTimeChange}
+        handleLocationChange={handleLocationChange}
+        handleDescriptionChange={handleDescriptionChange}
+        cancelCreationOnClick={cancelCreationOnClick}
+        saveNewEventOnClick={saveNewEventOnClick}
+      />
+
     </div>
   )
 }
