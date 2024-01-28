@@ -36,7 +36,7 @@ const memberAux =[
         "profileImage": []
     }
 ];
-let assocaitionAux = {
+let associationAux = {
     "name": "Sample Event",
     "description": "This is a sample event description.",
     "paymentDate": "2024-01-26T12:00:00.000Z",
@@ -90,17 +90,17 @@ const linkAux = [
       const links = await Link.create(linkAux);
       const linkIds = links.map(link => link._id);
 
-      assocaitionAux.link = linkIds;
-      assocaitionAux.notification = notificationIds;
+      associationAux.link = linkIds;
+      associationAux.notification = notificationIds;
       eventAux.link = linkIds;
       eventAux.notification = notificationIds;
 
       const event = await Event.create(eventAux);
       const eventId = event._id;
 
-      assocaitionAux.event = eventId;
+      associationAux.event = eventId;
 
-      const association = await Association.create(assocaitionAux);
+      const association = await Association.create(associationAux);
       const associationId = association._id;
 
       
