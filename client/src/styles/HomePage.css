@@ -44,7 +44,7 @@
     text-align: justify;
     display: flex;
     flex-direction: row;
-    align-items:end;
+    align-items: flex-end;
     justify-content: space-between;
 }
 
@@ -178,7 +178,7 @@ p
 {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: flex-end;
   margin: 20px 0 0 0;
 }
 
