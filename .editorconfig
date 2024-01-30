@@ -1,0 +1,10 @@
+root = true
+
+[*.{js,json,css,html,md}]
+indent_style = space
+indent_size = 2
+quote_type = double
+
+
+# Install editor config support plugin for this to work. More info on
+# https://editorconfig.org/
