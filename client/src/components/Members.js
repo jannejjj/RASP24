@@ -1,23 +1,22 @@
 import {useState, useEffect} from 'react';
 import Member from './Member';
+import Typography from "@mui/material/Typography";
 
 function Members() {
 
-  const [members, setMembers] = useState([{
-    "_id": null,
-    "email": null,
-    "password": null,
-    "admin": null
-  }]);
+  const [members, setMembers] = useState([{}]);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
     async function fetchMembers() {
         let url = '/api/members';
         let response = await fetch(url);
         let dataJson = await response.json();
         if (mounted) {
             setMembers(dataJson);
+            setLoading(false);
         }
     }
     fetchMembers();
@@ -26,13 +25,23 @@ function Members() {
     };
   }, [])
 
+  if (loading) {
+    return (
+        <div>
+            <h1>Members</h1>
+            <Typography sx={{ mt: 20 }} variant='h4' align="center">
+              Loading...
+            </Typography>
+        </div>
+    )
+  }
   return (
     <div>
       <h1>Members</h1>
         {[...members].map((member) => (
             <Member key={member._id} member={member}/>
         ))}
-      {!members?.length>0 && "No members."}
+      <Typography sx={{ mt: 20 }} variant='h4' align="center">{!members?.length>0 && "No members."}</Typography>
     </div>
   )
 }
