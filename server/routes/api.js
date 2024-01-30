@@ -25,8 +25,8 @@ router.post('/register',
     }
     //checks if email is already in use
     try {
-        const unique = await Member.findOne({email: req.body.email});
-        if(unique){
+        const duplicate = await Member.findOne({email: req.body.email});
+        if(duplicate){
             return res.status(403).json({success: false, message: "Email already in use"});
         } else {
         
