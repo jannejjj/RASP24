@@ -211,25 +211,22 @@ function EventItem(props)
         </div>
 
         <div className='HomeEventAttendanceButtonsArea'>
-          {props.admin ? 
+          {props.admin && 
             (
-              <Button variant='outlined' onClick={editOnClick} >Edit</Button>
-            )
-            :
-            (
-              <div>
-                {attending ? 
-                  (
-                    <Button variant='outlined' color='error' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
-                  )
-                  :
-                  (
-                    <Button variant='outlined' color='success' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
-                  )
-                }
-              </div>
+              <Button className='EditEventButton' variant='outlined' onClick={editOnClick} >Edit</Button>
             )
           }
+          <div>
+            {attending ? 
+              (
+                <Button variant='outlined' color='error' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
+              )
+              :
+              (
+                <Button variant='outlined' color='success' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
+              )
+            }
+          </div>
         </div>
       </div>
 
@@ -264,7 +261,7 @@ function EventItem(props)
 }
 
 function Home() {
-  const [admin, setAdmin] = useState(false);
+  const [admin, setAdmin] = useState(true);
   const [newEvent, setNewEvent] = useState(false);
   const [events, setEvents] = useState([
     {

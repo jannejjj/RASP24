@@ -63,7 +63,7 @@
 {
   display: flex;
   flex-direction: column;
-  align-items: end;
+  align-items: start;
   padding: 10px 0 0 0;
 }
 
@@ -180,7 +180,15 @@ p
   display: flex;
   flex-direction: row;
   justify-content: end;
+  position: relative;
   margin: 20px 0 0 0;
+}
+
+.HomeEventAttendanceButtonsArea .EditEventButton
+{
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 .HorizontalSeparator
