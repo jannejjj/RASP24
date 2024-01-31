@@ -11,10 +11,12 @@ import { Menu, MenuItem } from "@mui/material";
 // import IconButton from "@mui/material/IconButton";
 // import MenuIcon from "@mui/icons-material/Menu";
 import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function TopBar() {
   const [language, setLanguage] = useState("EN");
   const [anchorElNav, setAnchorElNav] = useState(null);
+  let navigate = useNavigate();
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
@@ -30,9 +32,18 @@ export default function TopBar() {
     setLanguage(lan);
   };
 
+  //logged in status
+  let loggedIn = false;
+  if(sessionStorage.getItem('token')) {
+      loggedIn = true;
+  }
+
   const logout = () => {
-    // Handle logout
-    console.log("Logged out :D");
+    if(loggedIn) {
+      sessionStorage.removeItem('token');
+      loggedIn = false;
+      navigate('/Home')
+    }
   };
 
   return (
@@ -64,7 +75,8 @@ export default function TopBar() {
             <MenuItem component={RouterLink} to='/home'>Home</MenuItem>
             <MenuItem component={RouterLink} to='/members'>Members</MenuItem>
             <MenuItem component={RouterLink} to='/myprofile'>My Profile</MenuItem>
-            <MenuItem onClick={logout}>Logout</MenuItem>
+            {loggedIn && <MenuItem onClick={logout} component={RouterLink}>Logout</MenuItem>}
+            {!loggedIn && <MenuItem onClick={logout} component={RouterLink} to='/login'>Login</MenuItem>}
           </Menu>
 
           <Typography
@@ -158,14 +170,23 @@ export default function TopBar() {
           >
             EN
           </Button>
-          <Button
+          {loggedIn && <Button
             color="inherit"
             onClick={logout}
             sx={{ minWidth: "8vw" }}
             disableRipple
           >
             Logout
-          </Button>
+          </Button>}
+          {!loggedIn && <Button
+            color="inherit"
+            onClick={logout} 
+            component={RouterLink} to='/login'
+            sx={{ minWidth: "8vw" }}
+            disableRipple
+          >
+            Login
+          </Button>}
         </Box>
       </Toolbar>
     </AppBar>

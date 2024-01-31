@@ -4,7 +4,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require("mongoose");
 var cors = require('cors');
-require('dotenv').config();
 
 const mongoDB = "mongodb://localhost:27017/assoceasedb";
 mongoose.connect(mongoDB);

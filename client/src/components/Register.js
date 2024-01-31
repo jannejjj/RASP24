@@ -35,16 +35,16 @@ const Register = () => {
                 if(data.success) {
                     console.log(data);
                     console.log("Success");
-                    //navigate('/Home');
+                    navigate('/login');
                 } else {
                     if(data.errors !== undefined) {
                     if (data.errors[0] !== undefined) {
-                        console.log(data);
+                        setErr(data.errors[0].msg + " " + data.errors[0].param);
                     } else if (data.errors[1] !== undefined) {
-                        console.log(data);
+                        setErr(data.errors[1].msg + " " + data.errors[1].param);
                     }
                     } else {
-                        console.log(data);
+                        setErr(data.message);
                     }
                 }
         })

@@ -4,11 +4,69 @@ const controller = require("./controller");
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const passport = require('passport');
+const multer = require("multer")
+const storage = multer.memoryStorage();
+const upload = multer({storage});
+
+require('../auth/passport')(passport)
+router.use(passport.initialize());
 
 //finds all the members in the DB
-router.get("/members", controller.getMembers);
+router.get("/members", passport.authenticate('jwt', {session: false}), async (req, res) => {
+    try {
+        const members  = await Member.find({});
+        res.send(members);
+    } catch (err) {
+        console.error(err);
+        res.send("No members.");
+    }
+});
 
 router.post("/newmember", controller.addMember);
+
+
+router.post('/login',
+  upload.none(),
+  body("email").trim().escape(),
+  body("password"),
+  async (req, res) => {
+    //checks if user exists with email
+    try {
+        const member = await Member.findOne({email: req.body.email});
+        if(!member){
+            return res.send({success: false, message: "Invalid credentials"});
+        } else {
+            //compares crypted password
+            bcrypt.compare(req.body.password, member.password, (err, isMatch) => {
+                if(err) throw err;
+                if(isMatch) {
+                //creates JWT
+                const jwtPayload = {
+                    id: member._id,
+                    email: member.email
+                }
+                jwt.sign(
+                    jwtPayload,
+                    process.env.SECRET,
+                    {
+                    expiresIn: 6000 //expires on 6000s and log in is needed again.
+                    },
+                    (err, token) => {
+                    res.json({success: true, token});
+                    }
+                );
+                } else {
+                    return res.status(403).json({success: false, message: "Invalid credentials"});
+                }
+            })
+        }
+    } catch(err) {
+        throw err;
+    }
+});
+
 
 // Register new member
 router.post('/register', 
