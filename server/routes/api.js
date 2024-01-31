@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const controller = require("./controller");
+// const controller = require("./controller");
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
 const bcrypt = require("bcryptjs");
@@ -13,7 +13,7 @@ const upload = multer({storage});
 require('../auth/passport')(passport)
 router.use(passport.initialize());
 
-//finds all the members in the DB
+//finds all the members in the DB if authenticated
 router.get("/members", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
         const members  = await Member.find({});
@@ -87,7 +87,6 @@ router.post('/register',
         if(duplicate){
             return res.status(403).json({success: false, message: "Email already in use"});
         } else {
-        
         //if member doesn't exist creates new member
         //creates password hash and salts it
         bcrypt.genSalt(10, (err, salt) => {

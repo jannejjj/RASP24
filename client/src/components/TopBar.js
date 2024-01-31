@@ -38,6 +38,7 @@ export default function TopBar() {
       loggedIn = true;
   }
 
+  //Removes Token from sessionStorage
   const logout = () => {
     if(loggedIn) {
       sessionStorage.removeItem('token');

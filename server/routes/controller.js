@@ -1,3 +1,4 @@
+/*
 const Member = require("../models/member");
 
 const getMembers = async (req, res) => {
@@ -38,3 +39,5 @@ module.exports = {
     getMembers,
     addMember,
 };
+
+*/

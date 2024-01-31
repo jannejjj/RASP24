@@ -6,6 +6,7 @@ function Members() {
 
   const [members, setMembers] = useState([{}]);
   const [loading, setLoading] = useState(true);
+  /* User is authrorized based on if there is a token in the sessionStorage or not */
   const [authorized, setAuthorized] = useState();
 
   useEffect(() => {
@@ -35,16 +36,7 @@ function Members() {
     };
   }, [])
 
-  if (!authorized) {
-    return (
-        <div>
-            <h1>Members</h1>
-            <Typography sx={{ mt: 20 }} variant='h4' align="center">
-              Unauthorized.
-            </Typography>
-        </div>
-    )
-  }
+  /* While fetching data from the backend, the user will be shown this */
   if (loading) {
     return (
         <div>
@@ -55,6 +47,19 @@ function Members() {
         </div>
     )
   }
+  
+  /* If the user is not authorized, they will be shown this */
+  if (!authorized) {
+    return (
+        <div>
+            <h1>Members</h1>
+            <Typography sx={{ mt: 20 }} variant='h4' align="center">
+              Unauthorized.
+            </Typography>
+        </div>
+    )
+  }
+  
   return (
     <div>
       <h1>Members</h1>

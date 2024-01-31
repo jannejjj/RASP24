@@ -12,10 +12,12 @@ function Login() {
     const [member, setMember] = useState({})
     const [err, setErr] = useState('')
 
+    /* When input fields are being changed, the member object is being updated */
     const whenChanging = (event) => {
       setMember({...member, [event.target.id]: event.target.value})
     }
 
+    /* Sends login details to the backend */
     const submitForm = (event) => {
       event.preventDefault()
       fetch("/api/login", {

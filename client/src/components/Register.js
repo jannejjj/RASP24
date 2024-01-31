@@ -11,14 +11,12 @@ const Register = () => {
     const [member, setMember] = useState({})
     const [err, setErr] = useState('')
 
-    //Keeps track of the input fields and creates the user object as the fields are being filled.
+    //Keeps track of the input fields and creates the member object as the fields are being filled.
     const whenChanging = (event) => {
         setMember({...member, [event.target.id]: event.target.value})
     }
 
-    //Function for submittting the form.  
-    //Sends the user object to server.
-    
+    //Sends the member object to server
     const submitForm = (e) => {
         e.preventDefault()
 
