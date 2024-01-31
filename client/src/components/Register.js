@@ -37,9 +37,9 @@ const Register = () => {
                 } else {
                     if(data.errors !== undefined) {
                     if (data.errors[0] !== undefined) {
-                        setErr(data.errors[0].msg + " " + data.errors[0].param);
+                        setErr(data.errors[0].msg);
                     } else if (data.errors[1] !== undefined) {
-                        setErr(data.errors[1].msg + " " + data.errors[1].param);
+                        setErr(data.errors[1].msg);
                     }
                     } else {
                         setErr(data.message);

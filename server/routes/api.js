@@ -24,8 +24,6 @@ router.get("/members", passport.authenticate('jwt', {session: false}), async (re
     }
 });
 
-router.post("/newmember", controller.addMember);
-
 
 router.post('/login',
   upload.none(),
