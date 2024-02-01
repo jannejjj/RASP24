@@ -3,10 +3,10 @@ import "../styles/HomePage.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { FaUserGroup } from "react-icons/fa6";
-import CancelAttendanceModal from "../models/CancelAttendanceModal";
-import ConfirmAttendanceModal from "../models/ConfirmAttendanceModal";
-import CreateEventModal from "../models/CreateEventModal";
-import EditEventModal from "../models/EditEventModal";
+import CancelAttendanceModal from "../modals/CancelAttendanceModal";
+import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
+import CreateEventModal from "../modals/CreateEventModal";
+import EditEventModal from "../modals/EditEventModal";
 
 /* eslint-disable no-unused-vars */
 
