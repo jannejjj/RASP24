@@ -4,6 +4,11 @@ import {useState} from 'react'
 import { useNavigate } from "react-router-dom";
 import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
+import '../App.css';
+import '../styles/Register.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 const Register = () => {
     let navigate = useNavigate();
@@ -30,56 +35,71 @@ const Register = () => {
         })
             .then(response => response.json())
             .then(data => {
-                if(data.success) {
+                if(data.success) 
+                {
                     console.log(data);
                     console.log("Success");
                     navigate('/login');
-                } else {
-                    if(data.errors !== undefined) {
-                    if (data.errors[0] !== undefined) {
-                        setErr(data.errors[0].msg);
-                    } else if (data.errors[1] !== undefined) {
-                        setErr(data.errors[1].msg);
-                    }
-                    } else {
+                }
+                else 
+                {
+                    if(data.errors !== undefined) 
+                    {
+                        if (data.errors[0] !== undefined) 
+                        {
+                            setErr(data.errors[0].msg);
+                            showToastMessage(data.errors[0].msg);
+                        } 
+                        else if (data.errors[1] !== undefined) 
+                        {
+                            setErr(data.errors[1].msg);
+                            showToastMessage(data.errors[1].msg);
+                        }
+                    } 
+                    else 
+                    {
                         setErr(data.message);
+                        showToastMessage(data.message);
                     }
                 }
         })
     }
 
-    return (
-        <div>
-            <Box sx={{ border: 0, width: '60%', margin: 'auto' }}>
-                <h1 align='left'>{'Register'}</h1>
-            </Box>
+    const showToastMessage = (message) =>
+    {
+        toast.error(message, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark"
+            });
+    }
 
-        <div>
-            <form onSubmit={submitForm} onChange={whenChanging}>
-                <Input required={true} placeholder={'First name'} type="text" id="firstname"></Input><br/><br/>
-                <Input required={true} placeholder={'Last name'} type="text" id="lastname"></Input><br/><br/>
-                <Input required={true} placeholder={'Phone number'} type="text" id="phone"></Input><br/><br/>
-                <Input required={true} placeholder={'Address'} type="text" id="address"></Input><br/><br/>
-                <Input required={true} placeholder={'Postal code'} type="text" id="postalcode"></Input><br/><br/>
-                <Input required={true} placeholder={'City'} type="text" id="city"></Input><br/><br/>
-                <Input required={true} placeholder={'Country'} type="text" id="country"></Input><br/><br/>
-                <Input required={true} placeholder={'Email'} type="email" id="email"></Input><br/><br/>
-                <Input required={true} placeholder={'Password'} type="password" id="password"></Input>
-                <Typography sx={{mt: 5}} variant='subtitle1' color='inherit'>
-                    {'The password must be 10 characters long, have upper- and lowercase, a number and a symbol.'}
-                </Typography>
-                
-                <br/>
-                <Button variant='contained' type="submit" id="submit">{'Register'}</Button>
+    return (
+        <div className='RegisterBackground'>
+            <h1>Register</h1>
+
+            <form onSubmit={submitForm} onChange={whenChanging} className='RegisterForm' >
+                <OutlinedInput fullWidth required placeholder={'First name'} type="text" id="firstname" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'Last name'} type="text" id="lastname" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'Phone number'} type="text" id="phone" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'Address'} type="text" id="address" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'Postal code'} type="text" id="postalcode" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'City'} type="text" id="city" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'Country'} type="text" id="country" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'Email'} type="email" id="email" sx={{m: 1}} />
+                <p className='HintParagraph'>The password must have upper- and lowercase characters, a number, a symbol and be 10 characters long.</p>
+                <OutlinedInput fullWidth required placeholder={'Password'} type="password" id="password" sx={{m: 1}} />
+                <Button variant='contained' type="submit" id="submit" sx={{m: 1}} >Register</Button>
             </form>
+        
+            {/* If there would be an error with registeration it would be shown here */}
+            <ToastContainer />
         </div>
-        
-        {/* If there would be an error with registeration it would be shown here */}
-        {err && (<Typography variant='h7' color='red' component='h3' padding={2}>
-                   {err}
-                </Typography>)}
-        
-    </div>
     )
 }
 

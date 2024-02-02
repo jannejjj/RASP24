@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import {useState} from 'react'
-import Typography from '@mui/material/Typography';
-import Input from '@mui/material/Input';
-import { Button } from "@mui/material";
-import Box from '@mui/material/Box';
-
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Button from "@mui/material/Button";
+import '../styles/Login.css';
+import '../App.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
     let navigate = useNavigate();
@@ -15,6 +16,20 @@ function Login() {
     /* When input fields are being changed, the member object is being updated */
     const whenChanging = (event) => {
       setMember({...member, [event.target.id]: event.target.value})
+    }
+
+    const showToastMessage = (message) =>
+    {
+        toast.error(message, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark"
+            });
     }
 
     /* Sends login details to the backend */
@@ -37,30 +52,21 @@ function Login() {
                   }
               } else {
                   setErr(data.message);
+                  showToastMessage(data.message);
               }
           })
   }
 
 
     return (
-        <div>
-            <Box sx={{ border: 0, width: '60%', margin: 'auto' }}>
-                <h1 align='left'>{'Login'}</h1>
-            </Box>
-
-            <div>
-                <form onSubmit={submitForm} onChange={whenChanging}>
-                    <Input required placeholder={'Email'} type="email" id="email"></Input><br/><br/>
-                    <Input required placeholder={'Password'} type="password" id="password"></Input><br/><br/>
-                    <Button variant='contained' type="submit" id="submit">{'Login'}</Button>
-                </form>
-            </div>
-
-            {/* Here is shown the error that was received from the server */}
-            {err && (<Typography variant='h7' color='red' component='h3' padding={2}>
-                        {err}
-                    </Typography>)}
-            
+        <div className="LoginBackground">
+            <h1>Login</h1>
+            <form onSubmit={submitForm} onChange={whenChanging} className='LoginForm' >
+                <OutlinedInput fullWidth variant='' required placeholder={'Email'} type="email" id="email" sx={{m: 1}} />
+                <OutlinedInput fullWidth variant="outlined" required placeholder={'Password'} type="password" id="password" sx={{m: 1}} />
+                <Button variant='contained' color="primary" type="submit" id="submit" sx={{m: 1}}>Login</Button>
+            </form>
+            <ToastContainer />
         </div>
     )
 }
