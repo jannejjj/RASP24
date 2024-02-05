@@ -75,31 +75,6 @@
   margin: 0px 0 10px 0;
 }
 
-h1 
-{
-  margin: 0;
-}
-
-h2
-{
-  font-size: x-large;
-  margin: 0;
-}
-
-h3
-{
-  font-size: medium;
-  font-weight: 400;
-  margin: 0;
-}
-
-p
-{
-  font-size: small;
-  font-weight: 400;
-  margin: 0;
-}
-
 .HomePageBackground
 {
   width: 100vw;

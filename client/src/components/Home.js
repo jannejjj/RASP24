@@ -1,5 +1,6 @@
 import { React, useState } from 'react';
 import '../styles/HomePage.css';
+import '../App.css';
 import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
 import { FaUserGroup } from "react-icons/fa6";
