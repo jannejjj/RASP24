@@ -12,7 +12,7 @@ mongoose.connect(mongoDB);
 mongoose.Promise = Promise;
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error"));
-insertSampleData();
+// insertSampleData(); // Commented this since the member data persists in the cloud DB, uncomment for local use if needed
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
