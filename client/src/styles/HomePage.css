@@ -1,19 +1,24 @@
-.Background {
-    background-color: rgb(255, 255, 255);
+.DetailsBackground {
     border-radius: 10px;
     box-shadow: 0 0 5px #888;
     padding: 15px;
-    width: 100%;
+    width: 90%;
     max-width: 700px;  
 }
 
-.Details
+.DetailsArea
 {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px 0 20px 0;
+  width: 100vw;
+  max-width: 800px;
+  padding: 10px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.DetailsArea h1
+{
+  margin: 0 0 20px 0;
 }
 
 .Header {
@@ -22,10 +27,6 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-}
-
-.Header h2 {
-    margin: 0;
 }
 
 .Header p {
@@ -58,12 +59,12 @@
     flex-direction: column;
 }
 
-
-.Edit {
-    padding: 0 20px 10px 20px;
-    display: 'flex';
-    justify-content: 'flex-end';
-    
+.EditDetailsButtonArea
+{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 10px 0 0 0;
 }
 
 .HorizontalSeparator
@@ -72,31 +73,6 @@
   background-color: #888;
   width: 100%;
   margin: 0px 0 10px 0;
-}
-
-h1 
-{
-  margin: 0;
-}
-
-h2
-{
-  font-size: x-large;
-  margin: 0;
-}
-
-h3
-{
-  font-size: medium;
-  font-weight: 400;
-  margin: 0;
-}
-
-p
-{
-  font-size: small;
-  font-weight: 400;
-  margin: 0;
 }
 
 .HomePageBackground
@@ -110,7 +86,7 @@ p
 
 .HomeEventsList
 {
-  width: 95vw;
+  width: 100vw;
   max-width: 800px;
   padding: 10px 0 10px 0;
   display: flex;
@@ -123,7 +99,7 @@ p
   border-radius: 10px;
   box-shadow: 0 0 5px #888;
   padding: 15px;
-  width: 90vw;
+  width: 90%;
   max-width: 700px;
   margin: 10px 0 10px 0;
 }
@@ -179,7 +155,15 @@ p
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  position: relative;
   margin: 20px 0 0 0;
+}
+
+.HomeEventAttendanceButtonsArea .EditEventButton
+{
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 .HorizontalSeparator
