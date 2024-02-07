@@ -48,7 +48,7 @@ function Details(props) {
   return(
     <div className='DetailsBackground'>
       <div className='Header'>
-        <h1 style={{"margin": "0"}}>
+        <h1>
           {title}
         </h1>
         <p>
@@ -62,7 +62,7 @@ function Details(props) {
       {admin &&
       (
         <div className='EditDetailsButtonArea'>
-          <Button variant='outlined' onClick={() => {setManageDetails(true)}}>
+          <Button variant='contained' onClick={() => {setManageDetails(true)}}>
             Edit
           </Button>
         </div>
@@ -214,17 +214,17 @@ function EventItem(props)
         <div className='HomeEventAttendanceButtonsArea'>
           {props.admin && 
             (
-              <Button className='EditEventButton' variant='outlined' onClick={editOnClick} >Edit</Button>
+              <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
             )
           }
           <div>
             {attending ? 
               (
-                <Button variant='outlined' color='error' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
+                <Button variant='outlined' color='primary' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
               )
               :
               (
-                <Button variant='outlined' color='success' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
+                <Button variant='contained' color='primary' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
               )
             }
           </div>
@@ -355,7 +355,7 @@ function Home() {
         <h1>Events</h1>
         <div className='HorizontalSeparator' style={{width: "95%"}} />
         {admin && (
-          <Button color="primary" variant='outlined' onClick={() => {setNewEvent(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
+          <Button color="primary" variant='contained' onClick={() => {setNewEvent(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
         )}
         {events.map((event, index) => (
           <EventItem

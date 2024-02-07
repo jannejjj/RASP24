@@ -2,69 +2,46 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 h1 
 {
   margin: 0;
+  font-family: Poppins;
+  color: #2C041C;
+  font-size: xx-large;
 }
 
 h2
 {
-  font-size: x-large;
   margin: 0;
+  font-family: Poppins;
+  color: #2C041C;
+  font-size: x-large;
 }
 
 h3
 {
-  font-size: medium;
-  font-weight: 400;
   margin: 0;
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: lighter;
 }
 
 p
 {
-  font-size: small;
-  font-weight: 400;
   margin: 0;
+  font-family: Poppins;
+  font-size: small;
 }
 
-.HintParagraph
+.HintParagraphSmall
 {
   color: #888;
   text-align: justify;
   font-size: x-small;
+}
+
+.HintParagraphBig
+{
+  color: #888;
+  font-size: small;
 }
