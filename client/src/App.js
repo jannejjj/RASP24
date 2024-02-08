@@ -36,6 +36,9 @@ function App() {
           <Route path="/Register" element={<Register />} />
           <Route path="/Login" element={<Login />} />
           </Routes>
+          <div className='Footer'>
+            <p>AssocEase &copy;</p>
+          </div>
         </div>
       </Router>
     </ThemeProvider>

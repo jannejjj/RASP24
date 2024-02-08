@@ -1,5 +1,25 @@
+
 .App {
   text-align: center;
+  padding-bottom: 60px;
+  position: relative;
+  height: 100%;
+  min-height: calc(100vh - 60px);
+}
+
+.Footer
+{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 0 20px 0;
+}
+
+.Footer p
+{
+  font-size: large;
+  color: #2C041C;
 }
 
 h1 
