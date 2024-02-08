@@ -25,7 +25,7 @@
 h1 
 {
   margin: 0;
-  font-family: Poppins;
+  font-family: 'Poppins';
   color: #2C041C;
   font-size: xx-large;
 }
@@ -33,7 +33,7 @@ h1
 h2
 {
   margin: 0;
-  font-family: Poppins;
+  font-family: 'Poppins';
   color: #2C041C;
   font-size: x-large;
 }
@@ -41,7 +41,7 @@ h2
 h3
 {
   margin: 0;
-  font-family: Poppins;
+  font-family: 'Poppins';
   font-size: 14px;
   font-weight: lighter;
 }
@@ -49,7 +49,7 @@ h3
 p
 {
   margin: 0;
-  font-family: Poppins;
+  font-family: 'Poppins';
   font-size: small;
 }
 
