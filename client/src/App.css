@@ -36,3 +36,35 @@
     transform: rotate(360deg);
   }
 }
+
+h1 
+{
+  margin: 0;
+}
+
+h2
+{
+  font-size: x-large;
+  margin: 0;
+}
+
+h3
+{
+  font-size: medium;
+  font-weight: 400;
+  margin: 0;
+}
+
+p
+{
+  font-size: small;
+  font-weight: 400;
+  margin: 0;
+}
+
+.HintParagraph
+{
+  color: #888;
+  text-align: justify;
+  font-size: x-small;
+}

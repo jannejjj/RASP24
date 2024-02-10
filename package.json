@@ -11,5 +11,8 @@
     "dev:server": "cd server && npm run dev"
   },
   "author": "Group 4",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "multer": "^1.4.5-lts.1"
+  }
 }

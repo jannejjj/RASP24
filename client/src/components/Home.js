@@ -1,90 +1,82 @@
 import { React, useState } from 'react';
 import '../styles/HomePage.css';
+import '../App.css';
 import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
 import { FaUserGroup } from "react-icons/fa6";
-import CancelAttendanceModal from '../models/CancelAttendanceModal';
-import ConfirmAttendanceModal from '../models/ConfirmAttendanceModal';
-import CreateEventModal from '../models/CreateEventModal';
-import EditEventModal from '../models/EditEventModal';
+import CancelAttendanceModal from '../modals/CancelAttendanceModal';
+import ConfirmAttendanceModal from '../modals/ConfirmAttendanceModal';
+import CreateEventModal from '../modals/CreateEventModal';
+import EditEventModal from '../modals/EditEventModal';
+import EditDetailsModal from '../modals/EditDetailsModal';
 
 function Details(props) {
-  const ManageOnClickManage = () => {
-    setmanageDetails(true)
-    setDetailsHistory(details)
+  const [admin, setAdmin] = useState(props.admin);
+  const [details, setDetails] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mollis imperdiet est, ut maximus est lobortis non. Aliquam bibendum venenatis mi, a auctor lacus interdum feugiat. Aenean nec leo a diam iaculis iaculis. Vestibulum cursus tincidunt neque, quis euismod dolor tincidunt ac.");
+  const [detailsHistory, setDetailsHistory] = useState(details);
+  const [changedDetails, setChangedDetails] = useState(details);
+  const [title, setTitle] = useState("Association Ry");
+  const [titleHistory, setTitleHistory] = useState(title);
+  const [changedTitle, setChangedTitle] = useState(title);
+  const [manageDetails, setManageDetails] = useState(false);
+
+  const saveEditOnClick = () => {
+    setDetailsHistory(changedDetails);
+    setTitleHistory(changedTitle);
+    setDetails(changedDetails);
+    setTitle(changedTitle);
+    setManageDetails(false);
   }
-  const ManageOnClickSave = () => {
-    setmanageDetails(false)
-    console.log(details)
+
+  const cancelEditOnClick = () => {
+    setDetails(detailsHistory);
+    setTitle(titleHistory);
+    setChangedDetails(detailsHistory);
+    setChangedTitle(titleHistory);
+    setManageDetails(false);
   }
-  const ManageOnClickCancel = () => {
-    setmanageDetails(false)
-    setDetails(detailsHistory)
-  }
+
   const handleDetailsChange = (event) => {
-    setDetails(event.target.value)
+    setChangedDetails(event.target.value)
   }
 
-  const [admin, setAdmin] = useState(props.admin)
-  const [details, setDetails] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mollis imperdiet est, ut maximus est lobortis non. Aliquam bibendum venenatis mi, a auctor lacus interdum feugiat. Aenean nec leo a diam iaculis iaculis. Vestibulum cursus tincidunt neque, quis euismod dolor tincidunt ac.")
-  const [manageDetails, setmanageDetails] = useState(false)
-  const [detailsHistory, setDetailsHistory] = useState("")
-
+  const handleTitleChange = (event) =>
+  {
+    setChangedTitle(event.target.value);
+  }
 
   return(
-    <div className='Details'>
-      <div className='Background'>
-        <div className='Header'>
-          <h2>
-            Details
-          </h2>
-          <p>
-            <FaUserGroup className='FaUserGroup'/> 123 members
-          </p>
-        </div>
-        <div className='HorizontalSeparator' />
-        <div className='Text'>
-        <TextField
-          multiline
-          fullWidth
-          maxRows={20}
-          disabled = {!manageDetails}
-          value = {details}
-          onInput= {handleDetailsChange}
-          wrap = "soft"
-          variant="standard"
-            InputProps={{
-            disableUnderline: true,
-            }}
-          sx={{
-            "& .MuiInputBase-input.Mui-disabled": {
-              WebkitTextFillColor: "#222222",
-          },
-          }}
-          />
-          {admin && (
-            <div>
-              {!manageDetails ? (
-                <Button variant="outlined" color="primary" onClick={ManageOnClickManage}>
-                Manage
-                </Button>
-              )
-              :
-              (
-                <div className='Buttons'>
-                  <Button variant="outlined" color="success" onClick={ManageOnClickSave}>
-                  Save
-                  </Button>
-                  <Button variant="outlined" color="error" onClick={ManageOnClickCancel}>
-                  Cancel
-                  </Button>
-                </div>
-              )}
-              </div>
-            )
-          }
-        </div>
+    <div className='DetailsBackground'>
+      <div className='Header'>
+        <h1 style={{"margin": "0"}}>
+          {title}
+        </h1>
+        <p>
+          <FaUserGroup className='FaUserGroup'/> 123 members
+        </p>
       </div>
+      <div className='HorizontalSeparator' />
+      <div className='Text'>
+        <p>{details}</p>
+      </div>
+      {admin &&
+      (
+        <div className='EditDetailsButtonArea'>
+          <Button variant='outlined' onClick={() => {setManageDetails(true)}}>
+            Edit
+          </Button>
+        </div>
+      )}
+
+      <EditDetailsModal 
+        edit={manageDetails}
+        title={changedTitle}
+        details={changedDetails}
+        handleDetailsChange={handleDetailsChange}
+        handleTitleChange={handleTitleChange}
+        saveEditOnClick={saveEditOnClick}
+        cancelEditOnClick={cancelEditOnClick}
+      />
     </div>
   )
 }
@@ -220,25 +212,22 @@ function EventItem(props)
         </div>
 
         <div className='HomeEventAttendanceButtonsArea'>
-          {props.admin ? 
+          {props.admin && 
             (
-              <Button variant='outlined' onClick={editOnClick} >Edit</Button>
-            )
-            :
-            (
-              <div>
-                {attending ? 
-                  (
-                    <Button variant='outlined' color='error' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
-                  )
-                  :
-                  (
-                    <Button variant='outlined' color='success' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
-                  )
-                }
-              </div>
+              <Button className='EditEventButton' variant='outlined' onClick={editOnClick} >Edit</Button>
             )
           }
+          <div>
+            {attending ? 
+              (
+                <Button variant='outlined' color='error' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
+              )
+              :
+              (
+                <Button variant='outlined' color='success' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
+              )
+            }
+          </div>
         </div>
       </div>
 
@@ -357,11 +346,14 @@ function Home() {
   }
   return (
     <div className='HomePageBackground'>
-      <h1>Association Ry</h1>
-      <Details admin={admin}/>
+      
+      <div className='DetailsArea'>
+        <Details admin={admin}/>
+      </div>
+      
       <div className='HomeEventsList'>
         <h1>Events</h1>
-        <div className='HorizontalSeparator'/>
+        <div className='HorizontalSeparator' style={{width: "95%"}} />
         {admin && (
           <Button color="primary" variant='outlined' onClick={() => {setNewEvent(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
         )}
