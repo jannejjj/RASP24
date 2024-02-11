@@ -48,7 +48,7 @@ function EventItem(props)
     // TODO: Send the edited values to the database to actually save the edit
     try{
       // Send updated data to the server
-      /*const response = await fetch('/users/updateProfile', {
+      const response = await fetch('/users/updateProfile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -64,7 +64,7 @@ function EventItem(props)
         editedEmail
       })
     });
-    */
+
     if (response.ok) {
 
       // Update the history
