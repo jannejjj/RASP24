@@ -43,13 +43,31 @@ function EventItem(props)
     setEdit(true);
   }
 
-  const saveEditOnClick = () =>
+  const saveEditOnClick = async () =>
   {
     // TODO: Send the edited values to the database to actually save the edit
+    try{
+      // Send updated data to the server
+      /*const response = await fetch('/users/updateProfile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        editedFirstname,
+        editedLastname,
+        editedPhone,
+        editedAddress,
+        editedPostalcode,
+        editedCity,
+        editedCountry,
+        editedEmail
+      })
+    });
+    */
+    if (response.ok) {
 
-
-
-    // Update the history
+      // Update the history
     setFirstnameHistory(editedFirstname);
     setLastnameHistory(editedLastname);
     setPhoneHistory(editedPhone);
@@ -71,6 +89,19 @@ function EventItem(props)
 
     // Close the edit
     setEdit(false);
+    }
+    else{
+      // Handle error response from server
+      console.error('Failed to update profile:', response.statusText);
+    }
+    }
+    catch(error){
+      // Handle network or other errors
+    console.error('Error updating profile:', error.message);
+    }
+
+
+    
   }
 
   const cancelEditOnClick = () =>
@@ -178,41 +209,50 @@ function EventItem(props)
   )
 }
 
+
+
 function Home() {
-  const [events, setEvents] = useState([
-    {
-      Firstname: "Jarmo",
-      Lastname: "juuu",
-      Phone: "1234567890",
-      Address: "Jossain",
-      Postalcode: "34567",
-      City: "Lappeenranta",
-      Country: "Finland",
-      Email: `moi@moi.fi`
+  /*const [user, setUser] = useState(null);
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/users/getData', {
+        headers: {
+          firstname: "Eduardo", 
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      const userData = await response.json();
+      setUser(userData);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
     }
-  ])
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);*/
 
   return (
     <div className='HomePageBackground'>
-      <h1>My Profile</h1>
-      <div className='Background'>
-        {events.map((event, index) => (
-          <EventItem
-            Firstname={event.Firstname}
-            Lastname={event.Lastname}
-            Phone={event.Phone}
-            Address={event.Address}
-            Postalcode={event.Postalcode}
-            City={event.City}
-            Country={event.Country}
-            Email= {event.Email}
-            key={index}
-          />
-        ))}
-      </div>
-
-      
+    <h1>My Profile</h1>
+    <div className='Background'>
+      {user && user.map((user, index) => (
+        <EventItem
+          Firstname={user.Firstname}
+          Lastname={user.Lastname}
+          Phone={user.Phone}
+          Address={user.Address}
+          Postalcode={user.Postalcode}
+          City={user.City}
+          Country={user.Country}
+          Email={user.Email}
+          key={index}
+        />
+      ))}
     </div>
+  </div>
 
   )
 }
