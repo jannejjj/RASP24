@@ -212,7 +212,7 @@ function EventItem(props)
 
 
 function Home() {
-  /*const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const fetchUserData = async () => {
     try {
       const response = await fetch('http://localhost:4000/users/getData', {
@@ -232,7 +232,7 @@ function Home() {
 
   useEffect(() => {
     fetchUserData();
-  }, []);*/
+  }, []);
 
   return (
     <div className='HomePageBackground'>
