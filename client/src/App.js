@@ -31,7 +31,7 @@ function App() {
           <TopBar />
           <Routes>
           <Route path="/members" element={<Members />} />
-          <Route path="/Home" element={<Home />} />
+          <Route path="/Home" element={(<Home />)} />
           <Route path="/myprofile" element={<MyProfile />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Login" element={<Login />} />
