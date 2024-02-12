@@ -1,18 +1,20 @@
-import { React, useState } from 'react';
-import '../styles/HomePage.css';
-import '../App.css';
+import { React, useState } from "react";
+import "../styles/HomePage.css";
+import "../App.css";
 import Button from "@mui/material/Button";
-import TextField from '@mui/material/TextField';
+import TextField from "@mui/material/TextField";
 import { FaUserGroup } from "react-icons/fa6";
-import CancelAttendanceModal from '../modals/CancelAttendanceModal';
-import ConfirmAttendanceModal from '../modals/ConfirmAttendanceModal';
-import CreateEventModal from '../modals/CreateEventModal';
-import EditEventModal from '../modals/EditEventModal';
-import EditDetailsModal from '../modals/EditDetailsModal';
+import CancelAttendanceModal from "../modals/CancelAttendanceModal";
+import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
+import CreateEventModal from "../modals/CreateEventModal";
+import EditEventModal from "../modals/EditEventModal";
+import EditDetailsModal from "../modals/EditDetailsModal";
 
 function Details(props) {
   const [admin, setAdmin] = useState(props.admin);
-  const [details, setDetails] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mollis imperdiet est, ut maximus est lobortis non. Aliquam bibendum venenatis mi, a auctor lacus interdum feugiat. Aenean nec leo a diam iaculis iaculis. Vestibulum cursus tincidunt neque, quis euismod dolor tincidunt ac.");
+  const [details, setDetails] = useState(
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mollis imperdiet est, ut maximus est lobortis non. Aliquam bibendum venenatis mi, a auctor lacus interdum feugiat. Aenean nec leo a diam iaculis iaculis. Vestibulum cursus tincidunt neque, quis euismod dolor tincidunt ac."
+  );
   const [detailsHistory, setDetailsHistory] = useState(details);
   const [changedDetails, setChangedDetails] = useState(details);
   const [title, setTitle] = useState("Association Ry");
@@ -26,7 +28,7 @@ function Details(props) {
     setDetails(changedDetails);
     setTitle(changedTitle);
     setManageDetails(false);
-  }
+  };
 
   const cancelEditOnClick = () => {
     setDetails(detailsHistory);
@@ -34,41 +36,42 @@ function Details(props) {
     setChangedDetails(detailsHistory);
     setChangedTitle(titleHistory);
     setManageDetails(false);
-  }
+  };
 
   const handleDetailsChange = (event) => {
-    setChangedDetails(event.target.value)
-  }
+    setChangedDetails(event.target.value);
+  };
 
-  const handleTitleChange = (event) =>
-  {
+  const handleTitleChange = (event) => {
     setChangedTitle(event.target.value);
-  }
+  };
 
-  return(
-    <div className='DetailsBackground'>
-      <div className='Header'>
-        <h1 style={{"margin": "0"}}>
-          {title}
-        </h1>
+  return (
+    <div className="DetailsBackground">
+      <div className="Header">
+        <h1 style={{ margin: "0" }}>{title}</h1>
         <p>
-          <FaUserGroup className='FaUserGroup'/> 123 members
+          <FaUserGroup className="FaUserGroup" /> 123 members
         </p>
       </div>
-      <div className='HorizontalSeparator' />
-      <div className='Text'>
+      <div className="HorizontalSeparator" />
+      <div className="Text">
         <p>{details}</p>
       </div>
-      {admin &&
-      (
-        <div className='EditDetailsButtonArea'>
-          <Button variant='outlined' onClick={() => {setManageDetails(true)}}>
+      {admin && (
+        <div className="EditDetailsButtonArea">
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setManageDetails(true);
+            }}
+          >
             Edit
           </Button>
         </div>
       )}
 
-      <EditDetailsModal 
+      <EditDetailsModal
         edit={manageDetails}
         title={changedTitle}
         details={changedDetails}
@@ -78,11 +81,10 @@ function Details(props) {
         cancelEditOnClick={cancelEditOnClick}
       />
     </div>
-  )
+  );
 }
 
-function EventItem(props)
-{
+function EventItem(props) {
   // These states store the original event data
   const [attending, setAttending] = useState(props.attending);
   const [title, setTitle] = useState(props.title);
@@ -104,18 +106,16 @@ function EventItem(props)
   const [titleHistory, setTitleHistory] = useState(props.title);
   const [timeHistory, setTimeHistory] = useState(props.time);
   const [locationHistory, setLocationHistory] = useState(props.location);
-  const [descriptionHistory, setDescriptionHistory] = useState(props.description);
+  const [descriptionHistory, setDescriptionHistory] = useState(
+    props.description
+  );
 
-  const editOnClick = () =>
-  {
+  const editOnClick = () => {
     setEdit(true);
-  }
+  };
 
-  const saveEditOnClick = () =>
-  {
+  const saveEditOnClick = () => {
     // TODO: Send the edited values to the database to actually save the edit
-
-
 
     // Update the history
     setTitleHistory(editedTitle);
@@ -131,10 +131,9 @@ function EventItem(props)
 
     // Close the edit
     setEdit(false);
-  }
+  };
 
-  const cancelEditOnClick = () =>
-  {
+  const cancelEditOnClick = () => {
     // Bring back the old event data
     setTitle(titleHistory);
     setTime(timeHistory);
@@ -149,116 +148,129 @@ function EventItem(props)
 
     // Close the edit
     setEdit(false);
-  }
+  };
 
-  const handleTitleChange = (event) =>
-  {
+  const handleTitleChange = (event) => {
     setEditedTitle(event.target.value);
-  }
+  };
 
-  const handleTimeChange = (event) =>
-  {
+  const handleTimeChange = (event) => {
     setEditedTime(event.target.value);
-  }
+  };
 
-  const handleLocationChange = (event) =>
-  {
+  const handleLocationChange = (event) => {
     setEditedLocation(event.target.value);
-  }
+  };
 
-  const handleDescriptionChange = (event) =>
-  {
+  const handleDescriptionChange = (event) => {
     setEditedDescription(event.target.value);
-  }
+  };
 
-  const handleEventAttendance = () =>
-  {
+  const handleEventAttendance = () => {
     setOpenAttend(false);
     setAttending(true);
     setAttendees(attendees + 1);
-  }
+  };
 
-  const handleCancelEventAttendance = () =>
-  {
+  const handleCancelEventAttendance = () => {
     setOpenCancelAttendance(false);
     setAttending(false);
     setAttendees(attendees - 1);
-  }
+  };
 
   return (
-    <div className='HomeEventItem'>
-
-      <div className='HomeEventTop'>
-        <div className='HomeEventPhotoBackground'>
-          <img src='https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg' />
+    <div className="HomeEventItem">
+      <div className="HomeEventTop">
+        <div className="HomeEventPhotoBackground">
+          <img
+            src="https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg"
+            alt="Event"
+          />
         </div>
 
-        <div className='HomeEventHeaderArea'>
-          <div className='HomeEventTitleAndLocationArea'>
+        <div className="HomeEventHeaderArea">
+          <div className="HomeEventTitleAndLocationArea">
             <h2>{title}</h2>
             <h3>Created by: {props.creator}</h3>
             <h3>{time}</h3>
             <h3>{location}</h3>
           </div>
 
-          <p><FaUserGroup style={{margin: "0 5px 0 0"}}/> {attendees}</p>
+          <p>
+            <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {attendees}
+          </p>
         </div>
       </div>
 
-      <div className='HomeEventBottom'>
-        <div className='HorizontalSeparator' />
-        <div className='HomeEventDescriptionArea'>
+      <div className="HomeEventBottom">
+        <div className="HorizontalSeparator" />
+        <div className="HomeEventDescriptionArea">
           <p>{description}</p>
         </div>
 
-        <div className='HomeEventAttendanceButtonsArea'>
-          {props.admin && 
-            (
-              <Button className='EditEventButton' variant='outlined' onClick={editOnClick} >Edit</Button>
-            )
-          }
+        <div className="HomeEventAttendanceButtonsArea">
+          {props.admin && (
+            <Button
+              className="EditEventButton"
+              variant="outlined"
+              onClick={editOnClick}
+            >
+              Edit
+            </Button>
+          )}
           <div>
-            {attending ? 
-              (
-                <Button variant='outlined' color='error' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
-              )
-              :
-              (
-                <Button variant='outlined' color='success' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
-              )
-            }
+            {attending ? (
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => {
+                  setOpenCancelAttendance(true);
+                }}
+              >
+                Cancel Attendance
+              </Button>
+            ) : (
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={() => {
+                  setOpenAttend(true);
+                }}
+              >
+                Attend the Event
+              </Button>
+            )}
           </div>
         </div>
       </div>
 
-    <EditEventModal 
-      edit={edit} 
-      editedDescription={editedDescription} 
-      editedLocation={editedLocation}
-      editedTime={editedTime}
-      editedTitle={editedTitle}
-      handleTitleChange={handleTitleChange}
-      handleTimeChange={handleTimeChange}
-      handleLocationChange={handleLocationChange}
-      handleDescriptionChange={handleDescriptionChange}
-      cancelEditOnClick={cancelEditOnClick}
-      saveEditOnClick={saveEditOnClick}
-    />
+      <EditEventModal
+        edit={edit}
+        editedDescription={editedDescription}
+        editedLocation={editedLocation}
+        editedTime={editedTime}
+        editedTitle={editedTitle}
+        handleTitleChange={handleTitleChange}
+        handleTimeChange={handleTimeChange}
+        handleLocationChange={handleLocationChange}
+        handleDescriptionChange={handleDescriptionChange}
+        cancelEditOnClick={cancelEditOnClick}
+        saveEditOnClick={saveEditOnClick}
+      />
 
-    <ConfirmAttendanceModal 
-      openAttend={openAttend}
-      setOpenAttend={setOpenAttend}
-      handleEventAttendance={handleEventAttendance}
-    />
+      <ConfirmAttendanceModal
+        openAttend={openAttend}
+        setOpenAttend={setOpenAttend}
+        handleEventAttendance={handleEventAttendance}
+      />
 
-    <CancelAttendanceModal 
-      openCancelAttendance={openCancelAttendance}
-      setOpenCancelAttendance={setOpenCancelAttendance}
-      handleCancelEventAttendance={handleCancelEventAttendance}
-    />
-
+      <CancelAttendanceModal
+        openCancelAttendance={openCancelAttendance}
+        setOpenCancelAttendance={setOpenCancelAttendance}
+        handleCancelEventAttendance={handleCancelEventAttendance}
+      />
     </div>
-  )
+  );
 }
 
 function Home() {
@@ -272,7 +284,7 @@ function Home() {
       location: "LUT University",
       attendees: 41,
       attending: true,
-      description: `The TechSynergy Summit is a premier corporate event designed to bring together industry leaders, visionaries, and innovators in the ever-evolving landscape of technology. This exclusive summit serves as a dynamic platform or collaboration, knowledge exchange, and networking. Attendees can expect insightful keynote presentations, interactive panel discussions, and hands-on workshops that explore the intersection of cutting-edge technologies, fostering an environment where ideas converge, and innovation thrives. Join us at TechSynergy Summit to be at the forefront of the technological revolution and cultivate meaningful connections that propel your organization into the future.`
+      description: `The TechSynergy Summit is a premier corporate event designed to bring together industry leaders, visionaries, and innovators in the ever-evolving landscape of technology. This exclusive summit serves as a dynamic platform or collaboration, knowledge exchange, and networking. Attendees can expect insightful keynote presentations, interactive panel discussions, and hands-on workshops that explore the intersection of cutting-edge technologies, fostering an environment where ideas converge, and innovation thrives. Join us at TechSynergy Summit to be at the forefront of the technological revolution and cultivate meaningful connections that propel your organization into the future.`,
     },
     {
       title: "FutureTech Showcase",
@@ -281,7 +293,7 @@ function Home() {
       location: "LUT University",
       attendees: 24,
       attending: false,
-      description: `Step into the future with FutureTech Showcase, where cutting-edge innovations and breakthrough technologies converge. Explore the latest advancements in robotics, artificial intelligence, and beyond. Immerse yourself in a curated exhibition that unveils tomorrow's tech landscape today.`
+      description: `Step into the future with FutureTech Showcase, where cutting-edge innovations and breakthrough technologies converge. Explore the latest advancements in robotics, artificial intelligence, and beyond. Immerse yourself in a curated exhibition that unveils tomorrow's tech landscape today.`,
     },
     {
       title: "Digital Nexus Symposium",
@@ -290,9 +302,9 @@ function Home() {
       location: "LUT University",
       attendees: 98,
       attending: false,
-      description: `Join thought leaders and industry experts at the Digital Nexus Symposium, a dynamic gathering that explores the interconnected world of digital technologies. Engage in insightful discussions on the impact of AI, data analytics, and cyber-physical systems. Discover the converging points shaping our digital future at this symposium of ideas and collaboration.`
-    }
-  ])
+      description: `Join thought leaders and industry experts at the Digital Nexus Symposium, a dynamic gathering that explores the interconnected world of digital technologies. Engage in insightful discussions on the impact of AI, data analytics, and cyber-physical systems. Discover the converging points shaping our digital future at this symposium of ideas and collaboration.`,
+    },
+  ]);
 
   // Data for for the new events
   const [newTitle, setNewTitle] = useState("");
@@ -300,40 +312,32 @@ function Home() {
   const [newLocation, setNewLocation] = useState("");
   const [newDescription, setNewDescription] = useState("");
 
-  const handleTitleChange = (event) =>
-  {
+  const handleTitleChange = (event) => {
     setNewTitle(event.target.value);
-  }
+  };
 
-  const handleTimeChange = (event) =>
-  {
+  const handleTimeChange = (event) => {
     setNewTime(event.target.value);
-  }
+  };
 
-  const handleLocationChange = (event) =>
-  {
+  const handleLocationChange = (event) => {
     setNewLocation(event.target.value);
-  }
+  };
 
-  const handleDescriptionChange = (event) =>
-  {
+  const handleDescriptionChange = (event) => {
     setNewDescription(event.target.value);
-  }
+  };
 
-  const cancelCreationOnClick = () =>
-  {
+  const cancelCreationOnClick = () => {
     setNewEvent(false);
     setNewTime("");
     setNewTitle("");
     setNewDescription("");
     setNewLocation("");
-  }
+  };
 
-  const saveNewEventOnClick = () =>
-  {
+  const saveNewEventOnClick = () => {
     // TODO: Send the event data to the server
-
-
 
     // Empty the input fields
     setNewTime("");
@@ -343,19 +347,27 @@ function Home() {
 
     // Close the Modal
     setNewEvent(false);
-  }
+  };
   return (
-    <div className='HomePageBackground'>
-      
-      <div className='DetailsArea'>
-        <Details admin={admin}/>
+    <div className="HomePageBackground">
+      <div className="DetailsArea">
+        <Details admin={admin} />
       </div>
-      
-      <div className='HomeEventsList'>
+
+      <div className="HomeEventsList">
         <h1>Events</h1>
-        <div className='HorizontalSeparator' style={{width: "95%"}} />
+        <div className="HorizontalSeparator" style={{ width: "95%" }} />
         {admin && (
-          <Button color="primary" variant='outlined' onClick={() => {setNewEvent(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
+          <Button
+            color="primary"
+            variant="outlined"
+            onClick={() => {
+              setNewEvent(true);
+            }}
+            style={{ margin: "10px 0 10px 0" }}
+          >
+            Add New Event
+          </Button>
         )}
         {events.map((event, index) => (
           <EventItem
@@ -366,13 +378,13 @@ function Home() {
             location={event.location}
             attendees={event.attendees}
             attending={event.attending}
-            description= {event.description}
+            description={event.description}
             key={index}
           />
         ))}
       </div>
 
-      <CreateEventModal 
+      <CreateEventModal
         newEvent={newEvent}
         newTime={newTime}
         newTitle={newTitle}
@@ -385,9 +397,10 @@ function Home() {
         cancelCreationOnClick={cancelCreationOnClick}
         saveNewEventOnClick={saveNewEventOnClick}
       />
-
     </div>
-  )
+  );
 }
 
-export default Home
+/* eslint-enable no-unused-vars */
+
+export default Home;

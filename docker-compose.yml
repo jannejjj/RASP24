@@ -1,0 +1,28 @@
+version: '1'
+
+services:
+  server:
+    build: ./server
+    image: rasp24.azurecr.io/rasp24-server
+    expose:
+      - 4000
+    ports:
+      - 4000:4000
+    volumes:
+      - ./server:/usr/src/app_server/data
+    command: npm run start
+  
+  client:
+    build: ./client
+    image: rasp24.azurecr.io/rasp24-client
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client/src:/usr/src/app_client/src
+      - ./client/public:/usr/src/app_client/public
+    depends_on:
+      - server
+    stdin_open: true
+    command: npm run start
