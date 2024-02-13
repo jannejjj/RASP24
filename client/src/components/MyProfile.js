@@ -45,63 +45,64 @@ function EventItem(props)
   const saveEditOnClick = async () =>
   {
     // TODO: Send the edited values to the database to actually save the edit
-    try{
-      // Send updated data to the server
-      const response = await fetch('http://localhost:4000/users/updateProfile', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        _id: `${sessionStorage.getItem("id")}`,
-        user: {
-          phone: `${editedPhone}`,
-          address: `${editedAddress}`,
-          postalcode: `${editedPostalcode}`,
-          city: `${editedCity}`,
-          country: `${editedCountry}`,
-          email: `${editedEmail}`
-        }
-      })
-    });
-
-    if (response.ok) {
-
-      // Update the history
-    setFirstnameHistory(editedFirstname);
-    setLastnameHistory(editedLastname);
-    setPhoneHistory(editedPhone);
-    setAddressHistory(editedAddress);
-    setPostalcodeHistory(editedPostalcode);
-    setCityHistory(editedCity);
-    setCountryHistory(editedCountry);
-    setEmailHistory(editedEmail);
-
-    // Update the actual values
-    setFirstname(editedFirstname);
-    setLastname(editedLastname);
-    setPhone(editedPhone);
-    setAddress(editedAddress);
-    setPostalcode(editedPostalcode);
-    setCity(editedCity);
-    setCountry(editedCountry);
-    setEmail(editedEmail);
-
-    // Close the edit
-    setEdit(false);
+    const confirmed = window.confirm("Are you sure you want to save the changes?");
+    if(confirmed){
+      try{
+        // Send updated data to the server
+        const response = await fetch('http://localhost:4000/users/updateProfile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          _id: `${sessionStorage.getItem("id")}`,
+          user: {
+            phone: `${editedPhone}`,
+            address: `${editedAddress}`,
+            postalcode: `${editedPostalcode}`,
+            city: `${editedCity}`,
+            country: `${editedCountry}`,
+            email: `${editedEmail}`
+          }
+        })
+      });
+  
+      if (response.ok) {
+  
+        // Update the history
+      setFirstnameHistory(editedFirstname);
+      setLastnameHistory(editedLastname);
+      setPhoneHistory(editedPhone);
+      setAddressHistory(editedAddress);
+      setPostalcodeHistory(editedPostalcode);
+      setCityHistory(editedCity);
+      setCountryHistory(editedCountry);
+      setEmailHistory(editedEmail);
+  
+      // Update the actual values
+      setFirstname(editedFirstname);
+      setLastname(editedLastname);
+      setPhone(editedPhone);
+      setAddress(editedAddress);
+      setPostalcode(editedPostalcode);
+      setCity(editedCity);
+      setCountry(editedCountry);
+      setEmail(editedEmail);
+  
+      // Close the edit
+      setEdit(false);
+      }
+      else{
+        // Handle error response from server
+        console.error('Failed to update profile:', response.statusText);
+      }
+      }
+      catch(error){
+        // Handle network or other errors
+      console.error('Error updating profile:', error.message);
+      }
     }
-    else{
-      // Handle error response from server
-      console.error('Failed to update profile:', response.statusText);
-    }
-    }
-    catch(error){
-      // Handle network or other errors
-    console.error('Error updating profile:', error.message);
-    }
-
-
-    
+  
   }
 
   const cancelEditOnClick = () =>
