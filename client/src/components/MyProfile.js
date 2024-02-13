@@ -3,7 +3,6 @@ import '../styles/MyProfile.css';
 import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
 
-
 function EventItem(props)
 {
 
@@ -48,20 +47,23 @@ function EventItem(props)
     // TODO: Send the edited values to the database to actually save the edit
     try{
       // Send updated data to the server
-      const response = await fetch('/users/updateProfile', {
+      const response = await fetch('http://localhost:4000/users/updateProfile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        editedFirstname,
-        editedLastname,
-        editedPhone,
-        editedAddress,
-        editedPostalcode,
-        editedCity,
-        editedCountry,
-        editedEmail
+        _id: `${sessionStorage.getItem("id")}`,
+        user: {
+          firstname : `${editedFirstname}`,
+          lastname: `${editedLastname}`,
+          phone: `${editedPhone}`,
+          address: `${editedAddress}`,
+          postalcode: `${editedPostalcode}`,
+          city: `${editedCity}`,
+          country: `${editedCountry}`,
+          email: `${editedEmail}`
+        }
       })
     });
 
@@ -212,25 +214,36 @@ function EventItem(props)
 
 
 function Home() {
-  const [user, setUser] = useState(null);
-  const fetchUserData = async () => {
+  const [user, setUser ] = useState(null);
+  const userId = sessionStorage.getItem('id');
+
+  const fetchUserId = async () => {
     try {
-      const response = await fetch('http://localhost:4000/users/getData', {
-        headers: {
-          firstname: "Eduardo", 
-        },
-      });
+      const response = await fetch('http://localhost:4000/api/getID');
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
-      const userData = await response.json();
-      setUser(userData);
+      sessionStorage.setItem("id",await response.json());
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/users/getData/${userId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      setUser (await response.json());
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
   };
 
   useEffect(() => {
+    fetchUserId();
+    console.log(userId);
     fetchUserData();
   }, []);
 
@@ -238,21 +251,23 @@ function Home() {
     <div className='HomePageBackground'>
     <h1>My Profile</h1>
     <div className='Background'>
-      {user && user.map((user, index) => (
-        <EventItem
-          Firstname={user.Firstname}
-          Lastname={user.Lastname}
-          Phone={user.Phone}
-          Address={user.Address}
-          Postalcode={user.Postalcode}
-          City={user.City}
-          Country={user.Country}
-          Email={user.Email}
-          key={index}
-        />
-      ))}
+        {user ? (
+            <EventItem
+                Firstname={user.firstname}
+                Lastname={user.lastname}
+                Phone={user.phone}
+                Address={user.address}
+                Postalcode={user.postalcode}
+                City={user.city}
+                Country={user.country}
+                Email={user.email}
+            />
+        ) : (
+            <p>user is false</p>
+        )}
     </div>
-  </div>
+</div>
+
 
   )
 }

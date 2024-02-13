@@ -6,7 +6,7 @@ require('dotenv').config();
 
 var opts = {}
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = "process.env.SECRET";
+opts.secretOrKey = process.env.SECRET;
 
 const strategy = new JwtStrategy(opts, async function(jwt_payload, done) {
     try {

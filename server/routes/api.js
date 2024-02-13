@@ -9,6 +9,7 @@ const passport = require('passport');
 const multer = require("multer")
 const storage = multer.memoryStorage();
 const upload = multer({storage});
+var idFromToken = null;
 
 
 require('../auth/passport')(passport)
@@ -54,6 +55,7 @@ router.post('/login',
                     },
                     (err, token) => {
                     res.json({success: true, token});
+                    idFromToken = getIdfromToken(token);
                     }
                 );
                 } else {
@@ -66,6 +68,14 @@ router.post('/login',
     }
 });
 
+function getIdfromToken(token){
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    return decodedToken.id;
+}
+
+router.get("/getID", async(req,res)=>{
+    res.json(idFromToken);
+});
 
 // Register new member
 router.post('/register', 

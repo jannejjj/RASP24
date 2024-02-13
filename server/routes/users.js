@@ -8,13 +8,13 @@ router.get('/', function(req, res, next) {
 });
 
 //get to have the members data
-router.get('/getData', async (req, res) => {
+router.get('/getData/:userId', async (req, res) => {
   try {
-    const { firstname } = req.query;
-    if (!firstname) {
+    const id   = req.params.userId;
+    if (!id) {
       return res.status(400).json({ error: 'Name parameter is required' });
     }
-    const userData = await Member.findOne({ firstname });
+    const userData = await Member.findById(id);
     if (!userData) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -29,7 +29,8 @@ router.get('/getData', async (req, res) => {
 // Handle POST request to update user profile
 router.post('/updateProfile', async (req, res) => {
   try {
-    const { userId, updatedProfileData } = req.body;
+    const userId = req.body._id;
+    const updatedProfileData  = req.body.user;
 
     // Find the user by ID in the database
     const user = await Member.findById(userId);
