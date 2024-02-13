@@ -12,6 +12,8 @@ import { Menu, MenuItem } from "@mui/material";
 // import MenuIcon from "@mui/icons-material/Menu";
 import { Link as RouterLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+// Test comment
+
 
 export default function TopBar() {
   const [language, setLanguage] = useState("EN");
