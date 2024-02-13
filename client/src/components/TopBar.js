@@ -13,8 +13,6 @@ import { Menu, MenuItem } from "@mui/material";
 import { Link as RouterLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
-import Swal from 'sweetalert2';
-
 export default function TopBar() {
   const [language, setLanguage] = useState("EN");
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -36,22 +34,16 @@ export default function TopBar() {
 
   //logged in status
   let loggedIn = false;
-  if (sessionStorage.getItem('token')) {
-    loggedIn = true;
+  if(sessionStorage.getItem('token')) {
+      loggedIn = true;
   }
 
   //Removes Token from sessionStorage
   const logout = () => {
-    if (loggedIn) {
+    if(loggedIn) {
       sessionStorage.removeItem('token');
       loggedIn = false;
-      navigate('/Home');
-      Swal.fire({
-        icon: 'warning',
-        title: 'Logged out successfully!',
-        showConfirmButton: false,
-        timer: 3000 // Auto close after 1.5 seconds
-      });
+      navigate('/Login')
     }
   };
 
@@ -201,7 +193,7 @@ export default function TopBar() {
           </Button>}
           {!loggedIn && <Button
             color="inherit"
-            onClick={logout}
+            onClick={logout} 
             component={RouterLink} to='/login'
             sx={{ minWidth: "8vw" }}
             disableRipple
