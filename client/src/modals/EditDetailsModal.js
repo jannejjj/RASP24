@@ -15,8 +15,6 @@ function EditDetailsModal(props)
             Edit profile information
           </h2>
           <div className='HorizontalSeparator' />
-          <TextField value={props.editedFirstname} onInput={props.handleFirstnameChange} className='TextField' fullWidth label="Firstname" />
-          <TextField value={props.editedLastname} onInput={props.handleLastnameChange} className='TextField' fullWidth label="Lastname" />
           <TextField value={props.editedPhone} onInput={props.handlePhoneChange} className='TextField' fullWidth label="Phone" />
           <TextField value={props.editedAddress} onInput={props.handleAddressChange} className='TextField' fullWidth label="Address" />
           <TextField value={props.editedPostalcode} onInput={props.handlePostalcodeChange} className='TextField' fullWidth label="Postalcode" />

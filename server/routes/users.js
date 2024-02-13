@@ -40,8 +40,6 @@ router.post('/updateProfile', async (req, res) => {
     }
 
     // Update the user's profile data
-    user.firstname = updatedProfileData.firstname;
-    user.lastname = updatedProfileData.lastname;
     user.phone = updatedProfileData.phone;
     user.address = updatedProfileData.address;
     user.postalcode = updatedProfileData.postalcode;

@@ -55,8 +55,6 @@ function EventItem(props)
       body: JSON.stringify({
         _id: `${sessionStorage.getItem("id")}`,
         user: {
-          firstname : `${editedFirstname}`,
-          lastname: `${editedLastname}`,
           phone: `${editedPhone}`,
           address: `${editedAddress}`,
           postalcode: `${editedPostalcode}`,
@@ -191,8 +189,6 @@ function EventItem(props)
       editedEmail={editedEmail} 
       editedCountry={editedCountry}
       editedCity={editedCity}
-      editedFirstname={editedFirstname}
-      editedLastname={editedLastname}
       editedPhone={editedPhone}
       editedAddress={editedAddress}
       editedPostalcode={editedPostalcode}
