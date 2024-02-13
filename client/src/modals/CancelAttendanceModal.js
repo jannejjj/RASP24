@@ -18,7 +18,7 @@ function CancelAttendanceModal(props)
 
           <div>
             <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={() => {props.setOpenCancelAttendance(false)}} >Cancel</Button>
-            <Button style={{margin: "10px 0 0 5px"}} color='error' variant='outlined' fullWidth onClick={props.handleCancelEventAttendance} >Cancel Attendace</Button>
+            <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.handleCancelEventAttendance} >Cancel Attendace</Button>
           </div>
         </Box>
       </Modal>

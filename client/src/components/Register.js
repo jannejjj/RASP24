@@ -92,7 +92,7 @@ const Register = () => {
                 <OutlinedInput fullWidth required placeholder={'City'} type="text" id="city" sx={{m: 1}} />
                 <OutlinedInput fullWidth required placeholder={'Country'} type="text" id="country" sx={{m: 1}} />
                 <OutlinedInput fullWidth required placeholder={'Email'} type="email" id="email" sx={{m: 1}} />
-                <p className='HintParagraph'>The password must have upper- and lowercase characters, a number, a symbol and be 10 characters long.</p>
+                <p className='HintParagraphSmall'>The password must have upper- and lowercase characters, a number, a symbol and be 10 characters long.</p>
                 <OutlinedInput fullWidth required placeholder={'Password'} type="password" id="password" sx={{m: 1}} />
                 <Button variant='contained' type="submit" id="submit" sx={{m: 1}} >Register</Button>
             </form>
