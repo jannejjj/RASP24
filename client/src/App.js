@@ -19,6 +19,10 @@ function App() {
         primary:
         {
           main: "#2C041C"
+        },
+        action:
+        {
+          disabled: '#85717c'
         }
       }    
     }
