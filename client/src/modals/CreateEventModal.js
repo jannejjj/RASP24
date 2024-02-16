@@ -22,7 +22,7 @@ function CreateEventModal(props)
             className='TextField' fullWidth label='Description' maxRows={10} />
           <div>
             <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
-            <Button style={{margin: "10px 0 0 5px"}} color='success' variant='outlined' fullWidth onClick={props.saveNewEventOnClick} >Save</Button>
+            <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.saveNewEventOnClick} >Save</Button>
           </div>
         </Box>
       </Modal>

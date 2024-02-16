@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import Member from './Member';
 import Typography from "@mui/material/Typography";
+import '../App.css';
 
 function Members() {
 
