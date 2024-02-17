@@ -3,38 +3,38 @@ import Member from './Member';
 import Typography from "@mui/material/Typography";
 import '../App.css';
 
-function Members() {
+function Members(props) {
 
   const [members, setMembers] = useState([{}]);
   const [loading, setLoading] = useState(true);
-  /* User is authrorized based on if there is a token in the sessionStorage or not */
-  const [authorized, setAuthorized] = useState();
 
   useEffect(() => {
     let mounted = true;
     setLoading(true);
+
     async function fetchMembers() {
         let url = '/api/members';
-        if(sessionStorage.getItem('token')) {
-          setAuthorized(true);
-          let response = await fetch(url, {headers: {
-            "Content-type": "application/json",
-            "Authorization": "Bearer " + sessionStorage.getItem('token')
-          }});
-          let dataJson = await response.json();
-          if (mounted) {
-              setMembers(dataJson);
-              setLoading(false);
-          }
-        } else {
-          setLoading(false);
-          setAuthorized(false);
-        }  
+        let response = await fetch(url, {headers: {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        }});
+        let dataJson = await response.json();
+        if (mounted) {
+            setMembers(dataJson);
+            setLoading(false);
+        }
     }
-    fetchMembers();
-    return () => {
-        mounted = false;
-    };
+
+    // Only for users that have logged in
+    if (props.currentUser.loggedIn)
+    {
+      fetchMembers();
+      return () => {
+          mounted = false;
+      };
+    }
+
+    setLoading(false);
   }, [])
 
   /* While fetching data from the backend, the user will be shown this */
@@ -49,8 +49,8 @@ function Members() {
     )
   }
   
-  /* If the user is not authorized, they will be shown this */
-  if (!authorized) {
+  /* If the user is not logged in, they will be shown this */
+  if (!props.currentUser.loggedIn) {
     return (
         <div>
             <h1>Members</h1>
