@@ -6,6 +6,7 @@ import MyProfile from './components/MyProfile';
 import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
+import MyEvents from './components/MyEvents';
 
 function App() {
   const theme = createTheme(
@@ -39,6 +40,7 @@ function App() {
           <Route path="/myprofile" element={<MyProfile />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Login" element={<Login />} />
+          <Route path="/MyEvents" element={<MyEvents />} />
           </Routes>
           <div className='Footer'>
             <p>AssocEase &copy;</p>

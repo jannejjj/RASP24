@@ -76,6 +76,7 @@ export default function TopBar() {
             <MenuItem component={RouterLink} to='/home'>Home</MenuItem>
             <MenuItem component={RouterLink} to='/members'>Members</MenuItem>
             {loggedIn && <MenuItem component={RouterLink} to='/myprofile'>My Profile</MenuItem>}
+            {loggedIn && <MenuItem component={RouterLink} to='/MyEvents'>My Events</MenuItem>}
             {!loggedIn && <MenuItem component={RouterLink} to='/register'>Register</MenuItem>}
             {loggedIn && <MenuItem onClick={logout} component={RouterLink}>Logout</MenuItem>}
             {!loggedIn && <MenuItem onClick={logout} component={RouterLink} to='/login'>Login</MenuItem>}
@@ -147,6 +148,17 @@ export default function TopBar() {
             }}
           >
             My profile
+          </Button>}
+          {loggedIn && <Button component={RouterLink} to='/MyEvents'
+            color="inherit"
+            disableRipple
+            sx={{
+              letterSpacing: ".1rem",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+            }}
+          >
+            My Events
           </Button>}
           {!loggedIn && <Button component={RouterLink} to='/register'
             color="inherit"
