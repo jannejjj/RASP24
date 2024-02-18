@@ -9,6 +9,7 @@ import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
 import CreateEventModal from "../modals/CreateEventModal";
 import EditEventModal from "../modals/EditEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
+import dayjs from 'dayjs';
 
 function Details(props) {
   const [admin, setAdmin] = useState(props.admin);
@@ -302,8 +303,8 @@ function Home() {
     setNewTitle(event.target.value);
   };
 
-  const handleTimeChange = (event) => {
-    setNewTime(event.target.value);
+  const handleTimeChange = (value) => {
+    setNewTime(value);
   };
 
   const handleLocationChange = (event) => {
@@ -322,9 +323,23 @@ function Home() {
     setNewLocation("");
   };
 
-  const saveNewEventOnClick = () => {
-    // TODO: Send the event data to the server
-
+  const saveNewEventOnClick = (e) => {
+    console.log(JSON.stringify({title: newTitle, startDate: newTime, location: newLocation, description: newDescription}));
+    e.preventDefault()
+        //Creates new post if user is authenticated with jwt token and redirects to '/'
+        fetch("/api/event", {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem('token')
+            },
+            body: JSON.stringify({title: newTitle, startDate: newTime, location: newLocation, description: newDescription}),
+            mode: "cors"
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            })
     // Empty the input fields
     setNewTime("");
     setNewTitle("");
@@ -334,7 +349,11 @@ function Home() {
     // Close the Modal
     setNewEvent(false);
   };
+
+
+
   return (
+    
     <div className="HomePageBackground">
       <div className="DetailsArea">
         <Details admin={admin} />
@@ -363,7 +382,7 @@ function Home() {
 
       <CreateEventModal
         newEvent={newEvent}
-        newTime={newTime}
+        newTime={dayjs(new Date())}
         newTitle={newTitle}
         newLocation={newLocation}
         newDescription={newDescription}

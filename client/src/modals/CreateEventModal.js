@@ -5,6 +5,11 @@ import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import dayjs from 'dayjs';
+
 
 function CreateEventModal(props)
 {
@@ -16,7 +21,16 @@ function CreateEventModal(props)
           </h2>
           <div className='HorizontalSeparator' />
           <TextField value={props.newTitle} onInput={props.handleTitleChange} className='TextField' fullWidth label="Title" />
-          <TextField value={props.newTime} onInput={props.handleTimeChange} className='TextField' fullWidth label="Time" />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateTimePicker
+            onChange={props.handleTimeChange}
+            label="Select Starting Time" 
+            views={['day', 'month', 'year', 'hours', 'minutes']} 
+            format="DD/MM/YYYY hh:mm"
+            ampm={false}
+            disablePast={true}
+            />
+          </LocalizationProvider>
           <TextField value={props.newLocation} onInput={props.handleLocationChange} className='TextField' fullWidth label="Location" />
           <TextField multiline value={props.newDescription} onInput={props.handleDescriptionChange}
             className='TextField' fullWidth label='Description' maxRows={10} />
