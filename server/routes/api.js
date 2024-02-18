@@ -3,6 +3,7 @@ var router = express.Router();
 // const controller = require("./controller");
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
+const Event = require("../models/event");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
@@ -118,6 +119,22 @@ router.post('/register',
         console.log(err);
     }
       
+});
+/*passport.authenticate('jwt', {session: false})*/
+router.post('/event', async (req, res) => {
+  const event = new Event({
+      title: req.body.title,
+      startDate: req.body.startDate,
+      location: req.body.location,
+      description: req.body.description
+  });
+  event.save()
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.log(err);
+  });
 });
 
 router.post('/authenticate/token', (req, res) =>

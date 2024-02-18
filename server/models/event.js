@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let eventSchema = new Schema ({
-    name:{type:String},
+    title:{type:String},
     description: {type: String},
     startDate:{type: Date},
     endDate:{type: Date},
     description: {type: String},
-    place:{type: String},
+    location:{type: String},
     logo:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'
