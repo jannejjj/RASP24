@@ -10,6 +10,8 @@ import CreateEventModal from "../modals/CreateEventModal";
 import EditEventModal from "../modals/EditEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import dayjs from 'dayjs';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Details(props) {
   const [admin, setAdmin] = useState(props.admin);
@@ -295,7 +297,8 @@ function Home(props) {
 
   // Data for for the new events
   const [newTitle, setNewTitle] = useState("");
-  const [newTime, setNewTime] = useState("");
+  const [newStartTime, setNewStartTime] = useState("");
+  const [newEndTime, setNewEndTime] = useState("");
   const [newLocation, setNewLocation] = useState("");
   const [newDescription, setNewDescription] = useState("");
 
@@ -303,8 +306,12 @@ function Home(props) {
     setNewTitle(event.target.value);
   };
 
-  const handleTimeChange = (value) => {
-    setNewTime(value);
+  const handleStartTimeChange = (value) => {
+    setNewStartTime(value);
+  };
+
+  const handleEndTimeChange = (value) => {
+    setNewEndTime(value);
   };
 
   const handleLocationChange = (event) => {
@@ -317,37 +324,54 @@ function Home(props) {
 
   const cancelCreationOnClick = () => {
     setNewEvent(false);
-    setNewTime("");
+    setNewStartTime("");
+    setNewEndTime("");
     setNewTitle("");
     setNewDescription("");
     setNewLocation("");
   };
 
+  const showToastMessage = (message) =>
+    {
+        toast.error(message, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark"
+            });
+    }
+
   const saveNewEventOnClick = (e) => {
-    console.log(JSON.stringify({title: newTitle, startDate: newTime, location: newLocation, description: newDescription}));
-    e.preventDefault()
-        //Creates new post if user is authenticated with jwt token and redirects to '/'
-        fetch("/api/event", {
-            method: "POST",
-            headers: {
-                "Content-type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem('token')
-            },
-            body: JSON.stringify({title: newTitle, startDate: newTime, location: newLocation, description: newDescription}),
-            mode: "cors"
+    if(newStartTime < newEndTime) {
+      fetch("/api/event", {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem('token')
+        },
+        body: JSON.stringify({title: newTitle, startDate: newStartTime, endDate: newEndTime, location: newLocation, description: newDescription}),
+        mode: "cors"
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
         })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-            })
     // Empty the input fields
-    setNewTime("");
+    setNewStartTime("");
+    setNewEndTime("");
     setNewTitle("");
     setNewDescription("");
     setNewLocation("");
 
     // Close the Modal
     setNewEvent(false);
+    } else {
+      showToastMessage("Starting time needs to be before ending time.");
+    }
   };
 
 
@@ -382,17 +406,20 @@ function Home(props) {
 
       <CreateEventModal
         newEvent={newEvent}
-        newTime={dayjs(new Date())}
+        newStartTime={newStartTime}
+        newEndTime={newEndTime}
         newTitle={newTitle}
         newLocation={newLocation}
         newDescription={newDescription}
         handleTitleChange={handleTitleChange}
-        handleTimeChange={handleTimeChange}
+        handleStartTimeChange={handleStartTimeChange}
+        handleEndTimeChange={handleEndTimeChange}
         handleLocationChange={handleLocationChange}
         handleDescriptionChange={handleDescriptionChange}
         cancelCreationOnClick={cancelCreationOnClick}
         saveNewEventOnClick={saveNewEventOnClick}
       />
+      <ToastContainer />
     </div>
   );
 }
