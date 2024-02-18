@@ -124,6 +124,7 @@ router.post('/event', async (req, res) => {
   const event = new Event({
       title: req.body.title,
       startDate: req.body.startDate,
+      endDate: req.body.endDate,
       location: req.body.location,
       description: req.body.description
   });

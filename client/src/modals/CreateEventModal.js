@@ -10,7 +10,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs from 'dayjs';
 
-
+// TODO: Add required to input fields
 function CreateEventModal(props)
 {
     return (
@@ -23,8 +23,16 @@ function CreateEventModal(props)
           <TextField value={props.newTitle} onInput={props.handleTitleChange} className='TextField' fullWidth label="Title" />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker
-            onChange={props.handleTimeChange}
+            onChange={props.handleStartTimeChange}
             label="Select Starting Time" 
+            views={['day', 'month', 'year', 'hours', 'minutes']} 
+            format="DD/MM/YYYY hh:mm"
+            ampm={false}
+            disablePast={true}
+            />
+            <DateTimePicker
+            onChange={props.handleEndTimeChange}
+            label="Select Ending Time" 
             views={['day', 'month', 'year', 'hours', 'minutes']} 
             format="DD/MM/YYYY hh:mm"
             ampm={false}

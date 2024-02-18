@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 
 let eventSchema = new Schema ({
     title:{type:String},
-    description: {type: String},
     startDate:{type: Date},
     endDate:{type: Date},
     description: {type: String},
     location:{type: String},
+    attendees: {type: Number},
     logo:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'
