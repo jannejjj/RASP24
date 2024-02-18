@@ -159,12 +159,11 @@ function EventItem(props) {
     <div className='MyInfo'>
       <img src='https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg' />
       <div>
-        <p>Firstname: {firstname}</p>
-        <p>Lastname: {lastname}</p>
+        <p>Name: {firstname}{lastname}</p>
         <p>Phone: {phone}</p>
+        <p>Email: {email}</p>
         <p>Address: {address}</p>
-        <p>Postalcode: {postalcode}</p>
-        <p>City: {city}</p>
+        <p>City: {city}, {postalcode}</p>
         <p>Country: {country}</p>
       </div>
       <Button variant='outlined' onClick={editOnClick} >Edit</Button>
