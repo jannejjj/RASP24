@@ -2,14 +2,12 @@ import { React, useState } from "react";
 import "../styles/HomePage.css";
 import "../App.css";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import { FaUserGroup } from "react-icons/fa6";
 import CancelAttendanceModal from "../modals/CancelAttendanceModal";
 import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
 import CreateEventModal from "../modals/CreateEventModal";
 import EditEventModal from "../modals/EditEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
-import dayjs from 'dayjs';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

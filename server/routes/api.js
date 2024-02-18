@@ -25,6 +25,15 @@ router.get("/members", passport.authenticate('jwt', {session: false}), async (re
     }
 });
 
+router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+      const events  = await Event.find({});
+      res.send(events);
+  } catch (err) {
+      console.error(err);
+      res.send("No events.");
+  }
+});
 
 router.post('/login',
   upload.none(),
