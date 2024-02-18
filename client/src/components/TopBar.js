@@ -43,12 +43,12 @@ export default function TopBar() {
     if(loggedIn) {
       sessionStorage.removeItem('token');
       loggedIn = false;
-      navigate('/Home')
+      navigate('/Login')
     }
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky">
       <Toolbar>
         <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
           <IconButton

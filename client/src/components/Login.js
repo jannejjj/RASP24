@@ -47,7 +47,7 @@ function Login() {
           .then(data => {
               if(data.success) {
                   if(data.token) {
-                      sessionStorage.setItem('token', data.token)
+                      sessionStorage.setItem('token', data.token);
                       navigate('/Home');
                   }
               } else {
@@ -66,6 +66,7 @@ function Login() {
                 <OutlinedInput fullWidth variant="outlined" required placeholder={'Password'} type="password" id="password" sx={{m: 1}} />
                 <Button variant='contained' color="primary" type="submit" id="submit" sx={{m: 1}}>Login</Button>
             </form>
+            <p className="HintParagraphBig" style={{margin: "20px 0 0 0"}}>Forgot your password? <a href="">Link</a></p>
             <ToastContainer />
         </div>
     )

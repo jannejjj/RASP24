@@ -23,7 +23,7 @@ function EditDetailsModal(props)
           <TextField value={props.editedEmail} onInput={props.handleEmailChange} className='TextField' fullWidth label="Email" />
           <div>
             <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelEditOnClick} >Cancel</Button>
-            <Button style={{margin: "10px 0 0 5px"}} color='success' variant='outlined' fullWidth onClick={props.saveEditOnClick} >Save</Button>
+            <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.saveEditOnClick} >Save</Button>
           </div>
         </Box>
       </Modal>
