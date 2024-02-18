@@ -40,7 +40,6 @@ function EventItem(props) {
   };
 
   const saveEditOnClick = async () => {
-    // TODO: Send the edited values to the database to actually save the edit
     const confirmed = window.confirm("Are you sure you want to save the changes?");
     if (confirmed) {
       try {
@@ -196,25 +195,24 @@ function EventItem(props) {
 
 
 
-function Home() {
+function Home({ currentUser, setCurrentUser }) {
   const [user, setUser ] = useState(null);
-  const userId = sessionStorage.getItem('id');
 
-  const fetchUserId = async () => {
+  /*const fetchUserId = async () => {
     try {
       const response = await fetch('http://localhost:4000/api/getID');
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
-      sessionStorage.setItem("id",await response.json());
+      localStorage.setItem("id",await response.json());
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-  };
+  };*/
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/users/getData/${userId}`);
+      const response = await fetch(`http://localhost:4000/users/getData/${currentUser.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
@@ -225,10 +223,9 @@ function Home() {
   };
 
   useEffect(() => {
-    fetchUserId();
-    console.log(userId);
+    //fetchUserId();
     fetchUserData();
-  }, []);
+  }, [currentUser.id]);
 
   return (
     <div className='HomePageBackground'>
