@@ -3,18 +3,16 @@ import '../styles/MyProfile.css';
 import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
 
-function EventItem(props)
-{
-
+function EventItem(props) {
   // These states store the original event data
-  const [Firstname, setFirstname] = useState(props.Firstname);
-  const [Lastname, setLastname] = useState(props.Lastname);
-  const [Phone, setPhone] = useState(props.Phone);
-  const [Address, setAddress] = useState(props.Address);
-  const [Postalcode, setPostalcode] = useState(props.Postalcode);
-  const [City, setCity] = useState(props.City);
-  const [Country, setCountry] = useState(props.Country);
-  const [Email, setEmail] = useState(props.Email);
+  const [firstname, setFirstname] = useState(props.Firstname);
+  const [lastname, setLastname] = useState(props.Lastname);
+  const [phone, setPhone] = useState(props.Phone);
+  const [address, setAddress] = useState(props.Address);
+  const [postalcode, setPostalcode] = useState(props.Postalcode);
+  const [city, setCity] = useState(props.City);
+  const [country, setCountry] = useState(props.Country);
+  const [email, setEmail] = useState(props.Email);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -28,185 +26,173 @@ function EventItem(props)
   const [editedEmail, setEditedEmail] = useState(props.Email);
 
   // Save the history so that the editing can be cancelled
-  const [FirstnameHistory, setFirstnameHistory] = useState(props.Firstname);
-  const [LastnameHistory, setLastnameHistory] = useState(props.Lastname);
-  const [PhoneHistory, setPhoneHistory] = useState(props.Phone);
-  const [AddressHistory, setAddressHistory] = useState(props.Address);
-  const [PostalcodeHistory, setPostalcodeHistory] = useState(props.Postalcode);
-  const [CityHistory, setCityHistory] = useState(props.City);
-  const [CountryHistory, setCountryHistory] = useState(props.Country);
-  const [EmailHistory, setEmailHistory] = useState(props.Email);
+  const [firstnameHistory, setFirstnameHistory] = useState(props.Firstname);
+  const [lastnameHistory, setLastnameHistory] = useState(props.Lastname);
+  const [phoneHistory, setPhoneHistory] = useState(props.Phone);
+  const [addressHistory, setAddressHistory] = useState(props.Address);
+  const [postalcodeHistory, setPostalcodeHistory] = useState(props.Postalcode);
+  const [cityHistory, setCityHistory] = useState(props.City);
+  const [countryHistory, setCountryHistory] = useState(props.Country);
+  const [emailHistory, setEmailHistory] = useState(props.Email);
 
-  const editOnClick = () =>
-  {
+  const editOnClick = () => {
     setEdit(true);
-  }
+  };
 
-  const saveEditOnClick = async () =>
-  {
+  const saveEditOnClick = async () => {
     // TODO: Send the edited values to the database to actually save the edit
     const confirmed = window.confirm("Are you sure you want to save the changes?");
-    if(confirmed){
-      try{
+    if (confirmed) {
+      try {
         // Send updated data to the server
         const response = await fetch('http://localhost:4000/users/updateProfile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          _id: `${sessionStorage.getItem("id")}`,
-          user: {
-            phone: `${editedPhone}`,
-            address: `${editedAddress}`,
-            postalcode: `${editedPostalcode}`,
-            city: `${editedCity}`,
-            country: `${editedCountry}`,
-            email: `${editedEmail}`
-          }
-        })
-      });
-  
-      if (response.ok) {
-  
-        // Update the history
-      setFirstnameHistory(editedFirstname);
-      setLastnameHistory(editedLastname);
-      setPhoneHistory(editedPhone);
-      setAddressHistory(editedAddress);
-      setPostalcodeHistory(editedPostalcode);
-      setCityHistory(editedCity);
-      setCountryHistory(editedCountry);
-      setEmailHistory(editedEmail);
-  
-      // Update the actual values
-      setFirstname(editedFirstname);
-      setLastname(editedLastname);
-      setPhone(editedPhone);
-      setAddress(editedAddress);
-      setPostalcode(editedPostalcode);
-      setCity(editedCity);
-      setCountry(editedCountry);
-      setEmail(editedEmail);
-  
-      // Close the edit
-      setEdit(false);
-      }
-      else{
-        // Handle error response from server
-        console.error('Failed to update profile:', response.statusText);
-      }
-      }
-      catch(error){
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            _id: `${sessionStorage.getItem("id")}`,
+            user: {
+              phone: `${editedPhone}`,
+              address: `${editedAddress}`,
+              postalcode: `${editedPostalcode}`,
+              city: `${editedCity}`,
+              country: `${editedCountry}`,
+              email: `${editedEmail}`
+            }
+          })
+        });
+
+        if (response.ok) {
+
+          // Update the history
+          setFirstnameHistory(editedFirstname);
+          setLastnameHistory(editedLastname);
+          setPhoneHistory(editedPhone);
+          setAddressHistory(editedAddress);
+          setPostalcodeHistory(editedPostalcode);
+          setCityHistory(editedCity);
+          setCountryHistory(editedCountry);
+          setEmailHistory(editedEmail);
+
+          // Update the actual values
+          setFirstname(editedFirstname);
+          setLastname(editedLastname);
+          setPhone(editedPhone);
+          setAddress(editedAddress);
+          setPostalcode(editedPostalcode);
+          setCity(editedCity);
+          setCountry(editedCountry);
+          setEmail(editedEmail);
+
+          // Close the edit
+          setEdit(false);
+        } else {
+          // Handle error response from server
+          console.error('Failed to update profile:', response.statusText);
+        }
+      } catch (error) {
         // Handle network or other errors
-      console.error('Error updating profile:', error.message);
+        console.error('Error updating profile:', error.message);
       }
     }
-  
-  }
 
-  const cancelEditOnClick = () =>
-  {
+  };
+
+  const cancelEditOnClick = () => {
     // Bring back the old event data
-    setFirstname(FirstnameHistory);
-    setLastname(LastnameHistory);
-    setPhone(PhoneHistory);
-    setAddress(AddressHistory);
-    setPostalcode(PostalcodeHistory);
-    setCity(CityHistory);
-    setCountry(CountryHistory);
-    setEmail(EmailHistory);
+    setFirstname(firstnameHistory);
+    setLastname(lastnameHistory);
+    setPhone(phoneHistory);
+    setAddress(addressHistory);
+    setPostalcode(postalcodeHistory);
+    setCity(cityHistory);
+    setCountry(countryHistory);
+    setEmail(emailHistory);
 
     // Also reset the changes to the edited values
-    setEditedFirstname(FirstnameHistory);
-    setEditedLastname(LastnameHistory);
-    setEditedPhone(PhoneHistory);
-    setEditedAddress(AddressHistory);
-    setEditedPostalcode(PostalcodeHistory);
-    setEditedCity(CityHistory);
-    setEditedCountry(CountryHistory);
-    setEditedEmail(EmailHistory);
+    setEditedFirstname(firstnameHistory);
+    setEditedLastname(lastnameHistory);
+    setEditedPhone(phoneHistory);
+    setEditedAddress(addressHistory);
+    setEditedPostalcode(postalcodeHistory);
+    setEditedCity(cityHistory);
+    setEditedCountry(countryHistory);
+    setEditedEmail(emailHistory);
 
     // Close the edit
     setEdit(false);
-  }
+  };
 
-  const handleFirstnameChange = (event) =>
-  {
+  const handleFirstnameChange = (event) => {
     setEditedFirstname(event.target.value);
-  }
+  };
 
-  const handleLastnameChange = (event) =>
-  {
+  const handleLastnameChange = (event) => {
     setEditedLastname(event.target.value);
-  }
+  };
 
-  const handlePhoneChange = (event) =>
-  {
+  const handlePhoneChange = (event) => {
     setEditedPhone(event.target.value);
-  }
+  };
 
-  const handleAddressChange = (event) =>
-  {
+  const handleAddressChange = (event) => {
     setEditedAddress(event.target.value);
-  }
+  };
 
-  const handlePostalcodeChange = (event) =>
-  {
+  const handlePostalcodeChange = (event) => {
     setEditedPostalcode(event.target.value);
-  }
+  };
 
-  const handleCityChange = (event) =>
-  {
+  const handleCityChange = (event) => {
     setEditedCity(event.target.value);
-  }
+  };
 
-  const handleCountryChange = (event) =>
-  {
+  const handleCountryChange = (event) => {
     setEditedCountry(event.target.value);
-  }
+  };
 
-  const handleEmailChange = (event) =>
-  {
+  const handleEmailChange = (event) => {
     setEditedEmail(event.target.value);
-  }
+  };
 
   return (
     <div className='MyInfo'>
       <img src='https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg' />
       <div>
-        <p>Firstname: {Firstname}</p>
-        <p>Lastname: {Lastname}</p>
-        <p>Phone: {Phone}</p>
-        <p>Address: {Address}</p>
-        <p>Postalcode: {Postalcode}</p>
-        <p>City: {City}</p>
-        <p>Country: {Country}</p>
+        <p>Firstname: {firstname}</p>
+        <p>Lastname: {lastname}</p>
+        <p>Phone: {phone}</p>
+        <p>Address: {address}</p>
+        <p>Postalcode: {postalcode}</p>
+        <p>City: {city}</p>
+        <p>Country: {country}</p>
       </div>
       <Button variant='outlined' onClick={editOnClick} >Edit</Button>
 
-    <EditDetailsModal 
-      edit={edit} 
-      editedEmail={editedEmail} 
-      editedCountry={editedCountry}
-      editedCity={editedCity}
-      editedPhone={editedPhone}
-      editedAddress={editedAddress}
-      editedPostalcode={editedPostalcode}
-      handleFirstnameChange={handleFirstnameChange}
-      handleLastnameChange={handleLastnameChange}
-      handlePhoneChange={handlePhoneChange}
-      handleAddressChange={handleAddressChange}
-      handlePostalcodeChange={handlePostalcodeChange}
-      handleCityChange={handleCityChange}
-      handleCountryChange={handleCountryChange}
-      handleEmailChange={handleEmailChange}
-      cancelEditOnClick={cancelEditOnClick}
-      saveEditOnClick={saveEditOnClick}
-    />
+      <EditDetailsModal 
+        edit={edit} 
+        editedEmail={editedEmail} 
+        editedCountry={editedCountry}
+        editedCity={editedCity}
+        editedPhone={editedPhone}
+        editedAddress={editedAddress}
+        editedPostalcode={editedPostalcode}
+        handleFirstnameChange={handleFirstnameChange}
+        handleLastnameChange={handleLastnameChange}
+        handlePhoneChange={handlePhoneChange}
+        handleAddressChange={handleAddressChange}
+        handlePostalcodeChange={handlePostalcodeChange}
+        handleCityChange={handleCityChange}
+        handleCountryChange={handleCountryChange}
+        handleEmailChange={handleEmailChange}
+        cancelEditOnClick={cancelEditOnClick}
+        saveEditOnClick={saveEditOnClick}
+      />
     </div>
   )
 }
+
 
 
 
