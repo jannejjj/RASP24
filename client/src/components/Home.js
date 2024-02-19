@@ -259,8 +259,8 @@ function EventItem(props) {
   );
 }
 
-function Home() {
-  const [admin, setAdmin] = useState(true);
+function Home(props) {
+  const [admin, setAdmin] = useState(props.currentUser.admin);
   const [newEvent, setNewEvent] = useState(false);
   const [events, setEvents] = useState([
     {
