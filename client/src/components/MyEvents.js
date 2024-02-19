@@ -3,37 +3,35 @@ import Event from './Event';
 import {useState, useEffect} from 'react';
 import Typography from "@mui/material/Typography";
 
-function MyEvents() {
+function MyEvents(props) {
   const [events, setEvents] = useState([{}]);
   const [loading, setLoading] = useState(true);
-  /* User is authrorized based on if there is a token in the sessionStorage or not */
-  const [authorized, setAuthorized] = useState();
 
   useEffect(() => {
     let mounted = true;
     setLoading(true);
+
     async function fetchEvents() {
         let url = '/api/events';
-        if(sessionStorage.getItem('token')) {
-          setAuthorized(true);
-          let response = await fetch(url, {headers: {
-            "Content-type": "application/json",
-            "Authorization": "Bearer " + sessionStorage.getItem('token')
-          }});
-          let dataJson = await response.json();
-          if (mounted) {
-              setEvents(dataJson);
-              setLoading(false);
-          }
-        } else {
-          setLoading(false);
-          setAuthorized(false);
-        }  
-    }
+        let response = await fetch(url, {headers: {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        }});
+        let dataJson = await response.json();
+        if (mounted) {
+            setEvents(dataJson);
+            setLoading(false);
+        }
+      }
+  // Only for users that have logged in
+  if (props.currentUser.loggedIn)
+  {
     fetchEvents();
     return () => {
         mounted = false;
     };
+  }
+setLoading(false);
 
   }, [])
   if (loading) {
@@ -46,7 +44,7 @@ function MyEvents() {
         </div>
     )
   }
-  if (!authorized) {
+  if (!props.currentUser.loggedIn) {
     return (
         <div>
             <h1>My Events</h1>

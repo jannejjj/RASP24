@@ -162,7 +162,7 @@ export default function TopBar(props) {
           >
             Register
           </Button>}
-          {!props.currentUser.loggedIn && <Button component={RouterLink} to='/MyEvents'
+          {props.currentUser.loggedIn && <Button component={RouterLink} to='/MyEvents'
             color="inherit"
             disableRipple
             sx={{
