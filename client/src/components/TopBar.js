@@ -80,7 +80,7 @@ export default function TopBar(props) {
             {props.currentUser.loggedIn && <MenuItem component={RouterLink} to='/MyProfile'>My Profile</MenuItem>}
             {!props.currentUser.loggedIn && <MenuItem component={RouterLink} to='/Register'>Register</MenuItem>}
             {props.currentUser.loggedIn && <MenuItem onClick={logout} component={RouterLink}>Logout</MenuItem>}
-            {!props.currentUser.loggedIn && <MenuItem onClick={logout} component={RouterLink} to='/Rogin'>Login</MenuItem>}
+            {!props.currentUser.loggedIn && <MenuItem onClick={logout} component={RouterLink} to='/Login'>Login</MenuItem>}
           </Menu>
 
           <Typography
