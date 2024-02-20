@@ -20,7 +20,7 @@ function CreateEventModal(props)
           </h2>
 
           <form onSubmit={props.saveNewEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
-                <OutlinedInput fullWidth required placeholder={'Title'} type="text" id="title" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'Title'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 1}} />
                 <OutlinedInput fullWidth required placeholder={'Location'} type="text" id="location" sx={{m: 1}} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
@@ -56,40 +56,12 @@ function CreateEventModal(props)
                   />
                 </LocalizationProvider>
                 <OutlinedInput fullWidth multiline required placeholder={'Description'} type="text" id="description" sx={{m: 1}} />
+                <OutlinedInput fullWidth multiline required placeholder={'Number of tickets'} type="text" id="tickets_amount" sx={{m: 1}} />
                 <div>
                   <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
                   <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit">Save</Button>
                 </div>
             </form>
-          {/*
-          <div className='HorizontalSeparator' />
-          <TextField value={props.newTitle} onInput={props.handleTitleChange} className='TextField' fullWidth label="Title" />
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-            onChange={props.handleStartTimeChange}
-            label="Select Starting Time" 
-            views={['day', 'month', 'year', 'hours', 'minutes']} 
-            format="DD/MM/YYYY hh:mm"
-            ampm={false}
-            disablePast={true}
-            />
-            <DateTimePicker
-            onChange={props.handleEndTimeChange}
-            label="Select Ending Time" 
-            views={['day', 'month', 'year', 'hours', 'minutes']} 
-            format="DD/MM/YYYY hh:mm"
-            ampm={false}
-            disablePast={true}
-            />
-          </LocalizationProvider>
-          <TextField value={props.newLocation} onInput={props.handleLocationChange} className='TextField' fullWidth label="Location" />
-          <TextField multiline value={props.newDescription} onInput={props.handleDescriptionChange}
-            className='TextField' fullWidth label='Description' maxRows={10} />
-          <div>
-            <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
-            <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.saveNewEventOnClick} >Save</Button>
-          </div>
-    */}
         </Box>
       </Modal>
     )
