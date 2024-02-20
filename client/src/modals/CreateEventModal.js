@@ -13,8 +13,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 function CreateEventModal(props)
 {
-  const [checked, setChecked] = useState(false);
-  const [tickets, setTickets] = useState("");
     return (
       <Modal open={props.newEventModal} >
         <Box className='ModalBackground' >
@@ -61,32 +59,25 @@ function CreateEventModal(props)
                 <OutlinedInput fullWidth multiline required placeholder={'Description'} type="text" id="description" sx={{m: 1}} />
                 <FormControlLabel 
                 control={<Switch />}
-                label="Limited tickets" checked={checked}
-                onChange={() => {
-                  if(checked){
-                      setTickets("")
-                    }
-                    setChecked(!checked)
-                    props.handleLimitedTickets()
-                  }
-                }
+                label="Limited tickets" checked={props.checked}
+                onChange={props.resetTickets}
                 />
                 <OutlinedInput 
                   fullWidth 
                   required 
-                  disabled={!checked} 
+                  disabled={!props.checked} 
                   placeholder={'Number of tickets'} 
                   min="0" 
                   type="number" 
                   inputProps={{min:0}} 
                   id="tickets" 
                   sx={{m: 1}}
-                  value={tickets}
-                  onChange={e => setTickets(e.target.value)}
+                  value={props.tickets}
+                  onChange={e => props.setTickets(e.target.value)}
                 />
                 <div>
-                  <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={() => {setTickets("");setChecked(false);props.cancelCreationOnClick()}} >Cancel</Button>
-                  <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit" onClick={() => {setTickets("");setChecked(false)}}>Save</Button>
+                  <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
+                  <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit">Save</Button>
                 </div>
             </form>
         </Box>

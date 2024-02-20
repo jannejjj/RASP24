@@ -271,10 +271,12 @@ function Home(props) {
     attendees: 0,
     attending: true,
     description: "",
-    tickets: 0,
+    tickets: "",
   },);
   const [startTimeError, setStartTimeError] = useState(false);
   const [endTimeError, setEndTimeError] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [tickets, setTickets] = useState("");
   const [events, setEvents] = useState([
     {
       title: "TechSynergy Summit",
@@ -305,10 +307,14 @@ function Home(props) {
     },
   ]);
 
-
-  const handleLimitedTickets = () => {
+ //TODO: DOESN'T RESET TICKETS IN newEvent.tickets for some reason?
+  const resetTickets = () => {
     console.log("Reset tickets");
-    setNewEvent({...newEvent, ["tickets"]: 0});
+    setTickets("")
+    setChecked(!checked)
+    setNewEvent(newEvent => ({...newEvent, tickets: ""}))
+    console.log(newEvent.tickets);
+    console.log(tickets);
     console.log(newEvent);
   }
 
@@ -335,7 +341,8 @@ function Home(props) {
         attendees: 0,
         attending: true,
         description: "",
-        tickets: 0});
+        tickets: ""});
+    resetTickets();
     setNewEventModal(false);
   };
 
@@ -393,9 +400,10 @@ function Home(props) {
         attendees: 0,
         attending: true,
         description: "",
-        tickets: 0});
+        tickets: ""});
         // Close the Modal
         setNewEventModal(false);
+        resetTickets();
         } else {
           console.log("Starting time needs to be before ending time.");
           showToastMessage("Starting time needs to be before ending time.");
@@ -442,6 +450,10 @@ function Home(props) {
 
       <CreateEventModal
         newEventModal={newEventModal}
+        checked={checked}
+        tickets={tickets}
+        setTickets={setTickets}
+        setChecked={setChecked}
         whenChanging={whenChanging}
         handleStartTimeChange={handleStartTimeChange}
         handleEndTimeChange={handleEndTimeChange}
@@ -449,7 +461,7 @@ function Home(props) {
         saveNewEventOnClick={saveNewEventOnClick}
         handleStartTimeError={handleStartTimeError}
         handleEndTimeError={handleEndTimeError}
-        handleLimitedTickets={handleLimitedTickets}
+        resetTickets={resetTickets}
       />
       <ToastContainer />
     </div>
