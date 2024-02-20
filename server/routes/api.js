@@ -45,17 +45,18 @@ router.post('/login',
                 //creates JWT
                 const jwtPayload = {
                     id: member._id,
-                    email: member.email
+                    email: member.email,
+                    admin: member.admin
                 }
                 jwt.sign(
                     jwtPayload,
                     process.env.SECRET,
                     {
-                    expiresIn: 6000 //expires on 6000s and log in is needed again.
+                    expiresIn: '24h' //expires on 24 hours and log in is needed again.
                     },
                     (err, token) => {
-                    res.json({success: true, token});
-                    idFromToken = getIdfromToken(token);
+
+                    res.json({success: true, token, admin: member.admin, id: member._id});
                     }
                 );
                 } else {
@@ -129,5 +130,26 @@ router.post('/register',
     }
       
 });
+
+router.post('/authenticate/token', (req, res) =>
+{
+    try
+    {
+        const payload = jwt.verify(req.body.token, process.env.SECRET);
+
+        if (payload)
+        {
+            return res.json({success: true, admin: payload.admin, id: payload.id});
+        }
+        else
+        {
+            return res.json({success: false});
+        }
+    }
+    catch (exception)
+    {
+        return res.json({success: false});
+    }
+})
 
 module.exports = router;

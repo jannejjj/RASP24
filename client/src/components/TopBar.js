@@ -13,7 +13,7 @@ import { Menu, MenuItem } from "@mui/material";
 import { Link as RouterLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
-export default function TopBar() {
+export default function TopBar(props) {
   const [language, setLanguage] = useState("EN");
   const [anchorElNav, setAnchorElNav] = useState(null);
   let navigate = useNavigate();
@@ -32,17 +32,19 @@ export default function TopBar() {
     setLanguage(lan);
   };
 
-  //logged in status
-  let loggedIn = false;
-  if(sessionStorage.getItem('token')) {
-      loggedIn = true;
-  }
-
-  //Removes Token from sessionStorage
+  //Removes Token from localStorage
   const logout = () => {
-    if(loggedIn) {
-      sessionStorage.removeItem('token');
-      loggedIn = false;
+    if(props.currentUser.loggedIn) {
+      localStorage.removeItem('AssocEase_Token');
+      props.setCurrentUser(
+        {
+          admin: false,
+          loggedIn: false,
+          token: "",
+          id: ""
+        }
+      );
+
       navigate('/Login')
     }
   };
@@ -73,12 +75,12 @@ export default function TopBar() {
               display: { xs: "block", md: "none" },
             }}
           >
-            <MenuItem component={RouterLink} to='/home'>Home</MenuItem>
-            <MenuItem component={RouterLink} to='/members'>Members</MenuItem>
-            {loggedIn && <MenuItem component={RouterLink} to='/myprofile'>My Profile</MenuItem>}
-            {!loggedIn && <MenuItem component={RouterLink} to='/register'>Register</MenuItem>}
-            {loggedIn && <MenuItem onClick={logout} component={RouterLink}>Logout</MenuItem>}
-            {!loggedIn && <MenuItem onClick={logout} component={RouterLink} to='/login'>Login</MenuItem>}
+            <MenuItem component={RouterLink} to='/'>Home</MenuItem>
+            <MenuItem component={RouterLink} to='/Members'>Members</MenuItem>
+            {props.currentUser.loggedIn && <MenuItem component={RouterLink} to='/MyProfile'>My Profile</MenuItem>}
+            {!props.currentUser.loggedIn && <MenuItem component={RouterLink} to='/Register'>Register</MenuItem>}
+            {props.currentUser.loggedIn && <MenuItem onClick={logout} component={RouterLink}>Logout</MenuItem>}
+            {!props.currentUser.loggedIn && <MenuItem onClick={logout} component={RouterLink} to='/Login'>Login</MenuItem>}
           </Menu>
 
           <Typography
@@ -113,7 +115,7 @@ export default function TopBar() {
           >
             AssocEase
           </Typography>
-          <Button component={RouterLink} to='/home'
+          <Button component={RouterLink} to='/'
             color="inherit"
             className="home-button"
             disableRipple
@@ -125,7 +127,7 @@ export default function TopBar() {
           >
             Home
           </Button>
-          <Button component={RouterLink} to='/members'
+          <Button component={RouterLink} to='/Members'
             color="inherit"
             className="members-button"
             disableRipple
@@ -137,7 +139,7 @@ export default function TopBar() {
           >
             Members
           </Button>
-          {loggedIn && <Button component={RouterLink} to='/myprofile'
+          {props.currentUser.loggedIn && <Button component={RouterLink} to='/MyProfile'
             color="inherit"
             disableRipple
             sx={{
@@ -148,7 +150,7 @@ export default function TopBar() {
           >
             My profile
           </Button>}
-          {!loggedIn && <Button component={RouterLink} to='/register'
+          {!props.currentUser.loggedIn && <Button component={RouterLink} to='/Register'
             color="inherit"
             disableRipple
             sx={{
@@ -183,7 +185,7 @@ export default function TopBar() {
           >
             EN
           </Button>
-          {loggedIn && <Button
+          {props.currentUser.loggedIn && <Button
             color="inherit"
             onClick={logout}
             sx={{ minWidth: "8vw" }}
@@ -191,10 +193,10 @@ export default function TopBar() {
           >
             Logout
           </Button>}
-          {!loggedIn && <Button
+          {!props.currentUser.loggedIn && <Button
             color="inherit"
             onClick={logout} 
-            component={RouterLink} to='/login'
+            component={RouterLink} to='/Login'
             sx={{ minWidth: "8vw" }}
             disableRipple
           >
