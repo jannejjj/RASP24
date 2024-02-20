@@ -55,7 +55,7 @@ function Members(props) {
         <div>
             <h1>Members</h1>
             <Typography sx={{ mt: 20 }} variant='h4' align="center">
-              Unauthorized.
+              Please login to view members.
             </Typography>
         </div>
     )

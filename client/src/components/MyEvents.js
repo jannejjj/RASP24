@@ -49,7 +49,7 @@ setLoading(false);
         <div>
             <h1>My Events</h1>
             <Typography sx={{ mt: 20 }} variant='h4' align="center">
-              Unauthorized.
+              Please login to view your events.
             </Typography>
         </div>
     )
