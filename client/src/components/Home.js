@@ -263,16 +263,7 @@ function EventItem(props) {
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
   const [newEventModal, setNewEventModal] = useState(false);
-  const [newEvent, setNewEvent] = useState({
-    title: "",
-    creator: "",
-    time: "",
-    location: "",
-    attendees: 0,
-    attending: true,
-    description: "",
-    tickets: "",
-  },);
+  const [newEvent, setNewEvent] = useState({});
   const [startTimeError, setStartTimeError] = useState(false);
   const [endTimeError, setEndTimeError] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -307,20 +298,16 @@ function Home(props) {
     },
   ]);
 
- //TODO: DOESN'T RESET TICKETS IN newEvent.tickets for some reason?
   const resetTickets = () => {
     console.log("Reset tickets");
-    setTickets("")
-    setChecked(!checked)
-    setNewEvent(newEvent => ({...newEvent, tickets: ""}))
-    console.log(newEvent.tickets);
-    console.log(tickets);
-    console.log(newEvent);
+    setTickets("");
+    setChecked(!checked);
+    newEvent.tickets = "";
+    setNewEvent(newEvent);
   }
 
   const whenChanging = (event) => {
     setNewEvent({...newEvent, [event.target.id]: event.target.value})
-    console.log(newEvent);
   }
   
   const handleStartTimeChange = (value) => {
@@ -334,14 +321,7 @@ function Home(props) {
   };
 
   const cancelCreationOnClick = () => {
-    setNewEvent({title: "",
-        creator: "",
-        time: "",
-        location: "",
-        attendees: 0,
-        attending: true,
-        description: "",
-        tickets: ""});
+    setNewEvent({});
     resetTickets();
     setNewEventModal(false);
   };
@@ -374,7 +354,6 @@ function Home(props) {
 
   const saveNewEventOnClick = (e) => {
     e.preventDefault()
-    console.log(JSON.stringify(newEvent))
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
         if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
@@ -384,7 +363,6 @@ function Home(props) {
                 "Content-type": "application/json",
                 "Authorization": "Bearer " + props.currentUser.token
             },
-            // TODO: Add attendee counter
             body: JSON.stringify(newEvent),
             mode: "cors"
         })
@@ -393,14 +371,7 @@ function Home(props) {
                 console.log(data)
             })
         // Empty the input fields
-        setNewEvent({title: "",
-        creator: "",
-        time: "",
-        location: "",
-        attendees: 0,
-        attending: true,
-        description: "",
-        tickets: ""});
+        setNewEvent({});
         // Close the Modal
         setNewEventModal(false);
         resetTickets();
