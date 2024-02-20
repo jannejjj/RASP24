@@ -1,6 +1,6 @@
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
-import React from "react";
+import { React, useState } from "react";
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -8,10 +8,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
-// TODO: Add required to input fields
 function CreateEventModal(props)
 {
+  const [checked, setChecked] = useState(false);
+  const [tickets, setTickets] = useState("");
     return (
       <Modal open={props.newEventModal} >
         <Box className='ModalBackground' >
@@ -56,10 +59,34 @@ function CreateEventModal(props)
                   />
                 </LocalizationProvider>
                 <OutlinedInput fullWidth multiline required placeholder={'Description'} type="text" id="description" sx={{m: 1}} />
-                <OutlinedInput fullWidth multiline required placeholder={'Number of tickets'} type="text" id="tickets_amount" sx={{m: 1}} />
+                <FormControlLabel 
+                control={<Switch />}
+                label="Limited tickets" checked={checked}
+                onChange={() => {
+                  if(checked){
+                      setTickets("")
+                    }
+                    setChecked(!checked)
+                    props.handleLimitedTickets()
+                  }
+                }
+                />
+                <OutlinedInput 
+                  fullWidth 
+                  required 
+                  disabled={!checked} 
+                  placeholder={'Number of tickets'} 
+                  min="0" 
+                  type="number" 
+                  inputProps={{min:0}} 
+                  id="tickets" 
+                  sx={{m: 1}}
+                  value={tickets}
+                  onChange={e => setTickets(e.target.value)}
+                />
                 <div>
-                  <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
-                  <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit">Save</Button>
+                  <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={() => {setTickets("");setChecked(false);props.cancelCreationOnClick()}} >Cancel</Button>
+                  <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit" onClick={() => {setTickets("");setChecked(false)}}>Save</Button>
                 </div>
             </form>
         </Box>

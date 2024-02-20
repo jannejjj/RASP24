@@ -10,6 +10,7 @@ let eventSchema = new Schema ({
     description: {type: String},
     location:{type: String},
     attendees: {type: Number},
+    tickets: {type: Number},
     logo:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'

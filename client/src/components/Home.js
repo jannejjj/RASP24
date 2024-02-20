@@ -263,7 +263,16 @@ function EventItem(props) {
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
   const [newEventModal, setNewEventModal] = useState(false);
-  const [newEvent, setNewEvent] = useState("");
+  const [newEvent, setNewEvent] = useState({
+    title: "",
+    creator: "",
+    time: "",
+    location: "",
+    attendees: 0,
+    attending: true,
+    description: "",
+    tickets: 0,
+  },);
   const [startTimeError, setStartTimeError] = useState(false);
   const [endTimeError, setEndTimeError] = useState(false);
   const [events, setEvents] = useState([
@@ -296,10 +305,18 @@ function Home(props) {
     },
   ]);
 
-  const whenChanging = (event) => {
-    setNewEvent({...newEvent, [event.target.id]: event.target.value})
+
+  const handleLimitedTickets = () => {
+    console.log("Reset tickets");
+    setNewEvent({...newEvent, ["tickets"]: 0});
+    console.log(newEvent);
   }
 
+  const whenChanging = (event) => {
+    setNewEvent({...newEvent, [event.target.id]: event.target.value})
+    console.log(newEvent);
+  }
+  
   const handleStartTimeChange = (value) => {
     setStartTimeError(false);
     setNewEvent({...newEvent, ["startDate"]: value});
@@ -311,7 +328,14 @@ function Home(props) {
   };
 
   const cancelCreationOnClick = () => {
-    setNewEvent("");
+    setNewEvent({title: "",
+        creator: "",
+        time: "",
+        location: "",
+        attendees: 0,
+        attending: true,
+        description: "",
+        tickets: 0});
     setNewEventModal(false);
   };
 
@@ -344,7 +368,6 @@ function Home(props) {
   const saveNewEventOnClick = (e) => {
     e.preventDefault()
     console.log(JSON.stringify(newEvent))
-    console.log(newEvent.startDate)
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
         if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
@@ -363,7 +386,14 @@ function Home(props) {
                 console.log(data)
             })
         // Empty the input fields
-        setNewEvent("");
+        setNewEvent({title: "",
+        creator: "",
+        time: "",
+        location: "",
+        attendees: 0,
+        attending: true,
+        description: "",
+        tickets: 0});
         // Close the Modal
         setNewEventModal(false);
         } else {
@@ -419,6 +449,7 @@ function Home(props) {
         saveNewEventOnClick={saveNewEventOnClick}
         handleStartTimeError={handleStartTimeError}
         handleEndTimeError={handleEndTimeError}
+        handleLimitedTickets={handleLimitedTickets}
       />
       <ToastContainer />
     </div>
