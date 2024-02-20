@@ -262,7 +262,10 @@ function EventItem(props) {
 
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
-  const [newEvent, setNewEvent] = useState(false);
+  const [newEventModal, setNewEventModal] = useState(false);
+  const [newEvent, setNewEvent] = useState("");
+  const [startTimeError, setStartTimeError] = useState(false);
+  const [endTimeError, setEndTimeError] = useState(false);
   const [events, setEvents] = useState([
     {
       title: "TechSynergy Summit",
@@ -293,40 +296,23 @@ function Home(props) {
     },
   ]);
 
-  // Data for for the new events
-  const [newTitle, setNewTitle] = useState("");
-  const [newStartTime, setNewStartTime] = useState("");
-  const [newEndTime, setNewEndTime] = useState("");
-  const [newLocation, setNewLocation] = useState("");
-  const [newDescription, setNewDescription] = useState("");
-
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value);
-  };
+  const whenChanging = (event) => {
+    setNewEvent({...newEvent, [event.target.id]: event.target.value})
+  }
 
   const handleStartTimeChange = (value) => {
-    setNewStartTime(value);
+    setStartTimeError(false);
+    setNewEvent({...newEvent, ["startDate"]: value});
   };
 
   const handleEndTimeChange = (value) => {
-    setNewEndTime(value);
-  };
-
-  const handleLocationChange = (event) => {
-    setNewLocation(event.target.value);
-  };
-
-  const handleDescriptionChange = (event) => {
-    setNewDescription(event.target.value);
+    setEndTimeError(false);
+    setNewEvent({...newEvent, ["endDate"]: value});
   };
 
   const cancelCreationOnClick = () => {
-    setNewEvent(false);
-    setNewStartTime("");
-    setNewEndTime("");
-    setNewTitle("");
-    setNewDescription("");
-    setNewLocation("");
+    setNewEvent("");
+    setNewEventModal(false);
   };
 
   const showToastMessage = (message) =>
@@ -342,33 +328,55 @@ function Home(props) {
             theme: "dark"
             });
     }
+  
+
+  const handleStartTimeError = (error) => {
+    console.log("Starting time error: " + error);
+    setStartTimeError(true);
+  }
+
+  const handleEndTimeError = (error) => {
+    console.log("Ending time error: " + error);
+    setEndTimeError(true);
+  }
+
 
   const saveNewEventOnClick = (e) => {
-    if(newStartTime < newEndTime) {
-      fetch("/api/event", {
-        method: "POST",
-        headers: {
-            "Content-type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem('token')
-        },
-        body: JSON.stringify({title: newTitle, startDate: newStartTime, endDate: newEndTime, location: newLocation, description: newDescription}),
-        mode: "cors"
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
+    e.preventDefault()
+    console.log(JSON.stringify(newEvent))
+    console.log(newEvent.startDate)
+    if(!startTimeError && newEvent.startDate) {
+      if(!endTimeError) {
+        if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
+          fetch("/api/event", {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json",
+                "Authorization": "Bearer " + props.currentUser.token
+            },
+            // TODO: Add attendee counter
+            body: JSON.stringify(newEvent),
+            mode: "cors"
         })
-    // Empty the input fields
-    setNewStartTime("");
-    setNewEndTime("");
-    setNewTitle("");
-    setNewDescription("");
-    setNewLocation("");
-
-    // Close the Modal
-    setNewEvent(false);
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            })
+        // Empty the input fields
+        setNewEvent("");
+        // Close the Modal
+        setNewEventModal(false);
+        } else {
+          console.log("Starting time needs to be before ending time.");
+          showToastMessage("Starting time needs to be before ending time.");
+        }
+      } else {
+        console.log("Ending time is not valid.");
+        showToastMessage("Ending time is not valid.");
+      }
     } else {
-      showToastMessage("Starting time needs to be before ending time.");
+      console.log("Starting time is not valid.");
+      showToastMessage("Starting time is not valid.");
     }
   };
 
@@ -385,7 +393,7 @@ function Home(props) {
         <h1>Events</h1>
         <div className="HorizontalSeparator" style={{ width: "95%" }} />
         {admin && (
-          <Button color="primary" variant='contained' onClick={() => {setNewEvent(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
+          <Button color="primary" variant='contained' onClick={() => {setNewEventModal(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
         )}
         {events.map((event, index) => (
           <EventItem
@@ -403,19 +411,14 @@ function Home(props) {
       </div>
 
       <CreateEventModal
-        newEvent={newEvent}
-        newStartTime={newStartTime}
-        newEndTime={newEndTime}
-        newTitle={newTitle}
-        newLocation={newLocation}
-        newDescription={newDescription}
-        handleTitleChange={handleTitleChange}
+        newEventModal={newEventModal}
+        whenChanging={whenChanging}
         handleStartTimeChange={handleStartTimeChange}
         handleEndTimeChange={handleEndTimeChange}
-        handleLocationChange={handleLocationChange}
-        handleDescriptionChange={handleDescriptionChange}
         cancelCreationOnClick={cancelCreationOnClick}
         saveNewEventOnClick={saveNewEventOnClick}
+        handleStartTimeError={handleStartTimeError}
+        handleEndTimeError={handleEndTimeError}
       />
       <ToastContainer />
     </div>

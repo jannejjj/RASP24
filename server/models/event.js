@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 let eventSchema = new Schema ({
     title:{type:String},
+    creator:{type:String},
     startDate:{type: Date},
     endDate:{type: Date},
     description: {type: String},

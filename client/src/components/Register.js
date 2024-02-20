@@ -1,9 +1,6 @@
-import Typography from '@mui/material/Typography';
-import Input from '@mui/material/Input';
 import {useState} from 'react'
 import { useNavigate } from "react-router-dom";
 import { Button } from '@mui/material';
-import Box from '@mui/material/Box';
 import '../App.css';
 import '../styles/Register.css';
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,7 +11,6 @@ const Register = () => {
     let navigate = useNavigate();
 
     const [member, setMember] = useState({})
-    const [err, setErr] = useState('')
 
     //Keeps track of the input fields and creates the member object as the fields are being filled.
     const whenChanging = (event) => {
@@ -45,18 +41,15 @@ const Register = () => {
                     {
                         if (data.errors[0] !== undefined) 
                         {
-                            setErr(data.errors[0].msg);
                             showToastMessage(data.errors[0].msg);
                         } 
                         else if (data.errors[1] !== undefined) 
                         {
-                            setErr(data.errors[1].msg);
                             showToastMessage(data.errors[1].msg);
                         }
                     } 
                     else 
                     {
-                        setErr(data.message);
                         showToastMessage(data.message);
                     }
                 }

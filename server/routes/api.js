@@ -129,14 +129,17 @@ router.post('/register',
     }
       
 });
-/*passport.authenticate('jwt', {session: false})*/
-router.post('/event', async (req, res) => {
+
+
+router.post('/event', passport.authenticate('jwt', {session: false}), async (req, res) => {
   const event = new Event({
       title: req.body.title,
+      creator: req.body.creator,
       startDate: req.body.startDate,
       endDate: req.body.endDate,
       location: req.body.location,
-      description: req.body.description
+      description: req.body.description,
+      attendees: req.body.attendees
   });
   event.save()
     .then(result => {
