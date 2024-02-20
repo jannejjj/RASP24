@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -8,13 +8,12 @@ import "../styles/TopBar.css";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Menu, MenuItem } from "@mui/material";
-// import IconButton from "@mui/material/IconButton";
-// import MenuIcon from "@mui/icons-material/Menu";
 import { Link as RouterLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
 export default function TopBar(props) {
   const [language, setLanguage] = useState("EN");
+  const [selectedPage, setSelectedPage] = useState("Home");
   const [anchorElNav, setAnchorElNav] = useState(null);
   let navigate = useNavigate();
 
@@ -48,6 +47,16 @@ export default function TopBar(props) {
       navigate('/Login')
     }
   };
+
+  useEffect(() =>
+  {
+    // Get the currently selected page when the website is reloaded
+    const href = window.location.href;
+    const data = href.split('/');
+    const page = data[data.length - 1];
+
+    setSelectedPage(page);
+  }, []);
 
   return (
     <AppBar position="sticky">
@@ -118,46 +127,54 @@ export default function TopBar(props) {
           <Button component={RouterLink} to='/'
             color="inherit"
             className="home-button"
+            disabled={selectedPage === "Home"}
             disableRipple
             sx={{
               letterSpacing: ".2rem",
               paddingLeft: "24px",
               paddingRight: "12px",
             }}
+            onClick={() => {setSelectedPage("Home")}}
           >
             Home
           </Button>
           <Button component={RouterLink} to='/Members'
             color="inherit"
             className="members-button"
+            disabled={selectedPage === "Members"}
             disableRipple
             sx={{
               letterSpacing: ".1rem",
               paddingLeft: "12px",
               paddingRight: "12px",
             }}
+            onClick={() => {setSelectedPage("Members")}}
           >
             Members
           </Button>
           {props.currentUser.loggedIn && <Button component={RouterLink} to='/MyProfile'
             color="inherit"
+            disabled={selectedPage === "MyProfile"}
             disableRipple
             sx={{
               letterSpacing: ".1rem",
               paddingLeft: "12px",
               paddingRight: "12px",
             }}
+            onClick={() => {setSelectedPage("MyProfile")}}
           >
             My profile
           </Button>}
           {!props.currentUser.loggedIn && <Button component={RouterLink} to='/Register'
             color="inherit"
+            disabled={selectedPage === "Register"}
             disableRipple
             sx={{
               letterSpacing: ".1rem",
               paddingLeft: "12px",
               paddingRight: "12px",
             }}
+            onClick={() => {setSelectedPage("Register")}}
           >
             Register
           </Button>}
