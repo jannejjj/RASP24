@@ -31,9 +31,9 @@ function MyEvents(props) {
         mounted = false;
     };
   }
-setLoading(false);
-
+  setLoading(false);
   }, [])
+
   if (loading) {
     return (
         <div>

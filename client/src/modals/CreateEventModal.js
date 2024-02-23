@@ -41,6 +41,22 @@ function CreateEventModal(props)
                     }}
                   />
                   <DateTimePicker
+                    onChange={props.handleJoinDeadlineChange}
+                    onError={props.handleJoinDeadlineError}
+                    label="Event join deadline" 
+                    views={['day', 'month', 'year', 'hours', 'minutes']} 
+                    format="DD/MM/YYYY hh:mm"
+                    ampm={false}
+                    disablePast={true}
+                    slotProps={{
+                      textField: {
+                        required: true,
+                        id: 'joinDeadline',
+                        readOnly: true,
+                      },
+                    }}
+                  />
+                  <DateTimePicker
                     onChange={props.handleEndTimeChange}
                     onError={props.handleEndTimeError}
                     label="Select Ending Time" 
@@ -51,7 +67,7 @@ function CreateEventModal(props)
                     slotProps={{
                       textField: {
                         id: 'endDate',
-                        
+                        readOnly: true,
                       },
                     }}
                   />

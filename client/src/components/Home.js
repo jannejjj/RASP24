@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import "../styles/HomePage.css";
 import "../App.css";
 import Button from "@mui/material/Button";
@@ -266,8 +266,12 @@ function Home(props) {
   const [newEvent, setNewEvent] = useState({});
   const [startTimeError, setStartTimeError] = useState(false);
   const [endTimeError, setEndTimeError] = useState(false);
+  const [joinDeadlineError, setJoinDeadlineError] = useState(false);
   const [checked, setChecked] = useState(false);
   const [tickets, setTickets] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState([{}]);
+  /*
   const [events, setEvents] = useState([
     {
       title: "TechSynergy Summit",
@@ -297,40 +301,12 @@ function Home(props) {
       description: `Join thought leaders and industry experts at the Digital Nexus Symposium, a dynamic gathering that explores the interconnected world of digital technologies. Engage in insightful discussions on the impact of AI, data analytics, and cyber-physical systems. Discover the converging points shaping our digital future at this symposium of ideas and collaboration.`,
     },
   ]);
-
-  const resetTickets = () => {
-    console.log("Reset tickets");
-    setTickets("");
-    setChecked(!checked);
-    newEvent.tickets = "";
-    setNewEvent(newEvent);
-  }
-
-  const whenChanging = (event) => {
-    setNewEvent({...newEvent, [event.target.id]: event.target.value})
-  }
-  
-  const handleStartTimeChange = (value) => {
-    setStartTimeError(false);
-    setNewEvent({...newEvent, ["startDate"]: value});
-  };
-
-  const handleEndTimeChange = (value) => {
-    setEndTimeError(false);
-    setNewEvent({...newEvent, ["endDate"]: value});
-  };
-
-  const cancelCreationOnClick = () => {
-    setNewEvent({});
-    resetTickets();
-    setNewEventModal(false);
-  };
-
+  */
   const showToastMessage = (message) =>
     {
         toast.error(message, {
             position: "top-center",
-            autoClose: 3000,
+            autoClose: 6000,
             hideProgressBar: true,
             closeOnClick: false,
             pauseOnHover: false,
@@ -339,8 +315,48 @@ function Home(props) {
             theme: "dark"
             });
     }
-  
 
+  //Resets the amount of tickets and clears the text box.
+  const resetTickets = () => {
+    console.log("Reset tickets");
+    setTickets("");
+    setChecked(!checked);
+    newEvent.tickets = "";
+    setNewEvent(newEvent);
+  }
+
+  //Updates the values for the text fields in event creation
+  const whenChanging = (event) => {
+    setNewEvent({...newEvent, [event.target.id]: event.target.value})
+  }
+  
+  //Updates the values for the start time
+  const handleStartTimeChange = (value) => {
+    setStartTimeError(false); // Sets error to false when changes are made
+    setNewEvent({...newEvent, ["startDate"]: value});
+  };
+
+  //Updates the values for the end time
+  const handleEndTimeChange = (value) => {
+    setEndTimeError(false); // Sets error to false when changes are made
+    setNewEvent({...newEvent, ["endDate"]: value});
+  };
+
+//Updates the values for the join deadline
+  const handleJoinDeadlineChange = (value) => {
+    setJoinDeadlineError(false); // Sets error to false when changes are made
+    setNewEvent({...newEvent, ["joinDeadline"]: value});
+  };
+
+  const cancelCreationOnClick = () => {
+    setNewEvent({});
+    if(checked) {
+      resetTickets();
+    }
+    setNewEventModal(false);
+  };
+
+  // Triggered if there is an error in the date formatting
   const handleStartTimeError = (error) => {
     console.log("Starting time error: " + error);
     setStartTimeError(true);
@@ -351,33 +367,72 @@ function Home(props) {
     setEndTimeError(true);
   }
 
+  const handleJoinDeadlineError = (error) => {
+    console.log("Join deadline error: " + error);
+    setJoinDeadlineError(true);
+  }
 
+  // Fetches events from API
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    async function fetchEvents() {
+        let url = '/api/events';
+        let response = await fetch(url, {headers: {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        }});
+        let dataJson = await response.json();
+        if (mounted) {
+            setEvents(dataJson);
+            setLoading(false);
+        }
+      }
+  // Only for users that have logged in
+  if (props.currentUser.loggedIn)
+  {
+    fetchEvents();
+    return () => {
+        mounted = false;
+    };
+  }
+  setLoading(false);
+  }, [])
+
+  // POST new event
   const saveNewEventOnClick = (e) => {
     e.preventDefault()
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
-        if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
-          fetch("/api/event", {
-            method: "POST",
-            headers: {
-                "Content-type": "application/json",
-                "Authorization": "Bearer " + props.currentUser.token
-            },
-            body: JSON.stringify(newEvent),
-            mode: "cors"
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-            })
-        // Empty the input fields
-        setNewEvent({});
-        // Close the Modal
-        setNewEventModal(false);
-        resetTickets();
+        if(!joinDeadlineError && newEvent.joinDeadline <= newEvent.startDate) {
+          if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
+            fetch("/api/event", {
+              method: "POST",
+              headers: {
+                  "Content-type": "application/json",
+                  "Authorization": "Bearer " + props.currentUser.token
+              },
+              body: JSON.stringify(newEvent),
+              mode: "cors"
+          })
+              .then(response => response.json())
+              .then(data => {
+                  console.log(data)
+              })
+          // Empty the input fields
+          setNewEvent({});
+          // Close the Modal
+          setNewEventModal(false);
+          if(checked) {
+            resetTickets();
+          }
+          } else {
+            console.log("Starting time needs to be before ending time.");
+            showToastMessage("Starting time needs to be before ending time.");
+          }
         } else {
-          console.log("Starting time needs to be before ending time.");
-          showToastMessage("Starting time needs to be before ending time.");
+          console.log("Event joining deadline needs to be before or the same as the starting time of the event.");
+            showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
         }
       } else {
         console.log("Ending time is not valid.");
@@ -428,10 +483,12 @@ function Home(props) {
         whenChanging={whenChanging}
         handleStartTimeChange={handleStartTimeChange}
         handleEndTimeChange={handleEndTimeChange}
+        handleJoinDeadlineChange={handleJoinDeadlineChange}
         cancelCreationOnClick={cancelCreationOnClick}
         saveNewEventOnClick={saveNewEventOnClick}
         handleStartTimeError={handleStartTimeError}
         handleEndTimeError={handleEndTimeError}
+        handleJoinDeadlineError={handleJoinDeadlineError}
         resetTickets={resetTickets}
       />
       <ToastContainer />

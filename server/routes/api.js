@@ -140,7 +140,8 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
       location: req.body.location,
       description: req.body.description,
       attendees: req.body.attendees,
-      tickets: req.body.tickets
+      tickets: req.body.tickets,
+      joinDeadline: req.body.joinDeadline
   });
   event.save()
     .then(result => {
