@@ -78,6 +78,7 @@ function CreateEventModal(props)
                   />
                 </LocalizationProvider>
                 <OutlinedInput fullWidth multiline required placeholder={'Description'} type="text" id="description" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 1}} />
                 <FormControlLabel 
                   control={<Switch />}
                   label="Limited tickets" checkedTicket={props.checkedTicket}
