@@ -7,7 +7,7 @@ import '../App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function Login() {
+function Login(props) {
     let navigate = useNavigate();
 
     const [member, setMember] = useState({})
@@ -47,8 +47,16 @@ function Login() {
           .then(data => {
               if(data.success) {
                   if(data.token) {
-                      sessionStorage.setItem('token', data.token);
-                      navigate('/Home');
+                      localStorage.setItem('AssocEase_Token', data.token);
+                      props.setCurrentUser(
+                        {
+                            admin: data.admin,
+                            loggedIn: true,
+                            token: data.token,
+                            id: data.id
+                        }
+                      );
+                      navigate('/');
                   }
               } else {
                   setErr(data.message);

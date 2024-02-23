@@ -37,8 +37,6 @@ const Register = () => {
             .then(data => {
                 if(data.success) 
                 {
-                    console.log(data);
-                    console.log("Success");
                     navigate('/login');
                 }
                 else 
