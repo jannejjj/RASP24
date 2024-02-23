@@ -10,6 +10,7 @@ import EditEventModal from "../modals/EditEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Typography from "@mui/material/Typography";
 
 function Details(props) {
   const [admin, setAdmin] = useState(props.admin);
@@ -180,90 +181,108 @@ function EventItem(props) {
     setAttending(false);
     setAttendees(attendees - 1);
   };
-
-  return (
-    <div className="HomeEventItem">
-      <div className="HomeEventTop">
-        <div className="HomeEventPhotoBackground">
-          <img
-            src="https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg"
-            alt="Event"
-          />
-        </div>
-
-        <div className="HomeEventHeaderArea">
-          <div className="HomeEventTitleAndLocationArea">
-            <h2>{title}</h2>
-            <h3>Created by: {props.creator}</h3>
-            <h3>{time}</h3>
-            <h3>{location}</h3>
+  if(props.loggedIn) {
+    return (
+      <div className="HomeEventItem">
+        <div className="HomeEventTop">
+          <div className="HomeEventPhotoBackground">
+            <img
+              src="https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg"
+              alt="Event"
+            />
           </div>
-
-          <p>
-            <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {attendees}
-          </p>
+  
+          <div className="HomeEventHeaderArea">
+            <div className="HomeEventTitleAndLocationArea">
+              <h2>{title}</h2>
+              <h3>Created by: {props.creator}</h3>
+              <h3>{time}</h3>
+              <h3>{location}</h3>
+            </div>
+  
+            <p>
+              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {attendees}
+            </p>
+          </div>
         </div>
-      </div>
-
-      <div className="HomeEventBottom">
-        <div className="HorizontalSeparator" />
-        <div className="HomeEventDescriptionArea">
-          <p>{description}</p>
-        </div>
-
-        <div className='HomeEventAttendanceButtonsArea'>
-          {props.admin && 
-            (
-              <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
-            )
-          }
-          <div>
-            {attending ? 
+  
+        <div className="HomeEventBottom">
+          <div className="HorizontalSeparator" />
+          <div className="HomeEventDescriptionArea">
+            <p>{description}</p>
+          </div>
+  
+          <div className='HomeEventAttendanceButtonsArea'>
+            {props.admin && 
               (
-                <Button variant='outlined' color='primary' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
-              )
-              :
-              (
-                <Button variant='contained' color='primary' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
+                <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
               )
             }
+            <div>
+              {attending ? 
+                (
+                  <Button variant='outlined' color='primary' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
+                )
+                :
+                (
+                  <Button variant='contained' color='primary' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
+                )
+              }
+            </div>
           </div>
         </div>
+  
+        <EditEventModal
+          edit={edit}
+          editedDescription={editedDescription}
+          editedLocation={editedLocation}
+          editedTime={editedTime}
+          editedTitle={editedTitle}
+          handleTitleChange={handleTitleChange}
+          handleTimeChange={handleTimeChange}
+          handleLocationChange={handleLocationChange}
+          handleDescriptionChange={handleDescriptionChange}
+          cancelEditOnClick={cancelEditOnClick}
+          saveEditOnClick={saveEditOnClick}
+        />
+  
+        <ConfirmAttendanceModal
+          openAttend={openAttend}
+          setOpenAttend={setOpenAttend}
+          handleEventAttendance={handleEventAttendance}
+        />
+  
+        <CancelAttendanceModal
+          openCancelAttendance={openCancelAttendance}
+          setOpenCancelAttendance={setOpenCancelAttendance}
+          handleCancelEventAttendance={handleCancelEventAttendance}
+        />
       </div>
-
-      <EditEventModal
-        edit={edit}
-        editedDescription={editedDescription}
-        editedLocation={editedLocation}
-        editedTime={editedTime}
-        editedTitle={editedTitle}
-        handleTitleChange={handleTitleChange}
-        handleTimeChange={handleTimeChange}
-        handleLocationChange={handleLocationChange}
-        handleDescriptionChange={handleDescriptionChange}
-        cancelEditOnClick={cancelEditOnClick}
-        saveEditOnClick={saveEditOnClick}
-      />
-
-      <ConfirmAttendanceModal
-        openAttend={openAttend}
-        setOpenAttend={setOpenAttend}
-        handleEventAttendance={handleEventAttendance}
-      />
-
-      <CancelAttendanceModal
-        openCancelAttendance={openCancelAttendance}
-        setOpenCancelAttendance={setOpenCancelAttendance}
-        handleCancelEventAttendance={handleCancelEventAttendance}
-      />
-    </div>
-  );
-}
+    );
+  } else {
+    return (
+      <Typography sx={{ mt: 20 }} variant='h4' align="center">
+         Please login to view events.
+      </Typography>
+    );
+  }
+  }
+  
 
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
   const [newEventModal, setNewEventModal] = useState(false);
-  const [newEvent, setNewEvent] = useState({});
+  const [newEvent, setNewEvent] = useState({
+    "title": "",
+    "creator": props.currentUser.id,
+    "startDate": "",
+    "endDate": "",
+    "joinDeadline": "",
+    "description": "",
+    "location": "",
+    "attendees": 1,
+    "tickets": 0
+  });
   const [startTimeError, setStartTimeError] = useState(false);
   const [endTimeError, setEndTimeError] = useState(false);
   const [joinDeadlineError, setJoinDeadlineError] = useState(false);
@@ -321,7 +340,7 @@ function Home(props) {
     console.log("Reset tickets");
     setTickets("");
     setChecked(!checked);
-    newEvent.tickets = "";
+    newEvent.tickets = 0;
     setNewEvent(newEvent);
   }
 
@@ -444,10 +463,7 @@ function Home(props) {
     }
   };
 
-
-
   return (
-    
     <div className="HomePageBackground">
       <div className="DetailsArea">
         <Details admin={admin} />
@@ -459,9 +475,13 @@ function Home(props) {
         {admin && (
           <Button color="primary" variant='contained' onClick={() => {setNewEventModal(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
         )}
-        {events.map((event, index) => (
+        {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">
+            Loading...
+          </Typography>}
+        {!loading && events.map((event, index) => (
           <EventItem
             admin={admin}
+            loggedIn={props.currentUser.loggedIn}
             title={event.title}
             creator={event.creator}
             time={event.time}
@@ -472,6 +492,7 @@ function Home(props) {
             key={index}
           />
         ))}
+        <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
       </div>
 
       <CreateEventModal
