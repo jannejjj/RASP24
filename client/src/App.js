@@ -13,6 +13,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState({
     admin: false,
     loggedIn: false,
+    firstname: "",
+    lastname: "",
     token: "",
     id: 0
   });
@@ -58,6 +60,8 @@ function App() {
             admin: data.admin,
             loggedIn: true,
             token: tokenFromStorage,
+            firstname: data.firstname,
+            lastname: data.lastname,
             id: data.id
           });
         }

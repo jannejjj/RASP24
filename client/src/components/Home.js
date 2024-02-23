@@ -272,21 +272,12 @@ function EventItem(props) {
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
   const [newEventModal, setNewEventModal] = useState(false);
-  const [newEvent, setNewEvent] = useState({
-    "title": "",
-    "creator": props.currentUser.id,
-    "startDate": "",
-    "endDate": "",
-    "joinDeadline": "",
-    "description": "",
-    "location": "",
-    "attendees": 1,
-    "tickets": 0
-  });
+  const [newEvent, setNewEvent] = useState({});
   const [startTimeError, setStartTimeError] = useState(false);
   const [endTimeError, setEndTimeError] = useState(false);
   const [joinDeadlineError, setJoinDeadlineError] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [checkedTicket, setCheckedTicket] = useState(false);
+  const [checkedDeadline, setCheckedDeadline] = useState(false);
   const [tickets, setTickets] = useState("");
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([{}]);
@@ -339,7 +330,7 @@ function Home(props) {
   const resetTickets = () => {
     console.log("Reset tickets");
     setTickets("");
-    setChecked(!checked);
+    setCheckedTicket(!checkedTicket);
     newEvent.tickets = 0;
     setNewEvent(newEvent);
   }
@@ -369,7 +360,7 @@ function Home(props) {
 
   const cancelCreationOnClick = () => {
     setNewEvent({});
-    if(checked) {
+    if(checkedTicket) {
       resetTickets();
     }
     setNewEventModal(false);
@@ -425,6 +416,10 @@ function Home(props) {
       if(!endTimeError) {
         if(!joinDeadlineError && newEvent.joinDeadline <= newEvent.startDate) {
           if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
+            newEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
+            newEvent.creatorId = props.currentUser.id;
+            newEvent.attendees = 1;
+            setNewEvent(newEvent);
             fetch("/api/event", {
               method: "POST",
               headers: {
@@ -442,7 +437,7 @@ function Home(props) {
           setNewEvent({});
           // Close the Modal
           setNewEventModal(false);
-          if(checked) {
+          if(checkedTicket) {
             resetTickets();
           }
           } else {
@@ -497,10 +492,12 @@ function Home(props) {
 
       <CreateEventModal
         newEventModal={newEventModal}
-        checked={checked}
+        checkedTicket={checkedTicket}
+        checkedDeadline={checkedDeadline}
         tickets={tickets}
+        setCheckedDeadline={setCheckedDeadline}
         setTickets={setTickets}
-        setChecked={setChecked}
+        setCheckedTicket={setCheckedTicket}
         whenChanging={whenChanging}
         handleStartTimeChange={handleStartTimeChange}
         handleEndTimeChange={handleEndTimeChange}

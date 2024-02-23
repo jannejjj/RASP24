@@ -75,13 +75,13 @@ function CreateEventModal(props)
                 <OutlinedInput fullWidth multiline required placeholder={'Description'} type="text" id="description" sx={{m: 1}} />
                 <FormControlLabel 
                 control={<Switch />}
-                label="Limited tickets" checked={props.checked}
+                label="Limited tickets" checkedTicket={props.checkedTicket}
                 onChange={props.resetTickets}
                 />
                 <OutlinedInput 
                   fullWidth 
                   required 
-                  disabled={!props.checked} 
+                  disabled={!props.checkedTicket} 
                   placeholder={'Number of tickets'} 
                   min="0" 
                   type="number" 

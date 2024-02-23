@@ -53,6 +53,8 @@ router.post('/login',
                 //creates JWT
                 const jwtPayload = {
                     id: member._id,
+                    firstname: member.firstname,
+                    lastname: member.lastname,
                     email: member.email,
                     admin: member.admin
                 }
@@ -63,7 +65,7 @@ router.post('/login',
                     expiresIn: '24h' //expires on 24 hours and log in is needed again.
                     },
                     (err, token) => {
-                    res.json({success: true, token, admin: member.admin, id: member._id});
+                    res.json({success: true, token, admin: member.admin, id: member._id, firstname: member.firstname, lastname: member.lastname});
                     }
                 );
                 } else {
@@ -135,6 +137,7 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
   const event = new Event({
       title: req.body.title,
       creator: req.body.creator,
+      creatorId: req.body.creatorId,
       startDate: req.body.startDate,
       endDate: req.body.endDate,
       location: req.body.location,
@@ -160,7 +163,7 @@ router.post('/authenticate/token', (req, res) =>
 
         if (payload)
         {
-            return res.json({success: true, admin: payload.admin, id: payload.id});
+            return res.json({success: true, admin: payload.admin, id: payload.id, firstname: payload.firstname, lastname: payload.lastname});
         }
         else
         {
