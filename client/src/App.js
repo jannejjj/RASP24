@@ -7,7 +7,6 @@ import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
 import { useState, useEffect } from 'react';
-import MyEvents from './components/MyEvents';
 
 function App() {
   const [currentUser, setCurrentUser] = useState({
@@ -80,7 +79,6 @@ function App() {
           <Route path="/MyProfile" element={<MyProfile currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           <Route path="/Register" element={<Register currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           <Route path="/Login" element={<Login currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
-          <Route path="/MyEvents" element={<MyEvents currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           </Routes>
           <div className='Footer'>
             <p>AssocEase &copy;</p>

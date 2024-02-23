@@ -87,7 +87,6 @@ export default function TopBar(props) {
             <MenuItem component={RouterLink} to='/'>Home</MenuItem>
             <MenuItem component={RouterLink} to='/Members'>Members</MenuItem>
             {props.currentUser.loggedIn && <MenuItem component={RouterLink} to='/MyProfile'>My Profile</MenuItem>}
-            {props.currentUser.loggedIn && <MenuItem component={RouterLink} to='/MyEvents'>My Events</MenuItem>}
             {!props.currentUser.loggedIn && <MenuItem component={RouterLink} to='/Register'>Register</MenuItem>}
             {props.currentUser.loggedIn && <MenuItem onClick={logout} component={RouterLink}>Logout</MenuItem>}
             {!props.currentUser.loggedIn && <MenuItem onClick={logout} component={RouterLink} to='/Login'>Login</MenuItem>}
@@ -178,17 +177,6 @@ export default function TopBar(props) {
             onClick={() => {setSelectedPage("Register")}}
           >
             Register
-          </Button>}
-          {props.currentUser.loggedIn && <Button component={RouterLink} to='/MyEvents'
-            color="inherit"
-            disableRipple
-            sx={{
-              letterSpacing: ".1rem",
-              paddingLeft: "12px",
-              paddingRight: "12px",
-            }}
-          >
-            My Events
           </Button>}
         </Box>
 
