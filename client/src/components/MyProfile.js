@@ -44,7 +44,7 @@ function EventItem(props) {
     if (confirmed) {
       try {
         // Send updated data to the server
-        const response = await fetch('http://localhost:4000/users/updateProfile', {
+        const response = await fetch('/users/updateProfile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -211,7 +211,7 @@ function Home({ currentUser, setCurrentUser }) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/users/getData/${currentUser.id}`);
+      const response = await fetch(`/users/getData/${currentUser.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
