@@ -40,9 +40,15 @@ function CreateEventModal(props)
                       },
                     }}
                   />
+                  <FormControlLabel 
+                    control={<Switch />}
+                    label="Deadline for joining" checkedDeadline={props.checkedDeadline}
+                    onChange={props.handleDeadlineSwitch}
+                  />
                   <DateTimePicker
                     onChange={props.handleJoinDeadlineChange}
                     onError={props.handleJoinDeadlineError}
+                    disabled={!props.checkedDeadline}
                     label="Event join deadline" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
                     format="DD/MM/YYYY hh:mm"
@@ -50,7 +56,6 @@ function CreateEventModal(props)
                     disablePast={true}
                     slotProps={{
                       textField: {
-                        required: true,
                         id: 'joinDeadline',
                         readOnly: true,
                       },
@@ -74,9 +79,9 @@ function CreateEventModal(props)
                 </LocalizationProvider>
                 <OutlinedInput fullWidth multiline required placeholder={'Description'} type="text" id="description" sx={{m: 1}} />
                 <FormControlLabel 
-                control={<Switch />}
-                label="Limited tickets" checkedTicket={props.checkedTicket}
-                onChange={props.resetTickets}
+                  control={<Switch />}
+                  label="Limited tickets" checkedTicket={props.checkedTicket}
+                  onChange={props.resetTickets}
                 />
                 <OutlinedInput 
                   fullWidth 

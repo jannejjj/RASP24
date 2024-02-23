@@ -328,10 +328,20 @@ function Home(props) {
 
   //Resets the amount of tickets and clears the text box.
   const resetTickets = () => {
-    console.log("Reset tickets");
     setTickets("");
     setCheckedTicket(!checkedTicket);
     newEvent.tickets = 0;
+    setNewEvent(newEvent);
+  }
+
+  const handleDeadlineSwitch = () => {
+    setCheckedDeadline(!checkedDeadline);
+    if(!checkedDeadline) {
+      newEvent.joinDeadline = "";
+    } else {
+      newEvent.joinDeadline = newEvent.startDate;
+    }
+    
     setNewEvent(newEvent);
   }
 
@@ -362,6 +372,9 @@ function Home(props) {
     setNewEvent({});
     if(checkedTicket) {
       resetTickets();
+    }
+    if(checkedDeadline) {
+      handleDeadlineSwitch();
     }
     setNewEventModal(false);
   };
@@ -414,11 +427,15 @@ function Home(props) {
     e.preventDefault()
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
-        if(!joinDeadlineError && newEvent.joinDeadline <= newEvent.startDate) {
+        if(!checkedDeadline) {
+          newEvent.joinDeadline = newEvent.startDate;
+        }
+        if(!joinDeadlineError && newEvent.joinDeadline && newEvent.joinDeadline <= newEvent.startDate) {
           if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
             newEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
             newEvent.creatorId = props.currentUser.id;
             newEvent.attendees = 1;
+            
             setNewEvent(newEvent);
             fetch("/api/event", {
               method: "POST",
@@ -439,6 +456,9 @@ function Home(props) {
           setNewEventModal(false);
           if(checkedTicket) {
             resetTickets();
+          }
+          if(checkedDeadline) {
+            handleDeadlineSwitch();
           }
           } else {
             console.log("Starting time needs to be before ending time.");
@@ -508,6 +528,7 @@ function Home(props) {
         handleEndTimeError={handleEndTimeError}
         handleJoinDeadlineError={handleJoinDeadlineError}
         resetTickets={resetTickets}
+        handleDeadlineSwitch={handleDeadlineSwitch}
       />
       <ToastContainer />
     </div>
