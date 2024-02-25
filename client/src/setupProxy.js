@@ -8,4 +8,12 @@ module.exports = (app) => {
       changeOrigin: true,
     })
   );
+  app.use(
+    "/users",
+    createProxyMiddleware({
+      target: process.env.REACT_APP_PROXY_TARGET,
+      changeOrigin: true,
+    })
+  );
 };
+
