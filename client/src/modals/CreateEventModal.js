@@ -21,13 +21,13 @@ function CreateEventModal(props)
           </h2>
 
           <form onSubmit={props.saveNewEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
-                <OutlinedInput fullWidth required placeholder={'Title'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 1}} />
-                <OutlinedInput fullWidth required placeholder={'Location'} type="text" id="location" sx={{m: 1}} />
+                <OutlinedInput fullWidth required placeholder={'Title *'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 0.5}} />
+                <OutlinedInput fullWidth required placeholder={'Location *'} type="text" id="location" sx={{m: 0.5}} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateTimePicker
+                  <DateTimePicker sx={{m: 0.5}}
                     onChange={props.handleStartTimeChange}
                     onError={props.handleStartTimeError}
-                    label="Select Starting Time" 
+                    label="Select starting time" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
                     format="DD/MM/YYYY hh:mm"
                     ampm={false}
@@ -45,7 +45,7 @@ function CreateEventModal(props)
                     label="Deadline for joining" checkedDeadline={props.checkedDeadline}
                     onChange={props.handleDeadlineSwitch}
                   />
-                  <DateTimePicker
+                  <DateTimePicker sx={{m: 0.5}}
                     onChange={props.handleJoinDeadlineChange}
                     onError={props.handleJoinDeadlineError}
                     disabled={!props.checkedDeadline}
@@ -61,10 +61,10 @@ function CreateEventModal(props)
                       },
                     }}
                   />
-                  <DateTimePicker
+                  <DateTimePicker sx={{m: 0.5}}
                     onChange={props.handleEndTimeChange}
                     onError={props.handleEndTimeError}
-                    label="Select Ending Time" 
+                    label="Select ending time" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
                     format="DD/MM/YYYY hh:mm"
                     ampm={false}
@@ -77,14 +77,15 @@ function CreateEventModal(props)
                     }}
                   />
                 </LocalizationProvider>
-                <OutlinedInput fullWidth multiline required placeholder={'Description'} type="text" id="description" sx={{m: 1}} />
-                <OutlinedInput fullWidth required placeholder={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 1}} />
+                <OutlinedInput fullWidth multiline required placeholder={'Description *'} type="text" id="description" sx={{m: 0.5}} />
+                <OutlinedInput fullWidth required placeholder={'Price *'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 0.5}} />
                 <FormControlLabel 
                   control={<Switch />}
                   label="Limited tickets" checkedTicket={props.checkedTicket}
                   onChange={props.resetTickets}
                 />
                 <OutlinedInput 
+                  sx={{m: 0.5}}
                   fullWidth 
                   required 
                   disabled={!props.checkedTicket} 
@@ -93,10 +94,10 @@ function CreateEventModal(props)
                   type="number" 
                   inputProps={{min:0}} 
                   id="tickets" 
-                  sx={{m: 1}}
                   value={props.tickets}
                   onChange={e => props.setTickets(e.target.value)}
                 />
+                <p className='HintParagraphSmall' >Required *</p>
                 <div>
                   <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
                   <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit">Save</Button>
