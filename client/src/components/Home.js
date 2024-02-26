@@ -89,85 +89,178 @@ function Details(props) {
 }
 
 function EventItem(props) {
-  // These states store the original event data
+
+  const [editedEvent, setEditedEvent] = useState({});
+  const [startTimeError, setStartTimeError] = useState(false);
+  const [endTimeError, setEndTimeError] = useState(false);
+  const [joinDeadlineError, setJoinDeadlineError] = useState(false);
+
   const [attending, setAttending] = useState(props.attending);
+  const [attendees, setAttendees] = useState(props.attendees);
+
+  // These states store the original event data
   const [title, setTitle] = useState(props.title);
-  const [time, setTime] = useState(props.time);
+  const [startDate, setStartDate] = useState(props.startDate);
+  const [endDate, setEndDate] = useState(props.endDate);
+  const [joinDeadlineDate, setJoinDeadlineDate] = useState(props.joinDeadline);
   const [location, setLocation] = useState(props.location);
   const [description, setDescription] = useState(props.description);
-  const [attendees, setAttendees] = useState(props.attendees);
+  const [price, setPrice] = useState(props.price);
+  const [tickets, setTickets] = useState(props.tickets);
+
+  const [checkedTicket, setCheckedTicket] = useState(false);
+  const [checkedDeadline, setCheckedDeadline] = useState(false);
+
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
   const [openAttend, setOpenAttend] = useState(false);
   const [openCancelAttendance, setOpenCancelAttendance] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(props.title);
-  const [editedTime, setEditedTime] = useState(props.time);
-  const [editedLocation, setEditedLocation] = useState(props.location);
-  const [editedDescription, setEditedDescription] = useState(props.description);
+  
 
-  // Save the history so that the editing can be cancelled
-  const [titleHistory, setTitleHistory] = useState(props.title);
-  const [timeHistory, setTimeHistory] = useState(props.time);
-  const [locationHistory, setLocationHistory] = useState(props.location);
-  const [descriptionHistory, setDescriptionHistory] = useState(
-    props.description
-  );
+const showToastMessage = (message) =>
+{
+    toast.error(message, {
+        position: "top-center",
+        autoClose: 6000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: "dark"
+        });
+}
 
+  // POST edited event
+  const saveEditedEventOnClick = (e) => {
+    e.preventDefault()
+    if(!startTimeError && editedEvent.startDate) {
+      if(!endTimeError) {
+        if(!checkedDeadline) {
+          editedEvent.joinDeadline = editedEvent.startDate;
+        }
+        if(!joinDeadlineError && editedEvent.joinDeadline && editedEvent.joinDeadline <= editedEvent.startDate) {
+          if(!editedEvent.endDate || editedEvent.startDate < editedEvent.endDate) {
+            editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
+            editedEvent.creatorId = props.currentUser.id;
+            editedEvent.attendees = 1;
+            editedEvent.id = props.eventID;
+            
+            setEditedEvent(editedEvent);
+            fetch("/api/event", { // TODO change url to event edit url
+              method: "POST",
+              headers: {
+                  "Content-type": "application/json",
+                  "Authorization": "Bearer " + props.currentUser.token
+              },
+              body: JSON.stringify(editedEvent),
+              mode: "cors"
+          })
+              .then(response => response.json())
+              .then(data => {
+                  console.log(data)
+              })
+          // Empty the input fields
+          setEditedEvent({});
+          // Close the Modal
+          setEdit(false);
+          if(checkedTicket) {
+            resetTickets();
+          }
+          if(checkedDeadline) {
+            handleDeadlineSwitch();
+          }
+          } else {
+            console.log("Starting time needs to be before ending time.");
+            showToastMessage("Starting time needs to be before ending time.");
+          }
+        } else {
+          console.log("Event joining deadline needs to be before or the same as the starting time of the event.");
+            showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
+        }
+      } else {
+        console.log("Ending time is not valid.");
+        showToastMessage("Ending time is not valid.");
+      }
+    } else {
+      console.log("Starting time is not valid.");
+      showToastMessage("Starting time is not valid.");
+    }
+  };
+
+
+//Resets the amount of tickets and clears the text box.
+const resetTickets = () => {
+  setTickets("");
+  setCheckedTicket(!checkedTicket);
+  editedEvent.tickets = 0;
+  setEditedEvent(editedEvent);
+}
+
+const handleDeadlineSwitch = () => {
+  setCheckedDeadline(!checkedDeadline);
+  if(!checkedDeadline) {
+    editedEvent.joinDeadline = "";
+  } else {
+    editedEvent.joinDeadline = editedEvent.startDate;
+  }
+  
+  setEditedEvent(editedEvent);
+}
+
+//Updates the values for the text fields in event creation
+const whenChanging = (event) => {
+  setEditedEvent({...editedEvent, [event.target.id]: event.target.value})
+}
+
+//Updates the values for the start time
+const handleStartTimeChange = (value) => {
+  setStartTimeError(false); // Sets error to false when changes are made
+  setEditedEvent({...editedEvent, ["startDate"]: value});
+};
+
+//Updates the values for the end time
+const handleEndTimeChange = (value) => {
+  setEndTimeError(false); // Sets error to false when changes are made
+  setEditedEvent({...editedEvent, ["endDate"]: value});
+};
+
+//Updates the values for the join deadline
+const handleJoinDeadlineChange = (value) => {
+  setJoinDeadlineError(false); // Sets error to false when changes are made
+  setEditedEvent({...editedEvent, ["joinDeadline"]: value});
+};
+
+const cancelEditOnClick = () => {
+  setEditedEvent({});
+  if(checkedTicket) {
+    resetTickets();
+  }
+  if(checkedDeadline) {
+    handleDeadlineSwitch();
+  }
+  setEdit(false);
+};
+
+// Triggered if there is an error in the date formatting
+const handleStartTimeError = (error) => {
+  console.log("Starting time error: " + error);
+  setStartTimeError(true);
+}
+
+const handleEndTimeError = (error) => {
+  console.log("Ending time error: " + error);
+  setEndTimeError(true);
+}
+
+const handleJoinDeadlineError = (error) => {
+  console.log("Join deadline error: " + error);
+  setJoinDeadlineError(true);
+}
+  // Show edit
   const editOnClick = () => {
     setEdit(true);
-  };
-
-  const saveEditOnClick = () => {
-    // TODO: Send the edited values to the database to actually save the edit
-
-    // Update the history
-    setTitleHistory(editedTitle);
-    setTimeHistory(editedTime);
-    setLocationHistory(editedLocation);
-    setDescriptionHistory(editedDescription);
-
-    // Update the actual values
-    setTitle(editedTitle);
-    setTime(editedTime);
-    setLocation(editedLocation);
-    setDescription(editedDescription);
-
-    // Close the edit
-    setEdit(false);
-  };
-
-  const cancelEditOnClick = () => {
-    // Bring back the old event data
-    setTitle(titleHistory);
-    setTime(timeHistory);
-    setLocation(locationHistory);
-    setDescription(descriptionHistory);
-
-    // Also reset the changes to the edited values
-    setEditedTitle(titleHistory);
-    setEditedTime(timeHistory);
-    setEditedLocation(locationHistory);
-    setEditedDescription(descriptionHistory);
-
-    // Close the edit
-    setEdit(false);
-  };
-
-  const handleTitleChange = (event) => {
-    setEditedTitle(event.target.value);
-  };
-
-  const handleTimeChange = (event) => {
-    setEditedTime(event.target.value);
-  };
-
-  const handleLocationChange = (event) => {
-    setEditedLocation(event.target.value);
-  };
-
-  const handleDescriptionChange = (event) => {
-    setEditedDescription(event.target.value);
   };
 
   const handleEventAttendance = () => {
@@ -181,6 +274,8 @@ function EventItem(props) {
     setAttending(false);
     setAttendees(attendees - 1);
   };
+
+
   if(props.loggedIn) {
     return (
       <div className="HomeEventItem">
@@ -196,7 +291,7 @@ function EventItem(props) {
             <div className="HomeEventTitleAndLocationArea">
               <h2>{title}</h2>
               <h3>Created by: {props.creator}</h3>
-              <h3>{time}</h3>
+              <h3>{startDate}</h3>
               <h3>{location}</h3>
             </div>
   
@@ -233,17 +328,33 @@ function EventItem(props) {
         </div>
   
         <EditEventModal
-          edit={edit}
-          editedDescription={editedDescription}
-          editedLocation={editedLocation}
-          editedTime={editedTime}
-          editedTitle={editedTitle}
-          handleTitleChange={handleTitleChange}
-          handleTimeChange={handleTimeChange}
-          handleLocationChange={handleLocationChange}
-          handleDescriptionChange={handleDescriptionChange}
+          edit={edit} // visible
+          checkedTicket={checkedTicket}
+          checkedDeadline={checkedDeadline}
+          tickets={tickets}
+          setCheckedDeadline={setCheckedDeadline}
+          setTickets={setTickets}
+          setCheckedTicket={setCheckedTicket}
+          whenChanging={whenChanging}
+          handleStartTimeChange={handleStartTimeChange}
+          handleEndTimeChange={handleEndTimeChange}
+          handleJoinDeadlineChange={handleJoinDeadlineChange}
           cancelEditOnClick={cancelEditOnClick}
-          saveEditOnClick={saveEditOnClick}
+          saveEditedEventOnClick={saveEditedEventOnClick}
+          handleStartTimeError={handleStartTimeError}
+          handleEndTimeError={handleEndTimeError}
+          handleJoinDeadlineError={handleJoinDeadlineError}
+          resetTickets={resetTickets}
+          handleDeadlineSwitch={handleDeadlineSwitch}
+          
+          //old values
+          title={title}
+          description={description}
+          location={location}
+          startDate={startDate}
+          endDate={endDate}
+          joinDeadlineDate={joinDeadlineDate}
+          price={price}
         />
   
         <ConfirmAttendanceModal
@@ -281,37 +392,7 @@ function Home(props) {
   const [tickets, setTickets] = useState("");
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState([{}]);
-  /*
-  const [events, setEvents] = useState([
-    {
-      title: "TechSynergy Summit",
-      creator: "Emily Thompson",
-      time: "26.2.2024 12:00",
-      location: "LUT University",
-      attendees: 41,
-      attending: true,
-      description: `The TechSynergy Summit is a premier corporate event designed to bring together industry leaders, visionaries, and innovators in the ever-evolving landscape of technology. This exclusive summit serves as a dynamic platform or collaboration, knowledge exchange, and networking. Attendees can expect insightful keynote presentations, interactive panel discussions, and hands-on workshops that explore the intersection of cutting-edge technologies, fostering an environment where ideas converge, and innovation thrives. Join us at TechSynergy Summit to be at the forefront of the technological revolution and cultivate meaningful connections that propel your organization into the future.`,
-    },
-    {
-      title: "FutureTech Showcase",
-      creator: "Liam Patel",
-      time: "2.4.2024 14:00",
-      location: "LUT University",
-      attendees: 24,
-      attending: false,
-      description: `Step into the future with FutureTech Showcase, where cutting-edge innovations and breakthrough technologies converge. Explore the latest advancements in robotics, artificial intelligence, and beyond. Immerse yourself in a curated exhibition that unveils tomorrow's tech landscape today.`,
-    },
-    {
-      title: "Digital Nexus Symposium",
-      creator: "Sophia Mitchell",
-      time: "18.7.2024 10:00",
-      location: "LUT University",
-      attendees: 98,
-      attending: false,
-      description: `Join thought leaders and industry experts at the Digital Nexus Symposium, a dynamic gathering that explores the interconnected world of digital technologies. Engage in insightful discussions on the impact of AI, data analytics, and cyber-physical systems. Discover the converging points shaping our digital future at this symposium of ideas and collaboration.`,
-    },
-  ]);
-  */
+
   const showToastMessage = (message) =>
     {
         toast.error(message, {
@@ -411,6 +492,7 @@ function Home(props) {
             setLoading(false);
         }
       }
+  
   // Only for users that have logged in
   if (props.currentUser.loggedIn)
   {
@@ -496,15 +578,22 @@ function Home(props) {
         {!loading && events.map((event, index) => (
           <EventItem
             admin={admin}
+            eventID={event.id}
+            currentUser={props.currentUser}
             loggedIn={props.currentUser.loggedIn}
             title={event.title}
             creator={event.creator}
-            time={event.time}
+            creatorId={event.creatorId}
+            startDate={event.startDate}
+            joinDeadline={event.joinDeadline}
+            endDate={event.endDate}
             location={event.location}
             attendees={event.attendees}
             attending={event.attending}
             description={event.description}
+            price={event.price}
             key={index}
+            tickets={event.tickets}
           />
         ))}
         <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
