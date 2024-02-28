@@ -9,6 +9,7 @@ import Login from './components/Login';
 import { useState, useEffect } from 'react';
 
 function App() {
+  const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState({
     admin: false,
     loggedIn: false,
@@ -40,35 +41,41 @@ function App() {
 
   useEffect(() =>
   {
-    const tokenFromStorage = localStorage.getItem('AssocEase_Token');
-    if (tokenFromStorage != null)
+    const tokenFromStorage = localStorage.getItem("AssocEase_Token");
+    async function authenticate()
     {
-      fetch('/api/authenticate/token', {
-        method: 'POST',
+      setLoading(true);
+      await fetch("/api/authenticate/token", {
+        method: "POST",
         headers: {
-          'Content-type': 'application/json'
+          "Content-type": "application/json",
         },
-        body: JSON.stringify({token: tokenFromStorage}),
+        body: JSON.stringify({ token: tokenFromStorage }),
       })
-      .then(response => response.json())
-      .then((data) =>
-      {
-        if (data.success)
+        .then((response) => response.json())
+        .then((data) =>
         {
-          setCurrentUser({
-            admin: data.admin,
-            loggedIn: true,
-            token: tokenFromStorage,
-            firstname: data.firstname,
-            lastname: data.lastname,
-            id: data.id
-          });
-        }
-      });
+          if (data.success)
+          {
+            setCurrentUser({
+              admin: data.admin,
+              loggedIn: true,
+              token: tokenFromStorage,
+              firstname: data.firstname,
+              lastname: data.lastname,
+              id: data.id,
+            });
+          }
+        });
+      setLoading(false);
+    }
+    if (tokenFromStorage !== null)
+    {
+      authenticate();
     }
   }, []);
 
-  return (
+  if (!loading) return (
     <ThemeProvider theme={theme}>
       <Router>
         <div className="App">

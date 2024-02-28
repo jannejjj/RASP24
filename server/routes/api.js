@@ -10,6 +10,8 @@ const passport = require('passport');
 const multer = require("multer")
 const storage = multer.memoryStorage();
 const upload = multer({storage});
+var idFromToken = null;
+
 
 require('../auth/passport')(passport)
 router.use(passport.initialize());
@@ -65,7 +67,7 @@ router.post('/login',
                     expiresIn: '24h' //expires on 24 hours and log in is needed again.
                     },
                     (err, token) => {
-                    res.json({success: true, token, admin: member.admin, id: member._id, firstname: member.firstname, lastname: member.lastname});
+                      res.json({success: true, token, admin: member.admin, id: member._id, firstname: member.firstname, lastname: member.lastname});
                     }
                 );
                 } else {
@@ -78,6 +80,14 @@ router.post('/login',
     }
 });
 
+function getIdfromToken(token){
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    return decodedToken.id;
+}
+
+router.get("/getID", async(req,res)=>{
+    res.json(idFromToken);
+});
 
 // Register new member
 router.post('/register', 
