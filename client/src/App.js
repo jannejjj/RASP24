@@ -13,6 +13,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState({
     admin: false,
     loggedIn: false,
+    firstname: "",
+    lastname: "",
     token: "",
     id: 0
   });

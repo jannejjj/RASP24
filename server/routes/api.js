@@ -3,6 +3,7 @@ var router = express.Router();
 // const controller = require("./controller");
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
+const Event = require("../models/event");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
@@ -26,6 +27,15 @@ router.get("/members", passport.authenticate('jwt', {session: false}), async (re
     }
 });
 
+router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+      const events  = await Event.find({});
+      res.send(events);
+  } catch (err) {
+      console.error(err);
+      res.send("No events.");
+  }
+});
 
 router.post('/login',
   upload.none(),
@@ -45,6 +55,8 @@ router.post('/login',
                 //creates JWT
                 const jwtPayload = {
                     id: member._id,
+                    firstname: member.firstname,
+                    lastname: member.lastname,
                     email: member.email,
                     admin: member.admin
                 }
@@ -55,8 +67,7 @@ router.post('/login',
                     expiresIn: '24h' //expires on 24 hours and log in is needed again.
                     },
                     (err, token) => {
-
-                    res.json({success: true, token, admin: member.admin, id: member._id});
+                      res.json({success: true, token, admin: member.admin, id: member._id, firstname: member.firstname, lastname: member.lastname});
                     }
                 );
                 } else {
@@ -131,6 +142,30 @@ router.post('/register',
       
 });
 
+
+router.post('/event', passport.authenticate('jwt', {session: false}), async (req, res) => {
+  const event = new Event({
+      title: req.body.title,
+      creator: req.body.creator,
+      creatorId: req.body.creatorId,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+      location: req.body.location,
+      description: req.body.description,
+      attendees: req.body.attendees,
+      tickets: req.body.tickets,
+      joinDeadline: req.body.joinDeadline,
+      price: req.body.price
+  });
+  event.save()
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.log(err);
+  });
+});
+
 router.post('/authenticate/token', (req, res) =>
 {
     try
@@ -139,7 +174,7 @@ router.post('/authenticate/token', (req, res) =>
 
         if (payload)
         {
-            return res.json({success: true, admin: payload.admin, id: payload.id});
+            return res.json({success: true, admin: payload.admin, id: payload.id, firstname: payload.firstname, lastname: payload.lastname});
         }
         else
         {
