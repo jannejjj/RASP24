@@ -1,9 +1,10 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect, useRef } from 'react';
 import '../styles/MyProfile.css';
+import '../App.css';
 import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
 
-function EventItem(props) {
+function ProfileItem(props) {
   // These states store the original event data
   const [firstname, setFirstname] = useState(props.Firstname);
   const [lastname, setLastname] = useState(props.Lastname);
@@ -157,16 +158,17 @@ function EventItem(props) {
 
   return (
     <div className='MyInfo'>
-      <img src='https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg' />
-      <div>
-        <p>Name: {firstname}{lastname}</p>
-        <p>Phone: {phone}</p>
-        <p>Email: {email}</p>
-        <p>Address: {address}</p>
-        <p>City: {city}, {postalcode}</p>
-        <p>Country: {country}</p>
+      <img src='https://www.paxus.com.au/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOW1nQXc9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--c0b8b8e1c6c0819b6eef4fb97c1b80ff9b77717d/7%20linkedin%20photo%20tipes%20to%20maximise%20your%20impact.png' />
+      <div className='MyInfoTextArea'>
+        <h2>{firstname} {lastname}</h2>
+
+        <p>{email}</p>
+        <p>{phone}</p>
+        <p>{address}</p>
+        <p>{city}, {postalcode}</p>
+        <p>{country}</p>
       </div>
-      <Button variant='outlined' onClick={editOnClick} >Edit</Button>
+      <Button variant='outlined' onClick={editOnClick} >Edit Information</Button>
 
       <EditDetailsModal 
         edit={edit} 
@@ -191,27 +193,27 @@ function EventItem(props) {
   )
 }
 
-
-
-
-function Home({ currentUser, setCurrentUser }) {
+function MyProfile(props) {
   const [user, setUser ] = useState(null);
+  const [selectedView, setSelectedView] = useState("Information");
 
-  /*const fetchUserId = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/api/getID');
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      localStorage.setItem("id",await response.json());
-    } catch (error) {
-      console.error('Error fetching user data:', error);
+  // These used to navigate between the My Information and My Events divs
+  const informationRef = useRef(null);
+  const eventsRef = useRef(null);
+  const currentRef = useRef(null);
+
+  const scrollToRef = (ref) =>
+  {
+    if (ref.current)
+    {
+      ref.current.scrollIntoView();
+      currentRef.current = ref.current;
     }
-  };*/
+  }
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`/users/getData/${currentUser.id}`);
+      const response = await fetch(`/users/getData/${props.currentUser.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
@@ -222,16 +224,29 @@ function Home({ currentUser, setCurrentUser }) {
   };
 
   useEffect(() => {
-    //fetchUserId();
     fetchUserData();
-  }, [currentUser.id]);
+  }, []);
 
   return (
-    <div className='HomePageBackground'>
-    <h1>My Profile</h1>
-    <div className='Background'>
-        {user ? (
-            <EventItem
+    <div className='MyProfileBackground'>
+      <h1>My Profile</h1>
+      <div className='HorizontalSeparator' style={{maxWidth: "700px", marginBottom: "0"}} />
+
+      <div className='MyProfileNavButtonArea'>
+        <div className='MyProfileNavButton' style={selectedView === "Information" ? {"borderColor": "#2C041C"} : {"borderColor": "transparent"}} onClick={() => {setSelectedView("Information"); scrollToRef(informationRef)}} >
+          <h3>My Information</h3>
+        </div>
+        <div className='MyProfileNavButton' style={selectedView === "Events" ? {"borderColor": "#2C041C"} : {"borderColor": "transparent"}} onClick={() => {setSelectedView("Events"); scrollToRef(eventsRef)}} >
+          <h3>My Events</h3>
+        </div>
+      </div>
+
+      <div className='Background'>
+        {/* This is shwon when the user has selected "My Information" from the top menu. */}
+        <div className='MyInformationArea' ref={informationRef} >
+          {user &&
+            (
+              <ProfileItem
                 Firstname={user.firstname}
                 Lastname={user.lastname}
                 Phone={user.phone}
@@ -240,15 +255,17 @@ function Home({ currentUser, setCurrentUser }) {
                 City={user.city}
                 Country={user.country}
                 Email={user.email}
-            />
-        ) : (
-            <p>user is false</p>
-        )}
+              />
+            )
+          }
+        </div>
+        {/* This is shwon when the user has selected "My Events" from the top menu. */}
+        <div className='MyEventsArea' ref={eventsRef}>
+          
+        </div>
+      </div>
     </div>
-</div>
-
-
   )
 }
 
-export default Home
+export default MyProfile
