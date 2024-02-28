@@ -280,6 +280,7 @@ function Home(props) {
   const [checkedDeadline, setCheckedDeadline] = useState(false);
   const [tickets, setTickets] = useState("");
   const [loading, setLoading] = useState(true);
+  const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
   /*
   const [events, setEvents] = useState([
@@ -420,7 +421,7 @@ function Home(props) {
     };
   }
   setLoading(false);
-  }, [])
+  }, [updateEvents])
 
   // POST new event
   const saveNewEventOnClick = (e) => {
@@ -454,6 +455,8 @@ function Home(props) {
           setNewEvent({});
           // Close the Modal
           setNewEventModal(false);
+          // Update events list by toggling the boolean
+          setUpdateEvents(!updateEvents);
           if(checkedTicket) {
             resetTickets();
           }
