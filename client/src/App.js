@@ -75,7 +75,7 @@ function App() {
     }
   }, []);
 
-  return (
+  if (!loading) return (
     <ThemeProvider theme={theme}>
       <Router>
         <div className="App">
