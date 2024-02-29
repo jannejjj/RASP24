@@ -4,6 +4,7 @@ var router = express.Router();
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
 const Event = require("../models/event");
+const Member_Event = require("../models/member_event");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
@@ -165,11 +166,24 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
     .catch(err => {
       console.log(err);
   });
+
+  // Add the creator as an attendee in the back-end
+  const member_event = new Member_Event({
+    date: new Date(),
+    paid: false,
+    member: req.body.creatorId,
+    event: event._id
+  });
+  member_event.save()
+    .catch(err => {
+      console.log(err);
+  });
 });
 
 router.delete('/event/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
       await Event.findByIdAndDelete(req.params.id);
+      await Member_Event.deleteMany({event: req.params.id});
       res.status(200).json({ message: "Event deleted." });
   } catch (err) {
       res.status(500).json({error: "Error deleting event."});
