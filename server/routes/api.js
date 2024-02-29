@@ -154,6 +154,7 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
       description: req.body.description,
       attendees: req.body.attendees,
       tickets: req.body.tickets,
+      ticketsSold: 0,
       joinDeadline: req.body.joinDeadline,
       price: req.body.price
   });
@@ -164,6 +165,15 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
     .catch(err => {
       console.log(err);
   });
+});
+
+router.delete('/event/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+      await Event.findByIdAndDelete(req.params.id);
+      res.status(200).json({ message: "Event deleted." });
+  } catch (err) {
+      res.status(500).json({error: "Error deleting event."});
+  }
 });
 
 router.post('/authenticate/token', (req, res) =>

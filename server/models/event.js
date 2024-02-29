@@ -12,6 +12,7 @@ let eventSchema = new Schema ({
     location:{type: String},
     attendees: {type: Number},
     tickets: {type: Number},
+    ticketsSold: {type: Number},
     joinDeadline: {type: Date}, 
     logo:[{
         type: mongoose.Schema.Types.ObjectId,
