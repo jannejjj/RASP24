@@ -96,5 +96,5 @@ img
   align-items: center;
   
   padding: 15px 0 15px 0;
-  overflow: scroll;
+  overflow: hidden;
 }

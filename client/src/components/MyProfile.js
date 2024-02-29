@@ -236,14 +236,15 @@ function MyProfile(props) {
 
   const fetchUsersEvents = async () =>
   {
-    fetch('/api/get/events/for/' + props.currentUser.id, {
+    const response = await fetch('/api/get/events/for/' + props.currentUser.id, {
       method: "GET"
     })
-    .then(response => response.json())
-    .then(data =>
-      {
-        setEvents(data.events);
-      });
+    
+    if (response)
+    {
+      const data = await response.json();
+      setEvents(data.events);
+    }
   }
 
   useEffect(() => {
@@ -256,10 +257,9 @@ function MyProfile(props) {
     // DELETED ONCE WE HAVE THE ABILITY TO JOIN EVENTS AND THE "REAL" EVENTS LIST CAN BE SHOWN HERE
 
     // Fetches the events the user is currently partisipating in
-    fetchUsersEvents();
-
+    // fetchUsersEvents();
+    
     // Create events for testing
-    /*
     setEvents([
       {
         title: "TechSynergy Summit",
@@ -289,8 +289,7 @@ function MyProfile(props) {
         description: `Join thought leaders and industry experts at the Digital Nexus Symposium, a dynamic gathering that explores the interconnected world of digital technologies. Engage in insightful discussions on the impact of AI, data analytics, and cyber-physical systems. Discover the converging points shaping our digital future at this symposium of ideas and collaboration.`,
       },
     ]);
-    */
-
+    
     // When the user refreshes the page, check which of the views was selected and scroll into that
     const selectedView_stored = sessionStorage.getItem('AssocEase_MyProfileSelectedView');
     if (selectedView_stored)
@@ -372,15 +371,14 @@ function MyProfile(props) {
               <div>
                 {events.length === 0 ?
                   (
-                    <p className='HintParagraphBig' style={{margin: "30px 0 0 0", fontStyle: "italic"}}>You are not partisipating in any events</p>
+                    <p className='HintParagraphBig' style={{margin: "30px 0 0 0", fontStyle: "italic"}}>You are not participating in any events</p>
                   ) 
                   :
                   (
-                    <div style={{width: "100%", display: "flex",flexDirection: "column", alignItems: "center", overflow: "scroll", maxHeight: "65vh"}}>
+                    <div style={{width: "100%", display: "flex",flexDirection: "column", alignItems: "center", overflowY: "scroll", overflowX: "hidden", maxHeight: "65vh"}}>
                       {events.map((event, index) => 
                       (
                         <EventItem
-                        // The admin abilities are always disabled meaning that the admin can only edit the events from the Home view.
                         admin={props.currentUser.admin}
                         title={event.title}
                         creator={event.creator}
