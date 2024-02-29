@@ -167,14 +167,16 @@ function EventItem(props) {
           </div>
   
           <div className='HomeEventAttendanceButtonsArea'>
-            {props.admin && 
-              (
-                <div>
-                  <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
-                  <Button className='DeleteEventButton' variant='contained' disabled={ticketsSold > 0} onClick={deleteOnClick} >Delete</Button>
-                </div>
-              )
-            }
+            <div>
+              {props.admin && 
+                (
+                  <div>
+                    <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
+                    <Button className='DeleteEventButton' variant='contained' disabled={ticketsSold > 0} onClick={deleteOnClick} >Delete</Button>
+                  </div>
+                )
+              }
+            </div>
             <div>
               {attending ? 
                 (
