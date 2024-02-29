@@ -15,7 +15,7 @@ function DeleteEventModal(props)
           </h2>
           <div className='HorizontalSeparator' />
           <p style={{textAlign: "center"}}>
-            Are you sure you want to delete this event? It has {props.attendees === 0 ? "no attendees." : props.attendees + " attendees."}.
+            Are you sure you want to delete this event? It has {props.attendees === 0 ? "no attendees" : props.attendees + " attendees"}.
           </p>
           <div>
             <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelDeleteOnClick} >Cancel</Button>
