@@ -215,6 +215,13 @@ function MyProfile(props) {
     }
   }
 
+  // Handle the navigation onClick between the information and evetn views
+  const handleNavOnClick = (value) =>
+  {
+    setSelectedView(value);
+    sessionStorage.setItem('AssocEase_MyProfileSelectedView', value);
+  }
+
   const fetchUserData = async () => {
     try {
       const response = await fetch(`/users/getData/${props.currentUser.id}`);
@@ -249,10 +256,10 @@ function MyProfile(props) {
     // DELETED ONCE WE HAVE THE ABILITY TO JOIN EVENTS AND THE "REAL" EVENTS LIST CAN BE SHOWN HERE
 
     // Fetches the events the user is currently partisipating in
-    // fetchUsersEvents();
+    fetchUsersEvents();
 
     // Create events for testing
-    
+    /*
     setEvents([
       {
         title: "TechSynergy Summit",
@@ -282,8 +289,44 @@ function MyProfile(props) {
         description: `Join thought leaders and industry experts at the Digital Nexus Symposium, a dynamic gathering that explores the interconnected world of digital technologies. Engage in insightful discussions on the impact of AI, data analytics, and cyber-physical systems. Discover the converging points shaping our digital future at this symposium of ideas and collaboration.`,
       },
     ]);
-    
+    */
 
+    // When the user refreshes the page, check which of the views was selected and scroll into that
+    const selectedView_stored = sessionStorage.getItem('AssocEase_MyProfileSelectedView');
+    if (selectedView_stored)
+    {
+      setSelectedView(selectedView_stored);
+      if (selectedView_stored === "Information")
+      {
+        scrollToRef(informationRef);
+      }
+      else
+      {
+        scrollToRef(eventsRef);
+      }
+    }
+
+    // when the window is resized the information and events divs can sometimes be a little messed up :).
+    // Created a resize listener for the window that recalibrates the scroll of the divs everytime the 
+    // window is resized.
+    const handleResize = () =>
+    {
+        if (currentRef.current) 
+        {
+          currentRef.current.scrollIntoView();
+        }
+        else if (eventsRef.current)
+        {
+          eventsRef.current.scrollIntoView();
+        }
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () =>
+    {
+        window.removeEventListener("resize", handleResize);
+    }
   }, []);
 
   return (
@@ -292,10 +335,10 @@ function MyProfile(props) {
       <div className='HorizontalSeparator' style={{maxWidth: "700px", marginBottom: "0"}} />
 
       <div className='MyProfileNavButtonArea'>
-        <div className='MyProfileNavButton' style={selectedView === "Information" ? {"borderColor": "#2C041C"} : {"borderColor": "transparent"}} onClick={() => {setSelectedView("Information"); scrollToRef(informationRef)}} >
+        <div className='MyProfileNavButton' style={selectedView === "Information" ? {"borderColor": "#2C041C"} : {"borderColor": "transparent"}} onClick={() => {handleNavOnClick("Information"); scrollToRef(informationRef)}} >
           <h3>My Information</h3>
         </div>
-        <div className='MyProfileNavButton' style={selectedView === "Events" ? {"borderColor": "#2C041C"} : {"borderColor": "transparent"}} onClick={() => {setSelectedView("Events"); scrollToRef(eventsRef)}} >
+        <div className='MyProfileNavButton' style={selectedView === "Events" ? {"borderColor": "#2C041C"} : {"borderColor": "transparent"}} onClick={() => {handleNavOnClick("Events"); scrollToRef(eventsRef)}} >
           <h3>My Events</h3>
         </div>
       </div>
@@ -338,7 +381,7 @@ function MyProfile(props) {
                       (
                         <EventItem
                         // The admin abilities are always disabled meaning that the admin can only edit the events from the Home view.
-                        admin={false}
+                        admin={props.currentUser.admin}
                         title={event.title}
                         creator={event.creator}
                         time={event.time}
