@@ -3,6 +3,7 @@ var router = express.Router();
 // const controller = require("./controller");
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
+const Member_event = require("../models/member_event");
 const Event = require("../models/event");
 const Member_Event = require("../models/member_event");
 const bcrypt = require("bcryptjs");
@@ -143,6 +144,35 @@ router.post('/register',
       
 });
 
+
+router.get('/get/events/for/:id', (req, res) =>
+{
+    const id = req.params.id;
+    // Initialize the list where the events will be added
+    let events = [];
+
+    // Find the events that the user is participating in
+    Member_event.find({member: id})
+    .then((docs) =>
+    {
+        docs.forEach(item => {
+            // ID of the event the user is partisipating
+            let eventID = item.event;
+
+            // Get the events
+            Event.find({_id: eventID})
+            .then((docs) =>
+            {
+                docs.forEach(event => {
+                    events.push(event);
+                });
+            })
+        });
+    });
+
+    // Returns a list every time. If the user is not partisipating in any events, the list is empty.
+    return res.json({events});
+});
 
 router.post('/event', passport.authenticate('jwt', {session: false}), async (req, res) => {
   const event = new Event({
