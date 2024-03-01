@@ -34,7 +34,10 @@ export default function TopBar(props) {
   //Removes Token from localStorage
   const logout = () => {
     if(props.currentUser.loggedIn) {
+      // Empty the local/sessionStorage
       localStorage.removeItem('AssocEase_Token');
+      sessionStorage.removeItem('AssocEase_MyProfileSelectedView');
+
       props.setCurrentUser(
         {
           admin: false,
@@ -44,7 +47,7 @@ export default function TopBar(props) {
         }
       );
 
-      navigate('/Login')
+      navigate('/Login');
     }
   };
 
@@ -54,9 +57,16 @@ export default function TopBar(props) {
     const href = window.location.href;
     const data = href.split('/');
     const page = data[data.length - 1];
-
-    setSelectedPage(page);
-  }, []);
+    
+    if (page === "")
+    {
+      setSelectedPage("Home");
+    }
+    else
+    {
+      setSelectedPage(page);
+    }
+  }, [props]);
 
   return (
     <AppBar position="sticky">

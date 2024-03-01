@@ -82,8 +82,9 @@ function App() {
           <TopBar currentUser={currentUser} setCurrentUser={setCurrentUser} />
           <Routes>
           <Route path="/Members" element={<Members currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
-          <Route path="/" element={(<Home currentUser={currentUser} setCurrentUser={setCurrentUser} />)} />
-          <Route path="/MyProfile" element={<MyProfile currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
+          <Route path="/" element={<Home currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
+          {/* If the user is not logged in and they go to the MyProfile url, they are rerouted to the home page */}
+          <Route path="/MyProfile" element={currentUser.loggedIn ? ( <MyProfile currentUser={currentUser} setCurrentUser={setCurrentUser} /> ) : ( <Home currentUser={currentUser} setCurrentUser={setCurrentUser} /> )} />
           <Route path="/Register" element={<Register currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           <Route path="/Login" element={<Login currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           </Routes>

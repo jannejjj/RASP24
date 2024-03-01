@@ -1,4 +1,4 @@
-.HomePageBackground
+.MyProfileBackground
 {
   width: 100vw;
   display: flex;
@@ -7,18 +7,14 @@
   margin: 20px 0 0 0;
 }
 
-h1 
-{
-  margin: 0;
-}
-
 .Background {
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-    box-shadow: 0 0 5px #888;
-    padding: 15px;
+    margin: 15px 0 0 0;
     width: 100%;
     max-width: 700px;  
+    overflow: hidden;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: row;
 }
 
 .MyInfo {
@@ -27,20 +23,78 @@ h1
   display: flex;
   flex-direction: column; 
   align-items: center; 
-  gap: 15px;
+  gap: 25px;
 }
 
-p
+.MyInfoTextArea
 {
-  font-size: small;
-  font-weight: 400;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.MyInfoTextArea p
+{
+  font-size: medium;
 }
 
 img
 {
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
   border-radius: 5px;
+  object-fit: cover;
 }
 
+.MyProfileNavButtonArea
+{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 700px;
+}
+
+.MyProfileNavButton
+{
+  width: 50%;
+  max-width: 350px;
+  padding: 10px 0 10px 0;
+  border-bottom: solid;
+  border-width: 2px;
+  border-color: #2C041C;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  transition: all 0.5s;
+}
+
+.MyProfileNavButton:hover
+{
+  cursor: pointer;
+  background-color: rgb(238, 238, 238);
+}
+
+.MyInformationArea
+{
+  width: 100%;
+  min-width: 100%;
+  padding: 15px 0 15px 0;
+}
+
+.MyEventsArea
+{
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  padding: 15px 0 15px 0;
+  overflow: hidden;
+}

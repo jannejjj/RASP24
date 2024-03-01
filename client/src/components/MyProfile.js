@@ -1,9 +1,11 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect, useRef } from 'react';
 import '../styles/MyProfile.css';
+import '../App.css';
 import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
+import EventItem from './EventItem';
 
-function EventItem(props) {
+function ProfileItem(props) {
   // These states store the original event data
   const [firstname, setFirstname] = useState(props.Firstname);
   const [lastname, setLastname] = useState(props.Lastname);
@@ -157,16 +159,17 @@ function EventItem(props) {
 
   return (
     <div className='MyInfo'>
-      <img src='https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg' />
-      <div>
-        <p>Name: {firstname}{lastname}</p>
-        <p>Phone: {phone}</p>
-        <p>Email: {email}</p>
-        <p>Address: {address}</p>
-        <p>City: {city}, {postalcode}</p>
-        <p>Country: {country}</p>
+      <img src='https://www.paxus.com.au/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOW1nQXc9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--c0b8b8e1c6c0819b6eef4fb97c1b80ff9b77717d/7%20linkedin%20photo%20tipes%20to%20maximise%20your%20impact.png' />
+      <div className='MyInfoTextArea'>
+        <h2>{firstname} {lastname}</h2>
+
+        <p>{email}</p>
+        <p>{phone}</p>
+        <p>{address}</p>
+        <p>{city}, {postalcode}</p>
+        <p>{country}</p>
       </div>
-      <Button variant='outlined' onClick={editOnClick} >Edit</Button>
+      <Button variant='outlined' onClick={editOnClick} >Edit Information</Button>
 
       <EditDetailsModal 
         edit={edit} 
@@ -191,27 +194,37 @@ function EventItem(props) {
   )
 }
 
-
-
-
-function Home({ currentUser, setCurrentUser }) {
+function MyProfile(props) {
   const [user, setUser ] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+  const [selectedView, setSelectedView] = useState("Information");
 
-  /*const fetchUserId = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/api/getID');
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      localStorage.setItem("id",await response.json());
-    } catch (error) {
-      console.error('Error fetching user data:', error);
+  // These used to navigate between the My Information and My Events divs
+  const informationRef = useRef(null);
+  const eventsRef = useRef(null);
+  const currentRef = useRef(null);
+
+  // Used to scroll between the My Information and My Events views
+  const scrollToRef = (ref) =>
+  {
+    if (ref.current)
+    {
+      ref.current.scrollIntoView();
+      currentRef.current = ref.current;
     }
-  };*/
+  }
+
+  // Handle the navigation onClick between the information and evetn views
+  const handleNavOnClick = (value) =>
+  {
+    setSelectedView(value);
+    sessionStorage.setItem('AssocEase_MyProfileSelectedView', value);
+  }
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`/users/getData/${currentUser.id}`);
+      const response = await fetch(`/users/getData/${props.currentUser.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
@@ -221,17 +234,120 @@ function Home({ currentUser, setCurrentUser }) {
     }
   };
 
+  const fetchUsersEvents = async () =>
+  {
+    const response = await fetch('/api/get/events/for/' + props.currentUser.id, {
+      method: "GET"
+    })
+    
+    if (response)
+    {
+      const data = await response.json();
+      setEvents(data.events);
+    }
+  }
+
   useEffect(() => {
-    //fetchUserId();
+    // Fetches the users personal information
     fetchUserData();
-  }, [currentUser.id]);
+
+    // WE DON'T CURRENTLY HAVE THE ABILITY TO JOIN EVENTS AND FOR THAT REASON YOU WON'T SEE ANY EVENTS IN
+    // THE MY EVENTS VIEW. IF YOU WANT TO SEE WHAT THE MY EVENTS LIST WOULD LOOK LIKE, COMMENT THE 
+    // 'fetchUsersEvents'- METHOD AND UNCOMMENT THE LIST CREATION BELOW. THIS FUNCTIONALITY WILL BE
+    // DELETED ONCE WE HAVE THE ABILITY TO JOIN EVENTS AND THE "REAL" EVENTS LIST CAN BE SHOWN HERE
+
+    // Fetches the events the user is currently partisipating in
+    // fetchUsersEvents();
+    
+    // Create events for testing
+    setEvents([
+      {
+        title: "TechSynergy Summit",
+        creator: "Emily Thompson",
+        time: "26.2.2024 12:00",
+        location: "LUT University",
+        attendees: 41,
+        attending: true,
+        description: `The TechSynergy Summit is a premier corporate event designed to bring together industry leaders, visionaries, and innovators in the ever-evolving landscape of technology. This exclusive summit serves as a dynamic platform or collaboration, knowledge exchange, and networking. Attendees can expect insightful keynote presentations, interactive panel discussions, and hands-on workshops that explore the intersection of cutting-edge technologies, fostering an environment where ideas converge, and innovation thrives. Join us at TechSynergy Summit to be at the forefront of the technological revolution and cultivate meaningful connections that propel your organization into the future.`,
+      },
+      {
+        title: "FutureTech Showcase",
+        creator: "Liam Patel",
+        time: "2.4.2024 14:00",
+        location: "LUT University",
+        attendees: 24,
+        attending: true,
+        description: `Step into the future with FutureTech Showcase, where cutting-edge innovations and breakthrough technologies converge. Explore the latest advancements in robotics, artificial intelligence, and beyond. Immerse yourself in a curated exhibition that unveils tomorrow's tech landscape today.`,
+      },
+      {
+        title: "Digital Nexus Symposium",
+        creator: "Sophia Mitchell",
+        time: "18.7.2024 10:00",
+        location: "LUT University",
+        attendees: 98,
+        attending: true,
+        description: `Join thought leaders and industry experts at the Digital Nexus Symposium, a dynamic gathering that explores the interconnected world of digital technologies. Engage in insightful discussions on the impact of AI, data analytics, and cyber-physical systems. Discover the converging points shaping our digital future at this symposium of ideas and collaboration.`,
+      },
+    ]);
+    
+    // When the user refreshes the page, check which of the views was selected and scroll into that
+    const selectedView_stored = sessionStorage.getItem('AssocEase_MyProfileSelectedView');
+    if (selectedView_stored)
+    {
+      setSelectedView(selectedView_stored);
+      if (selectedView_stored === "Information")
+      {
+        scrollToRef(informationRef);
+      }
+      else
+      {
+        scrollToRef(eventsRef);
+      }
+    }
+
+    // when the window is resized the information and events divs can sometimes be a little messed up :).
+    // Created a resize listener for the window that recalibrates the scroll of the divs everytime the 
+    // window is resized.
+    const handleResize = () =>
+    {
+        if (currentRef.current) 
+        {
+          currentRef.current.scrollIntoView();
+        }
+        else if (eventsRef.current)
+        {
+          eventsRef.current.scrollIntoView();
+        }
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () =>
+    {
+        window.removeEventListener("resize", handleResize);
+    }
+  }, []);
 
   return (
-    <div className='HomePageBackground'>
-    <h1>My Profile</h1>
-    <div className='Background'>
-        {user ? (
-            <EventItem
+    <div className='MyProfileBackground'>
+      <h1>My Profile</h1>
+      <div className='HorizontalSeparator' style={{maxWidth: "700px", marginBottom: "0"}} />
+
+      <div className='MyProfileNavButtonArea'>
+        <div className='MyProfileNavButton' style={selectedView === "Information" ? {"borderColor": "#2C041C"} : {"borderColor": "transparent"}} onClick={() => {handleNavOnClick("Information"); scrollToRef(informationRef)}} >
+          <h3>My Information</h3>
+        </div>
+        <div className='MyProfileNavButton' style={selectedView === "Events" ? {"borderColor": "#2C041C"} : {"borderColor": "transparent"}} onClick={() => {handleNavOnClick("Events"); scrollToRef(eventsRef)}} >
+          <h3>My Events</h3>
+        </div>
+      </div>
+
+      <div className='Background'>
+        {/* This is shwon when the user has selected "My Information" from the top menu. */}
+        <div className='MyInformationArea' ref={informationRef} >
+          {user &&
+            (
+              <ProfileItem
                 Firstname={user.firstname}
                 Lastname={user.lastname}
                 Phone={user.phone}
@@ -240,15 +356,50 @@ function Home({ currentUser, setCurrentUser }) {
                 City={user.city}
                 Country={user.country}
                 Email={user.email}
-            />
-        ) : (
-            <p>user is false</p>
-        )}
+              />
+            )
+          }
+        </div>
+        {/* This is shwon when the user has selected "My Events" from the top menu. */}
+        <div className='MyEventsArea' ref={eventsRef}>
+          {loadingEvents ?
+            (
+              <p className='HintParagraphBig'>Loading...</p>
+            )
+            :
+            (
+              <div>
+                {events.length === 0 ?
+                  (
+                    <p className='HintParagraphBig' style={{margin: "30px 0 0 0", fontStyle: "italic"}}>You are not participating in any events</p>
+                  ) 
+                  :
+                  (
+                    <div style={{width: "100%", display: "flex",flexDirection: "column", alignItems: "center", overflowY: "scroll", overflowX: "hidden", maxHeight: "65vh"}}>
+                      {events.map((event, index) => 
+                      (
+                        <EventItem
+                        admin={props.currentUser.admin}
+                        title={event.title}
+                        creator={event.creator}
+                        time={event.time}
+                        location={event.location}
+                        attendees={event.attendees}
+                        attending={event.attending}
+                        description={event.description}
+                        key={index}
+                        />
+                      ))}
+                    </div>
+                  ) 
+                }
+              </div>
+            )
+          }
+        </div>
+      </div>
     </div>
-</div>
-
-
   )
 }
 
-export default Home
+export default MyProfile
