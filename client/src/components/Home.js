@@ -86,6 +86,9 @@ function Details(props) {
   );
 }
 
+
+  
+
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
   const [newEventModal, setNewEventModal] = useState(false);
@@ -99,37 +102,11 @@ function Home(props) {
   const [loading, setLoading] = useState(true);
   const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
-  /*
-  const [events, setEvents] = useState([
-    {
-      title: "TechSynergy Summit",
-      creator: "Emily Thompson",
-      time: "26.2.2024 12:00",
-      location: "LUT University",
-      attendees: 41,
-      attending: true,
-      description: `The TechSynergy Summit is a premier corporate event designed to bring together industry leaders, visionaries, and innovators in the ever-evolving landscape of technology. This exclusive summit serves as a dynamic platform or collaboration, knowledge exchange, and networking. Attendees can expect insightful keynote presentations, interactive panel discussions, and hands-on workshops that explore the intersection of cutting-edge technologies, fostering an environment where ideas converge, and innovation thrives. Join us at TechSynergy Summit to be at the forefront of the technological revolution and cultivate meaningful connections that propel your organization into the future.`,
-    },
-    {
-      title: "FutureTech Showcase",
-      creator: "Liam Patel",
-      time: "2.4.2024 14:00",
-      location: "LUT University",
-      attendees: 24,
-      attending: false,
-      description: `Step into the future with FutureTech Showcase, where cutting-edge innovations and breakthrough technologies converge. Explore the latest advancements in robotics, artificial intelligence, and beyond. Immerse yourself in a curated exhibition that unveils tomorrow's tech landscape today.`,
-    },
-    {
-      title: "Digital Nexus Symposium",
-      creator: "Sophia Mitchell",
-      time: "18.7.2024 10:00",
-      location: "LUT University",
-      attendees: 98,
-      attending: false,
-      description: `Join thought leaders and industry experts at the Digital Nexus Symposium, a dynamic gathering that explores the interconnected world of digital technologies. Engage in insightful discussions on the impact of AI, data analytics, and cyber-physical systems. Discover the converging points shaping our digital future at this symposium of ideas and collaboration.`,
-    },
-  ]);
-  */
+
+  const toggleUpdateEvents = () => {
+    setUpdateEvents(!updateEvents);
+  }
+
   const showToastMessage = (message) =>
     {
         toast.error(message, {
@@ -142,6 +119,19 @@ function Home(props) {
             progress: undefined,
             theme: "dark"
             });
+    }
+  
+    const showToastSuccessMessage = (message) =>  {
+      toast.success(message, {
+          position: "top-center",
+          autoClose: 6000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+          theme: "dark"
+          });
     }
 
   //Resets the amount of tickets and clears the text box.
@@ -273,7 +263,7 @@ function Home(props) {
           // Close the Modal
           setNewEventModal(false);
           // Update events list by toggling the boolean
-          setUpdateEvents(!updateEvents);
+          toggleUpdateEvents();
           if(checkedTicket) {
             resetTickets();
           }
@@ -307,14 +297,20 @@ function Home(props) {
       <div className="HomeEventsList">
         <h1>Events</h1>
         <div className="HorizontalSeparator" style={{ width: "95%" }} />
+        
         {admin && (
           <Button color="primary" variant='contained' onClick={() => {setNewEventModal(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
         )}
+
         {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">
             Loading...
           </Typography>}
-        {!loading && events.map((event, index) => (
+
+        {props.currentUser.loggedIn
+        ?
+        !loading && events.map((event, index) => (
           <EventItem
+            id={event._id}
             admin={admin}
             loggedIn={props.currentUser.loggedIn}
             title={event.title}
@@ -324,9 +320,19 @@ function Home(props) {
             attendees={event.attendees}
             attending={event.attending}
             description={event.description}
+            ticketsSold={event.ticketsSold}
             key={index}
+            showToastMessage={showToastMessage}
+            showToastSuccessMessage={showToastSuccessMessage}
+            token={props.currentUser.token}
+            toggleUpdateEvents={toggleUpdateEvents}
           />
-        ))}
+        ))
+        :
+        <Typography sx={{ mt: 20 }} variant='h4' align="center">
+          Please log in to see events.</Typography>
+        }
+
         <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
       </div>
 

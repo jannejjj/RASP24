@@ -9,7 +9,7 @@ import Login from './components/Login';
 import { useState, useEffect } from 'react';
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState({
     admin: false,
     loggedIn: false,

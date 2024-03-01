@@ -6,101 +6,135 @@ import { FaUserGroup } from "react-icons/fa6";
 import CancelAttendanceModal from "../modals/CancelAttendanceModal";
 import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
 import EditEventModal from "../modals/EditEventModal";
+import DeleteEventModal from "../modals/DeleteEventModal";
+import Typography from "@mui/material/Typography";
 
 function EventItem(props) {
-    // These states store the original event data
-    const [attending, setAttending] = useState(props.attending);
-    const [title, setTitle] = useState(props.title);
-    const [time, setTime] = useState(props.time);
-    const [location, setLocation] = useState(props.location);
-    const [description, setDescription] = useState(props.description);
-    const [attendees, setAttendees] = useState(props.attendees);
-  
-    // These states store the data that is edited
-    const [edit, setEdit] = useState(false);
-    const [openAttend, setOpenAttend] = useState(false);
-    const [openCancelAttendance, setOpenCancelAttendance] = useState(false);
-    const [editedTitle, setEditedTitle] = useState(props.title);
-    const [editedTime, setEditedTime] = useState(props.time);
-    const [editedLocation, setEditedLocation] = useState(props.location);
-    const [editedDescription, setEditedDescription] = useState(props.description);
-  
-    // Save the history so that the editing can be cancelled
-    const [titleHistory, setTitleHistory] = useState(props.title);
-    const [timeHistory, setTimeHistory] = useState(props.time);
-    const [locationHistory, setLocationHistory] = useState(props.location);
-    const [descriptionHistory, setDescriptionHistory] = useState(
-      props.description
-    );
-  
-    const editOnClick = () => {
-      setEdit(true);
-    };
-  
-    const saveEditOnClick = () => {
-      // TODO: Send the edited values to the database to actually save the edit
-  
-      // Update the history
-      setTitleHistory(editedTitle);
-      setTimeHistory(editedTime);
-      setLocationHistory(editedLocation);
-      setDescriptionHistory(editedDescription);
-  
-      // Update the actual values
-      setTitle(editedTitle);
-      setTime(editedTime);
-      setLocation(editedLocation);
-      setDescription(editedDescription);
-  
-      // Close the edit
-      setEdit(false);
-    };
-  
-    const cancelEditOnClick = () => {
-      // Bring back the old event data
-      setTitle(titleHistory);
-      setTime(timeHistory);
-      setLocation(locationHistory);
-      setDescription(descriptionHistory);
-  
-      // Also reset the changes to the edited values
-      setEditedTitle(titleHistory);
-      setEditedTime(timeHistory);
-      setEditedLocation(locationHistory);
-      setEditedDescription(descriptionHistory);
-  
-      // Close the edit
-      setEdit(false);
-    };
-  
-    const handleTitleChange = (event) => {
-      setEditedTitle(event.target.value);
-    };
-  
-    const handleTimeChange = (event) => {
-      setEditedTime(event.target.value);
-    };
-  
-    const handleLocationChange = (event) => {
-      setEditedLocation(event.target.value);
-    };
-  
-    const handleDescriptionChange = (event) => {
-      setEditedDescription(event.target.value);
-    };
-  
-    const handleEventAttendance = () => {
-      setOpenAttend(false);
-      setAttending(true);
-      setAttendees(attendees + 1);
-    };
-  
-    const handleCancelEventAttendance = () => {
-      setOpenCancelAttendance(false);
-      setAttending(false);
-      setAttendees(attendees - 1);
-    };
-  
+  // These states store the original event data
+  const [attending, setAttending] = useState(props.attending);
+  const [title, setTitle] = useState(props.title);
+  const [time, setTime] = useState(props.time);
+  const [location, setLocation] = useState(props.location);
+  const [description, setDescription] = useState(props.description);
+  const [attendees, setAttendees] = useState(props.attendees);
+  const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
+
+  // These states store the data that is edited
+  const [edit, setEdit] = useState(false);
+  const [openAttend, setOpenAttend] = useState(false);
+  const [openCancelAttendance, setOpenCancelAttendance] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(props.title);
+  const [editedTime, setEditedTime] = useState(props.time);
+  const [editedLocation, setEditedLocation] = useState(props.location);
+  const [editedDescription, setEditedDescription] = useState(props.description);
+
+  // Save the history so that the editing can be cancelled
+  const [titleHistory, setTitleHistory] = useState(props.title);
+  const [timeHistory, setTimeHistory] = useState(props.time);
+  const [locationHistory, setLocationHistory] = useState(props.location);
+  const [descriptionHistory, setDescriptionHistory] = useState(
+    props.description
+  );
+
+  // State for event deletion modal
+  const [deleteModal, setDeleteModal] = useState(false);
+
+  const editOnClick = () => {
+    setEdit(true);
+  };
+
+  const saveEditOnClick = () => {
+    // TODO: Send the edited values to the database to actually save the edit
+
+    // Update the history
+    setTitleHistory(editedTitle);
+    setTimeHistory(editedTime);
+    setLocationHistory(editedLocation);
+    setDescriptionHistory(editedDescription);
+
+    // Update the actual values
+    setTitle(editedTitle);
+    setTime(editedTime);
+    setLocation(editedLocation);
+    setDescription(editedDescription);
+
+    // Close the edit
+    setEdit(false);
+  };
+
+  const cancelEditOnClick = () => {
+    // Bring back the old event data
+    setTitle(titleHistory);
+    setTime(timeHistory);
+    setLocation(locationHistory);
+    setDescription(descriptionHistory);
+
+    // Also reset the changes to the edited values
+    setEditedTitle(titleHistory);
+    setEditedTime(timeHistory);
+    setEditedLocation(locationHistory);
+    setEditedDescription(descriptionHistory);
+
+    // Close the edit
+    setEdit(false);
+  };
+
+  const handleTitleChange = (event) => {
+    setEditedTitle(event.target.value);
+  };
+
+  const handleTimeChange = (event) => {
+    setEditedTime(event.target.value);
+  };
+
+  const handleLocationChange = (event) => {
+    setEditedLocation(event.target.value);
+  };
+
+  const handleDescriptionChange = (event) => {
+    setEditedDescription(event.target.value);
+  };
+
+  const handleEventAttendance = () => {
+    setOpenAttend(false);
+    setAttending(true);
+    setAttendees(attendees + 1);
+  };
+
+  const handleCancelEventAttendance = () => {
+    setOpenCancelAttendance(false);
+    setAttending(false);
+    setAttendees(attendees - 1);
+  };
+
+  const deleteOnClick = () => {
+    setDeleteModal(true);
+  };
+
+  const cancelDeleteOnClick = () => {
+    setDeleteModal(false);
+  };
+
+  const confirmDeleteOnClick = () => {
+    fetch('/api/event/' + props.id, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + props.token,
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        props.showToastMessage(data.error);
+      } else {
+        props.showToastSuccessMessage(data.message);
+        props.toggleUpdateEvents();
+      }
+      setDeleteModal(false);
+    })
+  };
+
     return (
       <div className="HomeEventItem">
         <div className="HomeEventTop">
@@ -132,11 +166,16 @@ function EventItem(props) {
           </div>
   
           <div className='HomeEventAttendanceButtonsArea'>
-            {props.admin && 
-              (
-                <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
-              )
-            }
+            <div>
+              {props.admin && 
+                (
+                  <div>
+                    <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
+                    <Button className='DeleteEventButton' variant='contained' disabled={ticketsSold > 0} onClick={deleteOnClick} >Delete</Button>
+                  </div>
+                )
+              }
+            </div>
             <div>
               {attending ? 
                 (
@@ -163,6 +202,13 @@ function EventItem(props) {
           handleDescriptionChange={handleDescriptionChange}
           cancelEditOnClick={cancelEditOnClick}
           saveEditOnClick={saveEditOnClick}
+        />
+
+        <DeleteEventModal
+          deleteModal={deleteModal}
+          attendees={attendees}
+          cancelDeleteOnClick={cancelDeleteOnClick}
+          confirmDeleteOnClick={confirmDeleteOnClick}
         />
   
         <ConfirmAttendanceModal

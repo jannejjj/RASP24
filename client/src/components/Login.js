@@ -52,7 +52,9 @@ function Login(props) {
                             admin: data.admin,
                             loggedIn: true,
                             token: data.token,
-                            id: data.id
+                            id: data.id,
+                            firstname: data.firstname,
+                            lastname: data.lastname
                         }
                       );
                       navigate('/');
