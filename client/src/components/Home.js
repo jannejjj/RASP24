@@ -231,7 +231,7 @@ function Home(props) {
   }, [updateEvents])
 
   // POST new event
-  const saveNewEventOnClick = (e) => {
+  const saveNewEventOnClick = async (e) => {
     e.preventDefault()
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
@@ -245,7 +245,7 @@ function Home(props) {
             newEvent.attendees = 1;
             
             setNewEvent(newEvent);
-            fetch("/api/event", {
+            await fetch("/api/event", {
               method: "POST",
               headers: {
                   "Content-type": "application/json",
