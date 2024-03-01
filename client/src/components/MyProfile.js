@@ -256,7 +256,9 @@ function MyProfile(props) {
     // 'fetchUsersEvents'- METHOD AND UNCOMMENT THE LIST CREATION BELOW. THIS FUNCTIONALITY WILL BE
     // DELETED ONCE WE HAVE THE ABILITY TO JOIN EVENTS AND THE "REAL" EVENTS LIST CAN BE SHOWN HERE
 
-    // Fetches the events the user is currently partisipating in
+    // Fetches the events the user is currently participating in
+    // TODO; this currently only includes events the user created themselves
+
     // fetchUsersEvents();
     
     // Create events for testing
@@ -385,7 +387,7 @@ function MyProfile(props) {
                         time={event.time}
                         location={event.location}
                         attendees={event.attendees}
-                        attending={event.attending}
+                        attending={true}
                         description={event.description}
                         key={index}
                         />
