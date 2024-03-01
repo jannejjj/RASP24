@@ -306,7 +306,9 @@ function Home(props) {
             Loading...
           </Typography>}
 
-        {!loading && events.map((event, index) => (
+        {props.currentUser.loggedIn
+        ?
+        !loading && events.map((event, index) => (
           <EventItem
             id={event._id}
             admin={admin}
@@ -325,7 +327,11 @@ function Home(props) {
             token={props.currentUser.token}
             toggleUpdateEvents={toggleUpdateEvents}
           />
-        ))}
+        ))
+        :
+        <Typography sx={{ mt: 20 }} variant='h4' align="center">
+          Please log in to see events.</Typography>
+        }
 
         <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
       </div>

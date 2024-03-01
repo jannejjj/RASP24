@@ -135,7 +135,6 @@ function EventItem(props) {
     })
   };
 
-  if(props.loggedIn) {
     return (
       <div className="HomeEventItem">
         <div className="HomeEventTop">
@@ -225,13 +224,6 @@ function EventItem(props) {
         />
       </div>
     );
-  } else {
-    return (
-      <Typography sx={{ mt: 20 }} variant='h4' align="center">
-         Please login to view events.
-      </Typography>
-    );
-  }
 }
 
 export default EventItem;
