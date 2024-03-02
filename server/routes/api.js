@@ -145,30 +145,29 @@ router.post('/register',
 });
 
 
-router.get('/get/events/for/:id', (req, res) =>
+router.get('/get/events/for/:id', async (req, res) =>
 {
     const id = req.params.id;
-    // Initialize the list where the events will be added
+    // Initialize the lists where the events will be added
     let events = [];
+    let eventIDs = [];
 
-    // Find the events that the user is participating in
-    Member_event.find({member: id})
+    // Find the IDs of the events that the user is participating in
+    await Member_event.find({member: id})
     .then((docs) =>
     {
         docs.forEach(item => {
-            // ID of the event the user is partisipating
-            let eventID = item.event;
-
-            // Get the events
-            Event.find({_id: eventID})
-            .then((docs) =>
-            {
-                docs.forEach(event => {
-                    events.push(event);
-                });
-            })
+            eventIDs.push(item.event);
         });
     });
+
+    // Find the events using the IDs and add to list
+    await Event.find({_id: {$in: eventIDs}})
+    .then((docs) => {
+      docs.forEach(event => {
+        events.push(event);
+      })
+    })
 
     // Returns a list every time. If the user is not partisipating in any events, the list is empty.
     return res.json({events});
