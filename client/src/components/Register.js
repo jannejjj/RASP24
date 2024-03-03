@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
+import validator from 'validator';
 
 const Register = () => {
   const countries = [
@@ -443,18 +444,27 @@ const Register = () => {
 
     let navigate = useNavigate();
 
+    const [member, setMember] = useState({});
+    const [err, setErr] = useState('');
 
-    const [member, setMember] = useState({})
-    const [err, setErr] = useState('')
+    // States for storing input validation results
+    const [emailValid, setEmailValid] = useState(true);
+    const [phoneValid, setPhoneValid] = useState(true);
+    const [postalValid, setPostalValid] = useState(true);
 
     //Keeps track of the input fields and creates the member object as the fields are being filled.
     const whenChanging = (event) => {
-        setMember({...member, [event.target.id]: event.target.value})
+        setMember({ ...member, [event.target.id]: event.target.value })
     }
 
     //Sends the member object to server
     const submitForm = (e) => {
-        e.preventDefault()
+        e.preventDefault();
+        if(member.password !== member.password_confirmation){
+          setErr("Password and confirmation aren't equal");
+          showToastMessage("Password and confirmation aren't equal");
+          return;
+        }
 
         fetch("/api/register", {
             method: "POST",
@@ -466,32 +476,26 @@ const Register = () => {
         })
             .then(response => response.json())
             .then(data => {
-                if(data.success) 
-                {
+                if (data.success) {
                     navigate('/login');
                 }
-                else 
-                {
-                    if(data.errors !== undefined) 
-                    {
-                        if (data.errors[0] !== undefined) 
-                        {
+                else {
+                    if (data.errors !== undefined) {
+                        if (data.errors[0] !== undefined) {
                             setErr(data.errors[0].msg);
                             showToastMessage(data.errors[0].msg);
-                        } 
-                        else if (data.errors[1] !== undefined) 
-                        {
+                        }
+                        else if (data.errors[1] !== undefined) {
                             setErr(data.errors[1].msg);
                             showToastMessage(data.errors[1].msg);
                         }
-                    } 
-                    else 
-                    {
+                    }
+                    else {
                         setErr(data.message);
                         showToastMessage(data.message);
                     }
                 }
-        })
+            })
     }
     
     const [countryCode, setCountryCode] = useState('EN');
@@ -502,8 +506,7 @@ const Register = () => {
       setCountryCode(value);
     }
 
-    const showToastMessage = (message) =>
-    {
+    const showToastMessage = (message) => {
         toast.error(message, {
             position: "top-center",
             autoClose: 3000,
@@ -513,8 +516,36 @@ const Register = () => {
             draggable: false,
             progress: undefined,
             theme: "dark"
-            });
+        });
     }
+
+    const validatePhone = (event) => {
+        if (event.target.value !== "" && !validator.isMobilePhone(event.target.value)) {
+            showToastMessage("Please input a valid phone number.");
+            setPhoneValid(false);
+        } else {
+            setPhoneValid(true);
+        }
+    }
+
+    const validateEmail = (event) => {
+        if (event.target.value !== "" && !validator.isEmail(event.target.value)) {
+            showToastMessage("Please input a valid email.");
+            setEmailValid(false);
+        } else {
+            setEmailValid(true);
+        }
+    }
+
+    const validatePostalCode = (event) => {
+        if (event.target.value !== "" && !validator.isPostalCode(event.target.value, "FI")) {
+            showToastMessage("Please input a valid postal code.");
+            setPostalValid(false);
+        } else {
+            setPostalValid(true);
+        }
+    }
+
 
     return (
         <div className='RegisterBackground'>
@@ -549,7 +580,7 @@ const Register = () => {
                     </Select>
                   </Grid>
                   <Grid item xs>
-                    <TextField label="Phone" id="phonenumbersecond" type="tel"></TextField>
+                    <TextField error={!phoneValid} label="Phone" id="phonenumbersecond" type="tel"></TextField>
                   </Grid>
                   <Grid item xs={2}>
                     <TextField fullWidth required label="Address" placeholder={'Address'} type="text" id="address"/>
@@ -559,19 +590,19 @@ const Register = () => {
                   </Grid>
                   
                   <Grid item xs>
-                    <TextField fullWidth required label="Postal Code" placeholder={'Postal code'} type="text" id="postalcode" />
+                    <TextField error={!postalValid} fullWidth required label="Postal Code" placeholder={'Postal code'} type="text" id="postalcode" />
                   </Grid>
                   <Grid item xs>
                     <TextField fullWidth required label="City" placeholder={'City'} type="text" id="city" />
                   </Grid>
                 </Grid>
-                <TextField fullWidth required label="Email" type="email" id="email" sx={{m: 1}} />
+                <TextField error={!emailValid} fullWidth required label="Email" type="email" id="email" sx={{m: 1}} />
                 <p className='HintParagraphSmall'>The password must have upper- and lowercase characters, a number, a symbol and be 10 characters long.</p>
-                <TextField fullWidth required label="Password" placeholder={'Password'} type="password" id="password_first" sx={{m: 1}} />
-                <TextField fullWidth required label="Confirmation" placeholder={'Confirmation'} type="password" id="password_second" sx={{m: 1}} />
+                <TextField fullWidth required label="Password" placeholder={'Password'} type="password" id="password" sx={{m: 1}} />
+                <TextField fullWidth required label="Confirmation" placeholder={'Confirmation'} type="password" id="password_confirmation" sx={{m: 1}} />
                 <Button variant='contained' type="submit" id="submit" sx={{m: 1}} >Register</Button>
             </form>
-        
+
             {/* If there would be an error with registeration it would be shown here */}
             <ToastContainer />
         </div>
