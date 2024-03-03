@@ -7,7 +7,8 @@ require("dotenv").config();
 var cors = require("cors");
 const { insertSampleData, deleteAllDocuments } = require("./bin/defaultdata");
 
-const mongoDB = process.env.MONGODB_CONN_STRING;
+// const mongoDB = process.env.MONGODB_CONN_STRING;  
+const mongoDB = "mongodb://localhost:27017/assoceasedb";  
 mongoose.connect(mongoDB);
 mongoose.Promise = Promise;
 const db = mongoose.connection;
@@ -20,7 +21,9 @@ var usersRouter = require("./routes/users");
 var apiRouter = require("./routes/api");
 var app = express();
 
-app.use(logger("dev"));
+
+app.use(cors());
+app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

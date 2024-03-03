@@ -454,8 +454,8 @@ const Register = () => {
 
     //Keeps track of the input fields and creates the member object as the fields are being filled.
     const whenChanging = (event) => {
-        setMember({ ...member, [event.target.id]: event.target.value })
-    }
+        setMember({ ...member, [event.target.id]: event.target.value });
+    };
 
     //Sends the member object to server
     const submitForm = (e) => {
@@ -495,8 +495,8 @@ const Register = () => {
                         showToastMessage(data.message);
                     }
                 }
-            })
-    }
+            });
+    };
     
     const [countryCode, setCountryCode] = useState('EN');
     const handleChange = (event) =>{
@@ -504,7 +504,7 @@ const Register = () => {
         target: { value },
       } = event;
       setCountryCode(value);
-    }
+    };
 
     const showToastMessage = (message) => {
         toast.error(message, {
@@ -517,35 +517,37 @@ const Register = () => {
             progress: undefined,
             theme: "dark"
         });
-    }
+    };
 
     const validatePhone = (event) => {
-        if (event.target.value !== "" && !validator.isMobilePhone(event.target.value)) {
+        console.log("Phone", event.target.value);
+        if (!event.target.value || event.target.value !== "" && !validator.isMobilePhone(event.target.value, countryCode)) {
             showToastMessage("Please input a valid phone number.");
             setPhoneValid(false);
         } else {
             setPhoneValid(true);
         }
-    }
+    };
 
     const validateEmail = (event) => {
-        if (event.target.value !== "" && !validator.isEmail(event.target.value)) {
+        console.log("Email", event.target.value);
+        if (!event.target.value || event.target.value !== "" && !validator.isEmail(event.target.value)) {
             showToastMessage("Please input a valid email.");
             setEmailValid(false);
         } else {
             setEmailValid(true);
         }
-    }
+    };
 
     const validatePostalCode = (event) => {
-        if (event.target.value !== "" && !validator.isPostalCode(event.target.value, "FI")) {
+        console.log("PostalCode", event.target.value);
+        if (!event.target.value || event.target.value !== "" && !validator.isPostalCode(event.target.value, event.target)) {
             showToastMessage("Please input a valid postal code.");
             setPostalValid(false);
         } else {
             setPostalValid(true);
         }
-    }
-
+    };
 
     return (
         <div className='RegisterBackground'>

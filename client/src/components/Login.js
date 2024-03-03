@@ -11,7 +11,6 @@ function Login(props) {
     let navigate = useNavigate();
 
     const [member, setMember] = useState({})
-    const [err, setErr] = useState('')
 
     /* When input fields are being changed, the member object is being updated */
     const whenChanging = (event) => {
@@ -53,13 +52,14 @@ function Login(props) {
                             admin: data.admin,
                             loggedIn: true,
                             token: data.token,
-                            id: data.id
+                            id: data.id,
+                            firstname: data.firstname,
+                            lastname: data.lastname
                         }
                       );
                       navigate('/');
                   }
               } else {
-                  setErr(data.message);
                   showToastMessage(data.message);
               }
           })

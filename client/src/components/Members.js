@@ -24,7 +24,6 @@ function Members(props) {
             setLoading(false);
         }
     }
-
     // Only for users that have logged in
     if (props.currentUser.loggedIn)
     {
@@ -33,29 +32,16 @@ function Members(props) {
           mounted = false;
       };
     }
-
     setLoading(false);
   }, [])
 
-  /* While fetching data from the backend, the user will be shown this */
-  if (loading) {
-    return (
-        <div>
-            <h1>Members</h1>
-            <Typography sx={{ mt: 20 }} variant='h4' align="center">
-              Loading...
-            </Typography>
-        </div>
-    )
-  }
-  
   /* If the user is not logged in, they will be shown this */
   if (!props.currentUser.loggedIn) {
     return (
         <div>
             <h1>Members</h1>
             <Typography sx={{ mt: 20 }} variant='h4' align="center">
-              Unauthorized.
+              Please login to view members.
             </Typography>
         </div>
     )
@@ -64,9 +50,12 @@ function Members(props) {
   return (
     <div>
       <h1>Members</h1>
-        {[...members].map((member) => (
-            <Member key={member._id} member={member}/>
-        ))}
+      {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">
+        Loading...
+      </Typography>}
+      {!loading && [...members].map((member) => (
+          <Member key={member._id} member={member}/>
+      ))}
       <Typography sx={{ mt: 20 }} variant='h4' align="center">{!members?.length>0 && "No members."}</Typography>
     </div>
   )

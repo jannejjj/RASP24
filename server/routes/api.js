@@ -3,12 +3,17 @@ var router = express.Router();
 // const controller = require("./controller");
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
+const Member_event = require("../models/member_event");
+const Event = require("../models/event");
+const Member_Event = require("../models/member_event");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
 const multer = require("multer")
 const storage = multer.memoryStorage();
 const upload = multer({storage});
+var idFromToken = null;
+
 
 require('../auth/passport')(passport)
 router.use(passport.initialize());
@@ -24,6 +29,15 @@ router.get("/members", passport.authenticate('jwt', {session: false}), async (re
     }
 });
 
+router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+      const events  = await Event.find({});
+      res.send(events);
+  } catch (err) {
+      console.error(err);
+      res.send("No events.");
+  }
+});
 
 router.post('/login',
   upload.none(),
@@ -43,6 +57,8 @@ router.post('/login',
                 //creates JWT
                 const jwtPayload = {
                     id: member._id,
+                    firstname: member.firstname,
+                    lastname: member.lastname,
                     email: member.email,
                     admin: member.admin
                 }
@@ -53,7 +69,7 @@ router.post('/login',
                     expiresIn: '24h' //expires on 24 hours and log in is needed again.
                     },
                     (err, token) => {
-                    res.json({success: true, token, admin: member.admin, id: member._id});
+                      res.json({success: true, token, admin: member.admin, id: member._id, firstname: member.firstname, lastname: member.lastname});
                     }
                 );
                 } else {
@@ -66,6 +82,14 @@ router.post('/login',
     }
 });
 
+function getIdfromToken(token){
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    return decodedToken.id;
+}
+
+router.get("/getID", async(req,res)=>{
+    res.json(idFromToken);
+});
 
 // Register new member
 router.post('/register', 
@@ -120,6 +144,81 @@ router.post('/register',
       
 });
 
+
+router.get('/get/events/for/:id', async (req, res) =>
+{
+    const id = req.params.id;
+    // Initialize the lists where the events will be added
+    let events = [];
+    let eventIDs = [];
+
+    // Find the IDs of the events that the user is participating in
+    await Member_event.find({member: id})
+    .then((docs) =>
+    {
+        docs.forEach(item => {
+            eventIDs.push(item.event);
+        });
+    });
+
+    // Find the events using the IDs and add to list
+    await Event.find({_id: {$in: eventIDs}})
+    .then((docs) => {
+      docs.forEach(event => {
+        events.push(event);
+      });
+    });
+
+    // Returns a list every time. If the user is not partisipating in any events, the list is empty.
+    return res.json({events});
+});
+
+router.post('/event', passport.authenticate('jwt', {session: false}), async (req, res) => {
+  const event = new Event({
+      title: req.body.title,
+      creator: req.body.creator,
+      creatorId: req.body.creatorId,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+      location: req.body.location,
+      description: req.body.description,
+      attendees: req.body.attendees,
+      tickets: req.body.tickets,
+      ticketsSold: 0,
+      joinDeadline: req.body.joinDeadline,
+      price: req.body.price
+  });
+  event.save()
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.log(err);
+  });
+
+  // Add the creator as an attendee in the back-end
+  const member_event = new Member_Event({
+    date: new Date(),
+    paid: false,
+    member: req.body.creatorId,
+    event: event._id
+  });
+  member_event.save()
+    .catch(err => {
+      console.log(err);
+  });
+});
+
+router.delete('/event/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+      await Event.findByIdAndDelete(req.params.id);
+      await Member_Event.deleteMany({event: req.params.id});
+      res.status(200).json({ message: "Event deleted." });
+  } catch (err) {
+      res.status(500).json({error: "Error deleting event."});
+  }
+});
+
 router.post('/authenticate/token', (req, res) =>
 {
     try
@@ -128,7 +227,7 @@ router.post('/authenticate/token', (req, res) =>
 
         if (payload)
         {
-            return res.json({success: true, admin: payload.admin, id: payload.id});
+            return res.json({success: true, admin: payload.admin, id: payload.id, firstname: payload.firstname, lastname: payload.lastname});
         }
         else
         {
