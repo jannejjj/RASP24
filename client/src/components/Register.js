@@ -1,6 +1,7 @@
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import {useState} from 'react'
 import { useNavigate } from "react-router-dom";
@@ -12,6 +13,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
 
 const Register = () => {
   const countries = [
@@ -497,7 +499,6 @@ const Register = () => {
       const {
         target: { value },
       } = event;
-      console.log(value);
       setCountryCode(value);
     }
 
@@ -518,12 +519,12 @@ const Register = () => {
     return (
         <div className='RegisterBackground'>
             <h1>Register</h1>
-
             <form onSubmit={submitForm} onChange={whenChanging} className='RegisterForm' >
                 <TextField fullWidth required label="First Name" placeholder={'First name'} type="text" id="firstname" sx={{m: 1}} />
                 <TextField fullWidth required label="Last name" placeholder={'Last name'} type="text" id="lastname" sx={{m: 1}} />
-                <Grid container spacing={1} sx={{ mt:1 ,mb:1 }} >
-                  <Grid item xs="auto" sx={{padding: 0}} >
+                {/* <Divider variant="middle"/> */}
+                <Grid container spacing={2} sx={{ mt:1 ,mb:1 }} columns={2}>
+                  <Grid item xs="auto">
                     <Select //Litteraly the example given here : https://mui.com/material-ui/react-autocomplete/
                       id="country-select"
                       onChange={handleChange}
@@ -540,7 +541,6 @@ const Register = () => {
                               src={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
                               alt=""
                             />
-                            {/* ({country.code}) */}
                             +{country.phone}
                           </Box>
                         </MenuItem>
@@ -549,19 +549,26 @@ const Register = () => {
                     </Select>
                   </Grid>
                   <Grid item xs>
-                    <TextField></TextField>
+                    <TextField label="Phone" id="phonenumbersecond" type="tel"></TextField>
                   </Grid>
-
+                  <Grid item xs={2}>
+                    <TextField fullWidth required label="Address" placeholder={'Address'} type="text" id="address"/>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <TextField fullWidth required label="Country" placeholder={'Country'} type="text" id="country" />
+                  </Grid>
+                  
+                  <Grid item xs>
+                    <TextField fullWidth required label="Postal Code" placeholder={'Postal code'} type="text" id="postalcode" />
+                  </Grid>
+                  <Grid item xs>
+                    <TextField fullWidth required label="City" placeholder={'City'} type="text" id="city" />
+                  </Grid>
                 </Grid>
-
-                <TextField fullWidth required label="Address" placeholder={'Address'} type="text" id="address" sx={{m: 1}} />
-                <OutlinedInput fullWidth required label="Postal Code" placeholder={'Postal code'} type="text" id="postalcode" sx={{m: 1}} />
-                <TextField fullWidth required label="City" placeholder={'City'} type="text" id="city" sx={{m: 1}} />
-                <TextField fullWidth required label="Country" placeholder={'Country'} type="text" id="country" sx={{m: 1}} />
                 <TextField fullWidth required label="Email" type="email" id="email" sx={{m: 1}} />
                 <p className='HintParagraphSmall'>The password must have upper- and lowercase characters, a number, a symbol and be 10 characters long.</p>
                 <TextField fullWidth required label="Password" placeholder={'Password'} type="password" id="password_first" sx={{m: 1}} />
-                <TextField fullWidth required lable="Confirmation" placeholder={'Confirmation'} type="password" id="password_second" sx={{m: 1}} />
+                <TextField fullWidth required label="Confirmation" placeholder={'Confirmation'} type="password" id="password_second" sx={{m: 1}} />
                 <Button variant='contained' type="submit" id="submit" sx={{m: 1}} >Register</Button>
             </form>
         
