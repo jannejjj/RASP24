@@ -178,6 +178,7 @@ const Register = () => {
                 <Grid container spacing={2} sx={{ mb:1 }} columns={2}>
                   <Grid item xs="auto">
                   <Select
+                    required
                     id="countryphone"
                     onChange={handleCountryCodePhoneChange}
                     value={countryPhone}
@@ -218,6 +219,7 @@ const Register = () => {
                           opacity: 0.25,
                         },
                       }}
+                      required
                       disabled={countryPhone === ""}
                       fullWidth
                       error={!phoneValid}
@@ -243,7 +245,7 @@ const Register = () => {
                         </Box>
                       )}
                       renderInput={(params) => (
-                        <TextField {...params} label="Country" />
+                        <TextField {...params} label="Country" required/>
                       )}
                     />
                   </Grid>
