@@ -11,5 +11,8 @@
     "dev:server": "cd server && npm run dev"
   },
   "author": "Group 4",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "sweetalert2": "^11.10.5"
+  }
 }
