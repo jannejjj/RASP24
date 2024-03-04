@@ -215,7 +215,7 @@ const Register = () => {
                     <TextField
                       sx={{
                         "& .Mui-disabled": {
-                          opacity: 0.3,
+                          opacity: 0.25,
                         },
                       }}
                       disabled={countryPhone === ""}
