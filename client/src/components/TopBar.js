@@ -37,7 +37,6 @@ export default function TopBar(props) {
     if (props.currentUser.loggedIn) {
       // Empty the local/sessionStorage
 
-
       Swal.fire({
         title: 'Logout',
         text: 'Are you sure you want to logout?',
@@ -45,14 +44,13 @@ export default function TopBar(props) {
         showCancelButton: true,
         confirmButtonText: 'Yes, logout!',
         cancelButtonText: 'Cancel',
+        confirmButtonColor: "#2C041C",
+        iconColor: "#85717C",
       }).then((result) => {
         if (result.isConfirmed) {
           // Empty the local/sessionStorage
           localStorage.removeItem('AssocEase_Token');
           sessionStorage.removeItem('AssocEase_MyProfileSelectedView');
-
-
-
           props.setCurrentUser(
             {
               admin: false,
