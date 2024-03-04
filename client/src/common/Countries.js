@@ -422,5 +422,6 @@ const countries = [
   { code: 'ZM', label: 'Zambia', phone: '260' },
   { code: 'ZW', label: 'Zimbabwe', phone: '263' },
 ];
+countries.sort((a,b)=>(a.phone > b.phone ? 1 : -1));
 
 export default countries;
