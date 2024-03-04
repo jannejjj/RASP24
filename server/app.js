@@ -7,8 +7,7 @@ require("dotenv").config();
 var cors = require("cors");
 const { insertSampleData, deleteAllDocuments } = require("./bin/defaultdata");
 
-// const mongoDB = process.env.MONGODB_CONN_STRING;  
-const mongoDB = "mongodb://localhost:27017/assoceasedb";  
+const mongoDB = process.env.MONGODB_CONN_STRING;
 mongoose.connect(mongoDB);
 mongoose.Promise = Promise;
 const db = mongoose.connection;
