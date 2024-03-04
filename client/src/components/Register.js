@@ -129,7 +129,10 @@ const Register = () => {
     };
 
     const validateEmail = (event) => {
-        if (!event.target.value || event.target.value !== "" && !validator.isEmail(event.target.value)) {
+
+        if (!event.target.value || event.target.value === "") return;
+
+        if (!validator.isEmail(event.target.value)) {
             showToastMessage("Please input a valid email.");
             setEmailValid(false);
             return false;
