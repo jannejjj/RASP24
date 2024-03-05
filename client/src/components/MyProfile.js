@@ -52,7 +52,7 @@ function ProfileItem(props) {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            _id: `${sessionStorage.getItem("id")}`,
+            _id: `${props.currentUser.id}`,
             user: {
               phone: `${editedPhone}`,
               address: `${editedAddress}`,
@@ -358,6 +358,7 @@ function MyProfile(props) {
                 City={user.city}
                 Country={user.country}
                 Email={user.email}
+                currentUser={props.currentUser}
               />
             )
           }
