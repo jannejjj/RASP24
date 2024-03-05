@@ -166,8 +166,8 @@ router.get('/get/events/for/:id', async (req, res) =>
     .then((docs) => {
       docs.forEach(event => {
         events.push(event);
-      })
-    })
+      });
+    });
 
     // Returns a list every time. If the user is not partisipating in any events, the list is empty.
     return res.json({events});
