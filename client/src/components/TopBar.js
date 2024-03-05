@@ -9,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Menu, MenuItem } from "@mui/material";
 import { Link as RouterLink } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 
 export default function TopBar(props) {
@@ -33,37 +34,48 @@ export default function TopBar(props) {
 
   //Removes Token from localStorage
   const logout = () => {
-    if(props.currentUser.loggedIn) {
+    if (props.currentUser.loggedIn) {
       // Empty the local/sessionStorage
-      localStorage.removeItem('AssocEase_Token');
-      sessionStorage.removeItem('AssocEase_MyProfileSelectedView');
 
-      props.setCurrentUser(
-        {
-          admin: false,
-          loggedIn: false,
-          token: "",
-          id: ""
+      Swal.fire({
+        title: 'Logout',
+        text: 'Are you sure you want to logout?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, logout!',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: "#2C041C",
+        iconColor: "#85717C",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Empty the local/sessionStorage
+          localStorage.removeItem('AssocEase_Token');
+          sessionStorage.removeItem('AssocEase_MyProfileSelectedView');
+          props.setCurrentUser(
+            {
+              admin: false,
+              loggedIn: false,
+              token: "",
+              id: ""
+            }
+          );
+
+          navigate('/Login');
         }
-      );
-
-      navigate('/Login');
+      });
     }
   };
 
-  useEffect(() =>
-  {
+  useEffect(() => {
     // Get the currently selected page when the website is reloaded
     const href = window.location.href;
     const data = href.split('/');
     const page = data[data.length - 1];
-    
-    if (page === "")
-    {
+
+    if (page === "") {
       setSelectedPage("Home");
     }
-    else
-    {
+    else {
       setSelectedPage(page);
     }
   }, [props]);
@@ -144,7 +156,7 @@ export default function TopBar(props) {
               paddingLeft: "24px",
               paddingRight: "12px",
             }}
-            onClick={() => {setSelectedPage("Home")}}
+            onClick={() => { setSelectedPage("Home") }}
           >
             Home
           </Button>
@@ -158,7 +170,7 @@ export default function TopBar(props) {
               paddingLeft: "12px",
               paddingRight: "12px",
             }}
-            onClick={() => {setSelectedPage("Members")}}
+            onClick={() => { setSelectedPage("Members") }}
           >
             Members
           </Button>
@@ -171,7 +183,7 @@ export default function TopBar(props) {
               paddingLeft: "12px",
               paddingRight: "12px",
             }}
-            onClick={() => {setSelectedPage("MyProfile")}}
+            onClick={() => { setSelectedPage("MyProfile") }}
           >
             My profile
           </Button>}
@@ -184,7 +196,7 @@ export default function TopBar(props) {
               paddingLeft: "12px",
               paddingRight: "12px",
             }}
-            onClick={() => {setSelectedPage("Register")}}
+            onClick={() => { setSelectedPage("Register") }}
           >
             Register
           </Button>}
@@ -222,7 +234,7 @@ export default function TopBar(props) {
           </Button>}
           {!props.currentUser.loggedIn && <Button
             color="inherit"
-            onClick={logout} 
+            onClick={logout}
             component={RouterLink} to='/Login'
             sx={{ minWidth: "8vw" }}
             disableRipple
