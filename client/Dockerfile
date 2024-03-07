@@ -7,6 +7,5 @@ COPY package-lock.json ./package-lock.json
 
 RUN npm install
 RUN npm install react-scripts@3.3.1 -g --silent
-RUN npm i sweetalert2
 
 COPY . /usr/src/app_client
