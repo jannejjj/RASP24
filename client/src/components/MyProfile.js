@@ -382,6 +382,8 @@ function MyProfile(props) {
                       {events.map((event, index) => 
                       (
                         <EventItem
+                        currentUser={props.currentUser}
+                        id={event._id}
                         admin={props.currentUser.admin}
                         title={event.title}
                         creator={event.creator}

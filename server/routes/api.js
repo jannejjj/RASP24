@@ -219,6 +219,80 @@ router.delete('/event/:id', passport.authenticate('jwt', {session: false}), asyn
   }
 });
 
+// Add the user as an attendee to a specific event
+router.post('/attend/event', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const eventID = req.body.eventID;
+    const userID = req.body.userID;
+    let succesful = true;
+
+    const member_event = new Member_Event(
+        {
+            date: new Date(),
+            paid: false,
+            member: userID,
+            event: eventID
+        }
+    );
+
+    member_event.save()    
+    .catch(err => 
+        {
+            console.log("Error while attending: " + err);
+            succesful = false;
+            return res.json({success: false});
+        }
+    );
+
+    if (succesful)
+    {
+        // After the attendance has been succesful, increase the amount of attendees for the event.
+        Event.findByIdAndUpdate({_id: eventID}, { $inc: {attendees: 1} })
+        .catch(err =>
+            {
+                if (err)
+                {
+                    console.log(err);
+                }
+            })
+
+        return res.json({success: true});
+    }
+});
+
+// Confirm if a user is attending an event or not
+router.get('/is/attending/:eventID/:userID', async (req, res) =>
+{
+    const eventID = req.params.eventID;
+    const userID = req.params.userID;
+    let attendees = [];
+    let found = false;
+
+    await Member_event.find({event: eventID})
+    .then((docs) =>
+    {
+        docs.forEach(item => {
+            attendees.push(item.member.toString());
+        });
+    });
+
+    // If the user is attending the event, return true. Else, return false
+    attendees.forEach(id =>
+        {
+            if (id === userID)
+            {
+                found = true;
+                return res.json({attending: true});
+            }
+        }
+    );
+
+    if (!found)
+    {
+        return res.json({attending: false});
+    }
+})
+
 router.post('/authenticate/token', (req, res) =>
 {
     try
