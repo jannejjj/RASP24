@@ -131,9 +131,38 @@ function EventItem(props) {
     setAttendees(attendees - 1);
   };
 
-  const handlePayment = () => {
+  const handlePayment = async (e) => {
+    e.preventDefault()
+
     setOpenPayment(false);
-    // TODO send payment to database
+
+    const data = {
+      userId: props.user_id,
+      eventId: props.id
+    };
+
+    try {
+      const response = await fetch('/api/ticket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": "Bearer " + props.token
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        props.showToastMessage("Payment failed");
+        throw new Error('Payment failed');
+      }
+
+      // Handle success
+      console.log('Data submitted successfully');
+      props.showToastSuccessMessage("Payment ok");
+    } catch (error) {
+      // Handle error
+      console.error('Error submitting data:', error.message);
+    }
   };
 
   const deleteOnClick = () => {
@@ -180,6 +209,7 @@ function EventItem(props) {
               <h3>Created by: {props.creator}</h3>
               <h3>{time}</h3>
               <h3>{location}</h3>
+              {price && <h3>Ticket price: {price}€</h3>}
             </div>
   
             <p>

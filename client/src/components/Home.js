@@ -111,7 +111,7 @@ function Home(props) {
     {
         toast.error(message, {
             position: "top-center",
-            autoClose: 6000,
+            autoClose: 3000,
             hideProgressBar: true,
             closeOnClick: false,
             pauseOnHover: false,
@@ -124,7 +124,7 @@ function Home(props) {
     const showToastSuccessMessage = (message) =>  {
       toast.success(message, {
           position: "top-center",
-          autoClose: 6000,
+          autoClose: 3000,
           hideProgressBar: true,
           closeOnClick: false,
           pauseOnHover: false,
