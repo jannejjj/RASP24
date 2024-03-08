@@ -1,0 +1,13 @@
+.MembersBackground
+{
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0 0 0;
+}
+
+.MembersTitle {
+  display: flex;
+  flex-direction: row; 
+  justify-content: space-evenly;
+  margin: 0 0 15px 0;
+}
