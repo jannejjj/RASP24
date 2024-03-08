@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import "../styles/HomePage.css";
 import "../App.css";
 import Button from "@mui/material/Button";
@@ -7,6 +7,7 @@ import CancelAttendanceModal from "../modals/CancelAttendanceModal";
 import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
 import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
+import PaymentModal from "../modals/PaymentModal";
 import Typography from "@mui/material/Typography";
 
 function EventItem(props) {
@@ -18,11 +19,15 @@ function EventItem(props) {
   const [description, setDescription] = useState(props.description);
   const [attendees, setAttendees] = useState(props.attendees);
   const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
+  const [tickets, setTickets] = useState(props.tickets);
+  const [price, setPrice] = useState(props.price);
+  const [user, setUser ] = useState(null);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
   const [openAttend, setOpenAttend] = useState(false);
   const [openCancelAttendance, setOpenCancelAttendance] = useState(false);
+  const [openPayment, setOpenPayment] = useState(false);
   const [editedTitle, setEditedTitle] = useState(props.title);
   const [editedTime, setEditedTime] = useState(props.time);
   const [editedLocation, setEditedLocation] = useState(props.location);
@@ -35,6 +40,25 @@ function EventItem(props) {
   const [descriptionHistory, setDescriptionHistory] = useState(
     props.description
   );
+
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`/users/getData/${props.user_id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        setUser(await response.json());
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
 
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
@@ -105,6 +129,11 @@ function EventItem(props) {
     setOpenCancelAttendance(false);
     setAttending(false);
     setAttendees(attendees - 1);
+  };
+
+  const handlePayment = () => {
+    setOpenPayment(false);
+    // TODO send payment to database
   };
 
   const deleteOnClick = () => {
@@ -187,6 +216,13 @@ function EventItem(props) {
                 )
               }
             </div>
+            <div>
+              {tickets > 0 ? (
+                <Button variant='contained' color='primary' onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
+              ) : (
+                <div>No tickets available</div>
+              )}
+            </div>
           </div>
         </div>
   
@@ -221,6 +257,14 @@ function EventItem(props) {
           openCancelAttendance={openCancelAttendance}
           setOpenCancelAttendance={setOpenCancelAttendance}
           handleCancelEventAttendance={handleCancelEventAttendance}
+        />
+        <PaymentModal
+          openPayment={openPayment}
+          setOpenPayment={setOpenPayment}
+          handlePayment={handlePayment}
+          price={price}
+          title={title}
+          user={user}
         />
       </div>
     );

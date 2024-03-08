@@ -311,6 +311,7 @@ function Home(props) {
         !loading && events.map((event, index) => (
           <EventItem
             id={event._id}
+            user_id={props.currentUser.id}
             admin={admin}
             loggedIn={props.currentUser.loggedIn}
             title={event.title}
@@ -321,7 +322,9 @@ function Home(props) {
             attending={event.attending}
             description={event.description}
             ticketsSold={event.ticketsSold}
+            tickets={event.tickets}
             key={index}
+            price={event.price}
             showToastMessage={showToastMessage}
             showToastSuccessMessage={showToastSuccessMessage}
             token={props.currentUser.token}
