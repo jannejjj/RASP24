@@ -265,32 +265,19 @@ router.get('/is/attending/:eventID/:userID', async (req, res) =>
 {
     const eventID = req.params.eventID;
     const userID = req.params.userID;
-    let attendees = [];
-    let found = false;
 
-    await Member_event.find({event: eventID})
+    await Member_event.find({event: eventID, member: userID})
     .then((docs) =>
     {
-        docs.forEach(item => {
-            attendees.push(item.member.toString());
-        });
-    });
-
-    // If the user is attending the event, return true. Else, return false
-    attendees.forEach(id =>
+        if (docs.length > 0)
         {
-            if (id === userID)
-            {
-                found = true;
-                return res.json({attending: true});
-            }
+            return res.json({attending: true});
         }
-    );
-
-    if (!found)
-    {
-        return res.json({attending: false});
-    }
+        else
+        {
+            return res.json({attending: false});
+        }
+    });
 })
 
 router.post('/authenticate/token', (req, res) =>
