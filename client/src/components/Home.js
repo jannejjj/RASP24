@@ -136,31 +136,36 @@ const showToastMessage = (message) =>
   const saveEditedEventOnClick = (e) => {
     e.preventDefault()
     if(!startTimeError && editedEvent.startDate) {
+      const startDateAux = new Date(editedEvent.startDate);
       if(!endTimeError) {
         if(!checkedDeadline) {
           editedEvent.joinDeadline = editedEvent.startDate;
         }
-        if(!joinDeadlineError && editedEvent.joinDeadline && editedEvent.joinDeadline <= editedEvent.startDate) {
-          if(!editedEvent.endDate || editedEvent.startDate < editedEvent.endDate) {
+        const joinDeadlineAux = new Date(editedEvent.joinDeadline);
+        if(!joinDeadlineError && editedEvent.joinDeadline && joinDeadlineAux <= startDateAux) {
+          const endDateAux = new Date(editedEvent.endDate);
+          if(!editedEvent.endDate || startDateAux < endDateAux) {
             editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
             editedEvent.creatorId = props.currentUser.id;
             editedEvent.attendees = 1;
             editedEvent.id = props.eventID;
             
             setEditedEvent(editedEvent);
-            fetch("/api/event", { // TODO change url to event edit url
+            fetch("/api/editEvent", { // TODO change url to event edit url
               method: "POST",
               headers: {
                   "Content-type": "application/json",
-                  "Authorization": "Bearer " + props.currentUser.token
               },
               body: JSON.stringify(editedEvent),
               mode: "cors"
           })
-              .then(response => response.json())
+              .then(response =>{
+                  return response.json()
+              } )
               .then(data => {
                   console.log(data)
               })
+
           // Empty the input fields
           setEditedEvent({});
           // Close the Modal
@@ -260,6 +265,17 @@ const handleJoinDeadlineError = (error) => {
 }
   // Show edit
   const editOnClick = () => {
+    // Set editedEvent to contain the original event data
+    setEditedEvent({
+      title: title,
+      startDate: startDate,
+      endDate: endDate,
+      joinDeadline: joinDeadlineDate,
+      location: location,
+      description: description,
+      price: props.price,
+      tickets : tickets
+    });
     setEdit(true);
   };
 
@@ -578,7 +594,7 @@ function Home(props) {
         {!loading && events.map((event, index) => (
           <EventItem
             admin={admin}
-            eventID={event.id}
+            eventID={event._id}
             currentUser={props.currentUser}
             loggedIn={props.currentUser.loggedIn}
             title={event.title}

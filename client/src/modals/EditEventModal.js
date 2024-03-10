@@ -44,7 +44,7 @@ function EditEventModal(props)
                   />
                   <FormControlLabel 
                     control={<Switch />}
-                    label="Deadline for joining" checkedDeadline={props.checkedDeadline}
+                    label="Deadline for joining" checkeddeadline={props.checkedDeadline ? "true" : "false"}
                     onChange={props.handleDeadlineSwitch}
                   />
                   <DateTimePicker
@@ -85,7 +85,7 @@ function EditEventModal(props)
                 <OutlinedInput fullWidth required placeholder={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 1}} defaultValue={props.price}/>
                 <FormControlLabel 
                   control={<Switch />}
-                  label="Limited tickets" checkedTicket={props.checkedTicket}
+                  label="Limited tickets" checkedticket={props.checkedTicket ? "true" : "false"}
                   onChange={props.resetTickets}
                 />
                 <OutlinedInput 
