@@ -2,11 +2,13 @@ import { React, useState } from "react";
 import "../styles/HomePage.css";
 import "../App.css";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import { FaUserGroup } from "react-icons/fa6";
 import CancelAttendanceModal from "../modals/CancelAttendanceModal";
 import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
 import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import Typography from "@mui/material/Typography";
 
 function EventItem(props) {
@@ -18,6 +20,7 @@ function EventItem(props) {
   const [description, setDescription] = useState(props.description);
   const [attendees, setAttendees] = useState(props.attendees);
   const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
+  const [paid, setPaid] = useState(props.paid);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -26,7 +29,7 @@ function EventItem(props) {
   const [editedTitle, setEditedTitle] = useState(props.title);
   const [editedTime, setEditedTime] = useState(props.time);
   const [editedLocation, setEditedLocation] = useState(props.location);
-  const [editedDescription, setEditedDescription] = useState(props.description);
+  const [editedDescription, setEditedDescription] = useState(props.description);  
 
   // Save the history so that the editing can be cancelled
   const [titleHistory, setTitleHistory] = useState(props.title);
@@ -179,11 +182,39 @@ function EventItem(props) {
             <div>
               {attending ? 
                 (
-                  <Button variant='outlined' color='primary' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
+                  <IconButton sx={{ 
+                    border: "1px solid",
+                    borderColor: "primary.main",
+                    borderRadius: 2, 
+                    mr:2,
+                    color: 'primary.main'
+                     }} onClick={() => {setOpenCancelAttendance(true)}}>
+                    <FavoriteIcon fontSize="small"/>
+                  </IconButton>
                 )
                 :
+                ( 
+                  <IconButton variant="contained" sx={{ 
+                    borderRadius: 2, 
+                    mr:1, 
+                    bgcolor:'primary.main', 
+                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+                    color:'white',
+                    '&:hover': {
+                      backgroundColor: 'primary.main', // Set the background color on hover
+                    },
+                    }} onClick={() => {setOpenAttend(true)}} color='white'>
+                    <FavoriteIcon fontSize="small" />
+                  </IconButton>
+                )
+              }
+              {paid ? 
                 (
-                  <Button variant='contained' color='primary' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
+                  <Button variant='outlined' color='primary' sx={{width: '125px'}} onClick={() => {setPaid(false)}} >Paid</Button>
+                )
+                :
+                ( 
+                  <Button variant='contained' color='primary' sx={{width: '125px'}} onClick={() => {setPaid(true)}} >Buy a ticket</Button>
                 )
               }
             </div>

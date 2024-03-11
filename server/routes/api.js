@@ -144,7 +144,6 @@ router.post('/register',
       
 });
 
-
 router.get('/get/events/for/:id', async (req, res) =>
 {
     const id = req.params.id;
@@ -152,7 +151,7 @@ router.get('/get/events/for/:id', async (req, res) =>
     let events = [];
     let eventIDs = [];
 
-    // Find the IDs of the events that the user is participating in
+    // Find the IDs of the events that the user is interested in or has paid for
     await Member_event.find({member: id})
     .then((docs) =>
     {
