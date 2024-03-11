@@ -156,7 +156,7 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
   });
 });
 
-router.post("/editEvent", async (req, res) => {
+router.post("/editEvent",passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
         const eventID = req.body.id;
         const editedEvent = req.body;

@@ -155,6 +155,7 @@ const showToastMessage = (message) =>
               method: "POST",
               headers: {
                   "Content-type": "application/json",
+                  "Authorization": "Bearer " + props.currentUser.token
               },
               body: JSON.stringify(editedEvent),
               mode: "cors"
