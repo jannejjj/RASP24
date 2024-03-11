@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import "../styles/HomePage.css";
 import "../App.css";
 import Button from "@mui/material/Button";
@@ -98,10 +98,27 @@ function EventItem(props) {
     setEditedDescription(event.target.value);
   };
 
-  const handleEventAttendance = () => {
+  const handleEventAttendance = async () => {
+    const body =
+    {
+      eventID: props.id,
+      userID: props.currentUser.id
+    }
+
+    await fetch("/api/attend/event", 
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        },
+        body: JSON.stringify(body)
+      }
+    );
+
+    // Close the modal and update the event list
     setOpenAttend(false);
-    setAttending(true);
-    setAttendees(attendees + 1);
+    props.toggleUpdateEvents();
   };
 
   const handleCancelEventAttendance = () => {
@@ -137,6 +154,25 @@ function EventItem(props) {
       setDeleteModal(false);
     })
   };
+
+  useEffect(() =>
+  {
+    const confirmAttendance = () => 
+    {
+      fetch(`/api/is/attending/${props.id}/${props.currentUser.id}` , {
+        method: 'GET'
+      })
+      .then(response => response.json())
+      .then(data => 
+        {
+          setAttending(data.attending);
+        }
+      );
+    }
+
+    // Find out if the user is attending this event or not
+    confirmAttendance();
+  }, []);
 
     return (
       <div className="HomeEventItem">

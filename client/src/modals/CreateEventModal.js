@@ -1,6 +1,7 @@
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
-import { React, useState } from "react";
+import '../App.css';
+import { React } from "react";
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -19,7 +20,7 @@ function CreateEventModal(props)
           <h2>
             Create a new event
           </h2>
-
+          <div className='HorizontalSeparator' />
           <form onSubmit={props.saveNewEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
                 <OutlinedInput fullWidth required placeholder={'Title *'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 0.5}} />
                 <OutlinedInput fullWidth required placeholder={'Location *'} type="text" id="location" sx={{m: 0.5}} />
@@ -77,7 +78,7 @@ function CreateEventModal(props)
                     }}
                   />
                 </LocalizationProvider>
-                <OutlinedInput fullWidth multiline required placeholder={'Description *'} type="text" id="description" sx={{m: 0.5}} />
+                <OutlinedInput fullWidth multiline required placeholder={'Description *'} type="text" id="description" sx={{m: 0.5}} maxRows={10} />
                 <OutlinedInput fullWidth required placeholder={'Price *'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 0.5}} />
                 <FormControlLabel 
                   control={<Switch />}
