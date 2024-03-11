@@ -160,7 +160,6 @@ router.post("/editEvent", async (req, res) => {
     try {
         const eventID = req.body.id;
         const editedEvent = req.body;
-        console.log(editedEvent);
 
         const event = await Event.findById(eventID);
 
