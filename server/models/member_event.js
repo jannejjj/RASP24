@@ -12,7 +12,8 @@ let member_eventSchema = new Schema ({
     event: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'event'
-    }]
+    }],
+    tickets:{type: Number}
     
 });
 

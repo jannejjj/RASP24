@@ -201,12 +201,56 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
     date: new Date(),
     paid: false,
     member: req.body.creatorId,
-    event: event._id
+    event: event._id,
+    tickets: 0
   });
   member_event.save()
     .catch(err => {
       console.log(err);
   });
+});
+
+router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+    try{
+        const { userId, eventId } = req.body;
+
+        const event = await Event.findById(eventId);
+        const user = await Member.findById(userId);
+
+        if(!event || !user){
+            return res.status(404).json({ error: 'User or Event not found' });
+        }
+
+        event.tickets--;
+        event.ticketsSold++;
+
+        const event_members = await Member_Event.find({
+            member: userId, 
+            event: eventId   
+        });
+
+        if (event_members.length === 0) {
+            const member_event = new Member_Event({
+                date: new Date(),
+                paid: true,
+                member: user._id,
+                event: event._id,
+                tickets: 1
+            });
+            await member_event.save();
+        } else {
+            for (const event_member of event_members) {
+                event_member.tickets++;
+                await event_member.save();
+            }
+        }
+
+        await event.save();
+        res.status(200).send("ticket sold");
+    }catch(err){
+        console.error('Error selling tickets:', err);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 router.delete('/event/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
