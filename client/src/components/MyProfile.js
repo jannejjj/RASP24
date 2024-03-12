@@ -251,46 +251,8 @@ function MyProfile(props) {
     // Fetches the users personal information
     fetchUserData();
 
-    // WE DON'T CURRENTLY HAVE THE ABILITY TO JOIN EVENTS AND FOR THAT REASON YOU WON'T SEE ANY EVENTS IN
-    // THE MY EVENTS VIEW. IF YOU WANT TO SEE WHAT THE MY EVENTS LIST WOULD LOOK LIKE, COMMENT THE 
-    // 'fetchUsersEvents'- METHOD AND UNCOMMENT THE LIST CREATION BELOW. THIS FUNCTIONALITY WILL BE
-    // DELETED ONCE WE HAVE THE ABILITY TO JOIN EVENTS AND THE "REAL" EVENTS LIST CAN BE SHOWN HERE
-
     // Fetches the events the user is currently participating in
-    // TODO; this currently only includes events the user created themselves
-
     fetchUsersEvents();
-    
-    // Create events for testing
-    // setEvents([
-    //   {
-    //     title: "TechSynergy Summit",
-    //     creator: "Emily Thompson",
-    //     time: "26.2.2024 12:00",
-    //     location: "LUT University",
-    //     attendees: 41,
-    //     attending: true,
-    //     description: `The TechSynergy Summit is a premier corporate event designed to bring together industry leaders, visionaries, and innovators in the ever-evolving landscape of technology. This exclusive summit serves as a dynamic platform or collaboration, knowledge exchange, and networking. Attendees can expect insightful keynote presentations, interactive panel discussions, and hands-on workshops that explore the intersection of cutting-edge technologies, fostering an environment where ideas converge, and innovation thrives. Join us at TechSynergy Summit to be at the forefront of the technological revolution and cultivate meaningful connections that propel your organization into the future.`,
-    //   },
-    //   {
-    //     title: "FutureTech Showcase",
-    //     creator: "Liam Patel",
-    //     time: "2.4.2024 14:00",
-    //     location: "LUT University",
-    //     attendees: 24,
-    //     attending: true,
-    //     description: `Step into the future with FutureTech Showcase, where cutting-edge innovations and breakthrough technologies converge. Explore the latest advancements in robotics, artificial intelligence, and beyond. Immerse yourself in a curated exhibition that unveils tomorrow's tech landscape today.`,
-    //   },
-    //   {
-    //     title: "Digital Nexus Symposium",
-    //     creator: "Sophia Mitchell",
-    //     time: "18.7.2024 10:00",
-    //     location: "LUT University",
-    //     attendees: 98,
-    //     attending: true,
-    //     description: `Join thought leaders and industry experts at the Digital Nexus Symposium, a dynamic gathering that explores the interconnected world of digital technologies. Engage in insightful discussions on the impact of AI, data analytics, and cyber-physical systems. Discover the converging points shaping our digital future at this symposium of ideas and collaboration.`,
-    //   },
-    // ]);
     
     // When the user refreshes the page, check which of the views was selected and scroll into that
     const selectedView_stored = sessionStorage.getItem('AssocEase_MyProfileSelectedView');
@@ -371,7 +333,7 @@ function MyProfile(props) {
             )
             :
             (
-              <div>
+              <div style={{width: "100%"}}>
                 {events.length === 0 ?
                   (
                     <p className='HintParagraphBig' style={{margin: "30px 0 0 0", fontStyle: "italic"}}>You are not participating in any events</p>
@@ -382,6 +344,8 @@ function MyProfile(props) {
                       {events.map((event, index) => 
                       (
                         <EventItem
+                        currentUser={props.currentUser}
+                        id={event._id}
                         admin={props.currentUser.admin}
                         title={event.title}
                         creator={event.creator}

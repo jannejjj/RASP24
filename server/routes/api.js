@@ -219,6 +219,67 @@ router.delete('/event/:id', passport.authenticate('jwt', {session: false}), asyn
   }
 });
 
+// Add the user as an attendee to a specific event
+router.post('/attend/event', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const eventID = req.body.eventID;
+    const userID = req.body.userID;
+    let succesful = true;
+
+    const member_event = new Member_Event(
+        {
+            date: new Date(),
+            paid: false,
+            member: userID,
+            event: eventID
+        }
+    );
+
+    member_event.save()    
+    .catch(err => 
+        {
+            console.log("Error while attending: " + err);
+            succesful = false;
+            return res.json({success: false});
+        }
+    );
+
+    if (succesful)
+    {
+        // After the attendance has been succesful, increase the amount of attendees for the event.
+        Event.findByIdAndUpdate({_id: eventID}, { $inc: {attendees: 1} })
+        .catch(err =>
+            {
+                if (err)
+                {
+                    console.log(err);
+                }
+            })
+
+        return res.json({success: true});
+    }
+});
+
+// Confirm if a user is attending an event or not
+router.get('/is/attending/:eventID/:userID', async (req, res) =>
+{
+    const eventID = req.params.eventID;
+    const userID = req.params.userID;
+
+    await Member_event.find({event: eventID, member: userID})
+    .then((docs) =>
+    {
+        if (docs.length > 0)
+        {
+            return res.json({attending: true});
+        }
+        else
+        {
+            return res.json({attending: false});
+        }
+    });
+})
+
 router.post('/authenticate/token', (req, res) =>
 {
     try
