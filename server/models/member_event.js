@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let member_eventSchema = new Schema ({
-    date:[{type: Date}],
+    date:{type: Date},
     paid: {type: Boolean},
     member:[{
         type: mongoose.Schema.Types.ObjectId,
@@ -13,7 +13,6 @@ let member_eventSchema = new Schema ({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'event'
     }],
-    tickets:{type: Number}
     
 });
 

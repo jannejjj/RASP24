@@ -219,33 +219,28 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
 
         if(!event || !user){
             return res.status(404).json({ error: 'User or Event not found' });
+    
+        }
+        const event_member = await Member_Event.findOne({
+            member: user._id,
+            event: event._id
+        });
+        if(event_member){
+            return res.status(409).json({ error: 'User already have a ticket' });   
         }
 
         event.tickets--;
         event.ticketsSold++;
 
-        const event_members = await Member_Event.find({
-            member: userId, 
-            event: eventId   
+
+        const member_event = new Member_Event({
+            date: new Date(),
+            paid: true,
+            member: user._id,
+            event: event._id
         });
 
-        if (event_members.length === 0) {
-            const member_event = new Member_Event({
-                date:[ new Date()],
-                paid: true,
-                member: user._id,
-                event: event._id,
-                tickets: 1
-            });
-            await member_event.save();
-        } else {
-            for (const event_member of event_members) {
-                event_member.tickets++;
-                event_member.date.push(new Date());
-                await event_member.save();
-            }
-        }
-
+        await member_event.save();
         await event.save();
         res.status(200).send("ticket sold");
     }catch(err){
