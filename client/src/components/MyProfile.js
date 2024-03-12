@@ -350,10 +350,11 @@ function MyProfile(props) {
                         title={event.title}
                         creator={event.creator}
                         time={event.time}
-                        location={event.location}
+                        location={event.location} 
                         attendees={event.attendees}
                         attending={true}
                         description={event.description}
+                        paid={event.paid}
                         key={index}
                         />
                       ))}

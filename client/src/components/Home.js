@@ -86,9 +86,6 @@ function Details(props) {
   );
 }
 
-
-  
-
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
   const [newEventModal, setNewEventModal] = useState(false);
@@ -296,7 +293,7 @@ function Home(props) {
 
       <div className="HomeEventsList">
         <h1>Events</h1>
-        <div className="HorizontalSeparator" style={{ width: "95%" }} />
+        <div className="HorizontalSeparator" style={{ width: "^95%" }} />
         
         {admin && (
           <Button color="primary" variant='contained' onClick={() => {setNewEventModal(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>

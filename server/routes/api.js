@@ -150,6 +150,7 @@ router.get('/get/events/for/:id', async (req, res) =>
     // Initialize the lists where the events will be added
     let events = [];
     let eventIDs = [];
+    let paid = {};
 
     // Find the IDs of the events that the user is interested in or has paid for
     await Member_event.find({member: id})
@@ -157,6 +158,7 @@ router.get('/get/events/for/:id', async (req, res) =>
     {
         docs.forEach(item => {
             eventIDs.push(item.event);
+            paid[item.event] = item.paid;
         });
     });
 
@@ -164,11 +166,12 @@ router.get('/get/events/for/:id', async (req, res) =>
     await Event.find({_id: {$in: eventIDs}})
     .then((docs) => {
       docs.forEach(event => {
+        let modifiedEvent = {...event, paid: paid[event._id]};
         events.push(event);
       });
     });
 
-    // Returns a list every time. If the user is not partisipating in any events, the list is empty.
+    // Returns a list every time. If the user is not participating in any events, the list is empty.
     return res.json({events});
 });
 

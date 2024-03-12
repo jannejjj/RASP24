@@ -113,7 +113,7 @@ function EventItem(props) {
           "Authorization": "Bearer " + props.currentUser.token
         },
         body: JSON.stringify(body)
-      }
+      } 
     );
 
     // Close the modal and update the event list
