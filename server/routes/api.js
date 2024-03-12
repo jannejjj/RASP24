@@ -198,7 +198,7 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
 
   // Add the creator as an attendee in the back-end
   const member_event = new Member_Event({
-    date: new Date(),
+    date: [new Date()],
     paid: false,
     member: req.body.creatorId,
     event: event._id,
@@ -231,7 +231,7 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
 
         if (event_members.length === 0) {
             const member_event = new Member_Event({
-                date: new Date(),
+                date:[ new Date()],
                 paid: true,
                 member: user._id,
                 event: event._id,
@@ -241,6 +241,7 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
         } else {
             for (const event_member of event_members) {
                 event_member.tickets++;
+                event_member.date.push(new Date());
                 await event_member.save();
             }
         }
