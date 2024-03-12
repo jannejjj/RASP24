@@ -11,6 +11,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import dayjs from 'dayjs';
+import { TextField } from '@mui/material';
 
 function EditEventModal(props)
 {
@@ -23,7 +24,7 @@ function EditEventModal(props)
           
           <form onSubmit={props.saveEditedEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
                 <h1>{props.title}</h1>
-                <OutlinedInput fullWidth required type="text" placeholder={'Location'} id="location" sx={{m: 1}} defaultValue={props.location} />
+                <TextField label='Location' fullWidth required type="text" placeholder={'Location'} id="location" sx={{m: 1}} defaultValue={props.location} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
                     onChange={props.handleStartTimeChange}
@@ -56,7 +57,7 @@ function EditEventModal(props)
                     format="DD/MM/YYYY hh:mm"
                     ampm={false}
                     disablePast={true}
-                    defaultValue={dayjs(props.joinDeadlineDate)}
+                    defaultValue={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):undefined}
                     slotProps={{
                       textField: {
                         id: 'joinDeadline',
@@ -72,7 +73,7 @@ function EditEventModal(props)
                     format="DD/MM/YYYY hh:mm"
                     ampm={false}
                     disablePast={true}
-                    defaultValue={dayjs(props.endDate)}
+                    defaultValue={props.endDate !== undefined ? dayjs(props.endDate):undefined}
                     slotProps={{
                       textField: {
                         id: 'endDate',
@@ -81,17 +82,20 @@ function EditEventModal(props)
                     }}
                   />
                 </LocalizationProvider>
-                <OutlinedInput fullWidth multiline required placeholder={'Description'} type="text" id="description" sx={{m: 1}} defaultValue={props.description}/>
-                <OutlinedInput fullWidth required placeholder={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 1}} defaultValue={props.price}/>
+                <TextField fullWidth multiline required label='Description' placeholder={'Description'} type="text" id="description" sx={{m: 1}} defaultValue={props.description}/>
+                <TextField fullWidth required label='Price' placeholder={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 1}} defaultValue={props.price}/>
                 <FormControlLabel 
-                  control={<Switch />}
-                  label="Limited tickets" checkedticket={props.checkedTicket ? "true" : "false"}
+                  control={
+                    <Switch checked={props.checkedTicket}/>
+                  }
+                  label="Limited tickets" checkedticket={!props.checkedTicket ? "true" : "false"}
                   onChange={props.resetTickets}
                 />
-                <OutlinedInput 
+                <TextField 
                   fullWidth 
                   required 
                   disabled={!props.checkedTicket} 
+                  label='Number of tickets'
                   placeholder={'Number of tickets'} 
                   min="0" 
                   type="number" 

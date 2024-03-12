@@ -108,7 +108,7 @@ function EventItem(props) {
   const [price, setPrice] = useState(props.price);
   const [tickets, setTickets] = useState(props.tickets);
 
-  const [checkedTicket, setCheckedTicket] = useState(false);
+  const [checkedTicket, setCheckedTicket] = useState(props.tickets !== 0 && props.tickets !== null && props.tickets !== undefined);
   const [checkedDeadline, setCheckedDeadline] = useState(false);
 
 
@@ -267,6 +267,16 @@ const handleJoinDeadlineError = (error) => {
   // Show edit
   const editOnClick = () => {
     // Set editedEvent to contain the original event data
+    console.log({
+      title: title,
+      startDate: startDate,
+      endDate: endDate,
+      joinDeadline: joinDeadlineDate,
+      location: location,
+      description: description,
+      price: props.price,
+      tickets : tickets
+    });
     setEditedEvent({
       title: title,
       startDate: startDate,
