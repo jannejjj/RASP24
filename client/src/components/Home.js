@@ -102,15 +102,14 @@ function EventItem(props) {
   const [title, setTitle] = useState(props.title);
   const [startDate, setStartDate] = useState(props.startDate);
   const [endDate, setEndDate] = useState(props.endDate);
-  const [joinDeadlineDate, setJoinDeadlineDate] = useState(props.joinDeadline);
+  const [joinDeadline, setJoinDeadlineDate] = useState(props.joinDeadline);
   const [location, setLocation] = useState(props.location);
   const [description, setDescription] = useState(props.description);
   const [price, setPrice] = useState(props.price);
   const [tickets, setTickets] = useState(props.tickets);
 
   const [checkedTicket, setCheckedTicket] = useState(props.tickets !== 0 && props.tickets !== null && props.tickets !== undefined);
-  const [checkedDeadline, setCheckedDeadline] = useState(false);
-
+  const [checkedDeadline, setCheckedDeadline] = useState(!(props.joinDeadline !== null && props.joinDeadline !== undefined));
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -263,7 +262,7 @@ const handleEndTimeError = (error) => {
 const handleJoinDeadlineError = (error) => {
   console.log("Join deadline error: " + error);
   setJoinDeadlineError(true);
-}
+} 
   // Show edit
   const editOnClick = () => {
     // Set editedEvent to contain the original event data
@@ -271,7 +270,7 @@ const handleJoinDeadlineError = (error) => {
       title: title,
       startDate: startDate,
       endDate: endDate,
-      joinDeadline: joinDeadlineDate,
+      joinDeadline: joinDeadline,
       location: location,
       description: description,
       price: props.price,
@@ -281,7 +280,7 @@ const handleJoinDeadlineError = (error) => {
       title: title,
       startDate: startDate,
       endDate: endDate,
-      joinDeadline: joinDeadlineDate,
+      joinDeadline: joinDeadline,
       location: location,
       description: description,
       price: props.price,
@@ -380,7 +379,7 @@ const handleJoinDeadlineError = (error) => {
           location={location}
           startDate={startDate}
           endDate={endDate}
-          joinDeadlineDate={joinDeadlineDate}
+          joinDeadline={joinDeadline}
           price={price}
         />
   

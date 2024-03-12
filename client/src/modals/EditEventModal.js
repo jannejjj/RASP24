@@ -26,7 +26,7 @@ function EditEventModal(props)
                 <h1>{props.title}</h1>
                 <TextField label='Location' fullWidth required type="text" placeholder={'Location'} id="location" sx={{m: 1}} defaultValue={props.location} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateTimePicker
+                  <DateTimePicker 
                     onChange={props.handleStartTimeChange}
                     onError={props.handleStartTimeError}
                     label="Select Starting Time" 
@@ -44,8 +44,8 @@ function EditEventModal(props)
                     }}
                   />
                   <FormControlLabel 
-                    control={<Switch />}
-                    label="Deadline for joining" checkeddeadline={props.checkedDeadline ? "true" : "false"}
+                    control={<Switch checked={props.checkedDeadline}/>}
+                    label="Deadline for joining" 
                     onChange={props.handleDeadlineSwitch}
                   />
                   <DateTimePicker
@@ -57,7 +57,7 @@ function EditEventModal(props)
                     format="DD/MM/YYYY hh:mm"
                     ampm={false}
                     disablePast={true}
-                    defaultValue={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):undefined}
+                    defaultValue={props.joinDeadlineDate !== undefined ? dayjs(props.joinDeadlineDate):undefined}
                     slotProps={{
                       textField: {
                         id: 'joinDeadline',
@@ -88,7 +88,7 @@ function EditEventModal(props)
                   control={
                     <Switch checked={props.checkedTicket}/>
                   }
-                  label="Limited tickets" checkedticket={!props.checkedTicket ? "true" : "false"}
+                  label="Limited tickets"
                   onChange={props.resetTickets}
                 />
                 <TextField 
