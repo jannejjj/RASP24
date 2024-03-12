@@ -15,7 +15,8 @@ function Members(props) {
     setDisplayMembers(members.filter(element => 
       element.lastname.toLowerCase().includes(event.target.value.toLowerCase().trim()) 
       || 
-      element.firstname.toLowerCase().includes(event.target.value.toLowerCase().trim())));
+      element.firstname.toLowerCase().includes(event.target.value.toLowerCase().trim())
+    ));
   }
 
   useEffect(() => {
