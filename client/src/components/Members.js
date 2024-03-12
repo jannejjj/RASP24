@@ -12,11 +12,7 @@ function Members(props) {
   const [loading, setLoading] = useState(true);
 
   const onChangeSearch = (event) => {
-    setDisplayMembers(members.filter(element => 
-      element.lastname.toLowerCase().includes(event.target.value.toLowerCase().trim()) 
-      || 
-      element.firstname.toLowerCase().includes(event.target.value.toLowerCase().trim())
-    ));
+    setDisplayMembers(members.filter(member => (member.firstname + " " + member.lastname).toLowerCase().includes(event.target.value.toLowerCase().trim())));
   }
 
   useEffect(() => {
