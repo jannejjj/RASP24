@@ -2,6 +2,8 @@ import {useState, useEffect} from 'react';
 import Member from './Member';
 import Typography from "@mui/material/Typography";
 import TextField from '@mui/material/TextField';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 import "../styles/Members.css";
 import '../App.css';
 
@@ -63,7 +65,19 @@ function Members(props) {
     <div className="MembersBackground">
       <div className="MembersTitle">
         <h1>Members</h1>
-        <TextField id="search-term" label="Search" variant="outlined" onChange={onChangeSearch}/>
+          <TextField 
+          id="search-term" 
+          label="Search" 
+          variant="outlined" 
+          sx={{ width: 400, ml: 5, mb: 2 }} 
+          onChange={onChangeSearch}  
+          InputProps={{
+          endAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          ),}} 
+          />
       </div>
       {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">
         Loading...

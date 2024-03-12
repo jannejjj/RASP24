@@ -34,6 +34,8 @@ function CreateEventModal(props)
                     ampm={false}
                     disablePast={true}
                     slotProps={{
+                      openPickerIcon: { fontSize: 'large' },
+                      inputAdornment: {sx: {mr: 2}},
                       textField: {
                         required: true,
                         id: 'startDate',
@@ -56,6 +58,8 @@ function CreateEventModal(props)
                     ampm={false}
                     disablePast={true}
                     slotProps={{
+                      openPickerIcon: { fontSize: 'large' },
+                      inputAdornment: {sx: {mr: 2}},
                       textField: {
                         id: 'joinDeadline',
                         readOnly: true,
@@ -71,6 +75,8 @@ function CreateEventModal(props)
                     ampm={false}
                     disablePast={true}
                     slotProps={{
+                      openPickerIcon: { fontSize: 'large' },
+                      inputAdornment: {sx: {mr: 2}},
                       textField: {
                         id: 'endDate',
                         readOnly: true,
