@@ -10,19 +10,24 @@ import "../styles/EventDetails.css";
 
 function EventDetails(props) {
 
-  const [startYear, startMonth, startDay] = props.startDate.split("T")[0].split("-")
-  const startTime = props.startDate.split("T")[1].slice(0, 5)
-  
-  const [endYear, endMonth, endDay] = props.endDate ? props.endDate.split("T")[0].split("-") : ["","",""]
-  const endTime = props.endDate ? props.endDate.split("T")[1].slice(0, 5) : ""
+  const localeStringOptions = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Helsinki"
+  }
 
-  const [deadlineYear, deadlineMonth, deadlineDay] = props.joinDeadline.split("T")[0].split("-")
-  const deadlineTime = props.joinDeadline.split("T")[1].slice(0, 5)
+  const localizedStartDate = new Date(props.startDate).toLocaleString("fi-FI", localeStringOptions);
+  const localizedEndDate = props.endDate ? new Date(props.endDate).toLocaleString("fi-FI", localeStringOptions) : "Not specified";
+  const localizedDeadline = new Date(props.joinDeadline).toLocaleString("fi-FI", localeStringOptions);
+
   return (
     <Grid container rowSpacing={2} columns={2} columnSpacing={16} justifyContent={"center"} fontFamily={"Poppins"}>
       <Grid item xs={2} md={1} className="details-grid-item">
         <AccessTimeIcon/>
-        <span>Start time: {startDay}.{startMonth}.{startYear} {startTime}</span>
+        <span>Start time: {localizedStartDate}</span>
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <LocalOfferIcon />
@@ -30,7 +35,7 @@ function EventDetails(props) {
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <AccessTimeIcon />
-        {props.endDate ? <span>End time: {endDay}.{endMonth}.{endYear} {endTime}</span> : <span>End time: Not specified</span>}
+        <span>End time: {localizedEndDate}</span>
         
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
@@ -39,7 +44,7 @@ function EventDetails(props) {
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <EventIcon />
-        <span>Deadline: {deadlineDay}.{deadlineMonth}.{deadlineYear} {deadlineTime}</span>
+        <span>Join by: {localizedDeadline}</span>
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <LocalActivityIcon />
