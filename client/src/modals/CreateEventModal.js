@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
@@ -22,8 +22,8 @@ function CreateEventModal(props)
           </h2>
           <div className='HorizontalSeparator' />
           <form onSubmit={props.saveNewEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
-                <OutlinedInput fullWidth required placeholder={'Title *'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 0.5}} />
-                <OutlinedInput fullWidth required placeholder={'Location *'} type="text" id="location" sx={{m: 0.5}} />
+                <TextField fullWidth required label={'Title'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 0.5}} />
+                <TextField fullWidth required label={'Location'} type="text" id="location" sx={{m: 0.5}} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker sx={{m: 0.5}}
                     onChange={props.handleStartTimeChange}
@@ -34,6 +34,8 @@ function CreateEventModal(props)
                     ampm={false}
                     disablePast={true}
                     slotProps={{
+                      openPickerIcon: { fontSize: 'large' },
+                      inputAdornment: {sx: {mr: 2}},
                       textField: {
                         required: true,
                         id: 'startDate',
@@ -50,12 +52,14 @@ function CreateEventModal(props)
                     onChange={props.handleJoinDeadlineChange}
                     onError={props.handleJoinDeadlineError}
                     disabled={!props.checkedDeadline}
-                    label="Event join deadline" 
+                    label="Event joining deadline" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
                     format="DD/MM/YYYY hh:mm"
                     ampm={false}
                     disablePast={true}
                     slotProps={{
+                      openPickerIcon: { fontSize: 'large' },
+                      inputAdornment: {sx: {mr: 2}},
                       textField: {
                         id: 'joinDeadline',
                         readOnly: true,
@@ -71,6 +75,8 @@ function CreateEventModal(props)
                     ampm={false}
                     disablePast={true}
                     slotProps={{
+                      openPickerIcon: { fontSize: 'large' },
+                      inputAdornment: {sx: {mr: 2}},
                       textField: {
                         id: 'endDate',
                         readOnly: true,
@@ -78,19 +84,19 @@ function CreateEventModal(props)
                     }}
                   />
                 </LocalizationProvider>
-                <OutlinedInput fullWidth multiline required placeholder={'Description *'} type="text" id="description" sx={{m: 0.5}} maxRows={10} />
-                <OutlinedInput fullWidth required placeholder={'Price *'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 0.5}} />
+                <TextField fullWidth multiline required label={'Description'} type="text" id="description" sx={{m: 0.5}} maxRows={10} />
+                <TextField fullWidth required label={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 0.5}} />
                 <FormControlLabel 
                   control={<Switch />}
                   label="Limited tickets" checkedTicket={props.checkedTicket}
                   onChange={props.resetTickets}
                 />
-                <OutlinedInput 
+                <TextField 
                   sx={{m: 0.5}}
                   fullWidth 
                   required 
                   disabled={!props.checkedTicket} 
-                  placeholder={'Number of tickets'} 
+                  label={'Number of tickets'} 
                   min="0" 
                   type="number" 
                   inputProps={{min:0}} 
