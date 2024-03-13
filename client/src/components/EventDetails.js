@@ -27,7 +27,7 @@ function EventDetails(props) {
     <Grid container rowSpacing={2} columns={2} columnSpacing={16} justifyContent={"center"} fontFamily={"Poppins"}>
       <Grid item xs={2} md={1} className="details-grid-item">
         <AccessTimeIcon/>
-        <span>Start time: {localizedStartDate}</span>
+        <span>Start: {localizedStartDate}</span>
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <LocalOfferIcon />
@@ -35,7 +35,7 @@ function EventDetails(props) {
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <AccessTimeIcon />
-        <span>End time: {localizedEndDate}</span>
+        <span>End: {localizedEndDate}</span>
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <PeopleAltIcon />
