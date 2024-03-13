@@ -36,7 +36,6 @@ function EventDetails(props) {
       <Grid item xs={2} md={1} className="details-grid-item">
         <AccessTimeIcon />
         <span>End time: {localizedEndDate}</span>
-        
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <PeopleAltIcon />
@@ -62,7 +61,7 @@ function EventDetails(props) {
           justifyContent: "center",
         border: "1px solid black",}}
         >
-            Map goes here, maybe
+            Map goes here
         </div>
       </Grid>
     </Grid>
