@@ -8,9 +8,6 @@
   display: flex;
   justify-content: flex-start;
   align-content: center;
-
-  @media screen and (max-width: 900px) {
-  }
 }
 
 .MuiSvgIcon-root {
