@@ -201,7 +201,7 @@ function EventItem(props) {
           <div className="HorizontalSeparator" />
           <div className="HomeEventDescriptionArea">
                 <p>{description}</p>
-              </div>
+          </div>
           <Accordion
             sx={{
               "&:before": {
