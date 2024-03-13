@@ -30,7 +30,7 @@ function CreateEventModal(props)
                     onError={props.handleStartTimeError}
                     label="Select starting time" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
-                    format="DD/MM/YYYY hh:mm"
+                    format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     disablePast={true}
                     slotProps={{
@@ -52,7 +52,7 @@ function CreateEventModal(props)
                     disabled={!props.checkedDeadline}
                     label="Event join deadline" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
-                    format="DD/MM/YYYY hh:mm"
+                    format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     disablePast={true}
                     slotProps={{
@@ -67,7 +67,7 @@ function CreateEventModal(props)
                     onError={props.handleEndTimeError}
                     label="Select ending time" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
-                    format="DD/MM/YYYY hh:mm"
+                    format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     disablePast={true}
                     slotProps={{
