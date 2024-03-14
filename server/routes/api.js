@@ -9,7 +9,8 @@ const Member_Event = require("../models/member_event");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
-const multer = require("multer")
+const multer = require("multer");
+const member_event = require('../models/member_event');
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 var idFromToken = null;
@@ -259,6 +260,50 @@ router.post('/attend/event', passport.authenticate('jwt', {session: false}), asy
         return res.json({success: true});
     }
 });
+
+// Cancel the attendance to an event
+router.delete('/cancel/attendance/:eventID/:userID', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const eventID = req.params.eventID;
+    const userID = req.params.userID;
+
+    try
+    {
+        const deletedItem = await Member_Event.findOneAndDelete({member: userID, event: eventID});
+
+        if (deletedItem)
+        {
+            try
+            {
+                // Update the amount of attendees the event now has
+                const updatedItem = await Event.findByIdAndUpdate({_id: eventID}, { $inc: {attendees: -1} })
+                
+                if (updatedItem)
+                {
+                    return res.json({success: true});
+                }
+                else
+                {
+                    return res.json({success: false});
+                }
+            }
+            catch (error)
+            {
+                console.log("Error while updating the attendees of the event: " + error);
+                return res.json({success: false});
+            }
+        }
+        else
+        {
+            return res.json({success: false});
+        }
+    }
+    catch (error)
+    {
+        console.log("Error while cancelling the attendance: " + error);
+        return res.json({success: false});
+    }
+})
 
 // Confirm if a user is attending an event or not
 router.get('/is/attending/:eventID/:userID', async (req, res) =>
