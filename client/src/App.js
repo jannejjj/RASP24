@@ -16,7 +16,7 @@ function App() {
     firstname: "",
     lastname: "",
     token: "",
-    id: 0
+    id: null
   });
 
   const theme = createTheme(

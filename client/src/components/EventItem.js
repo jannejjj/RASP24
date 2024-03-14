@@ -21,7 +21,7 @@ function EventItem(props) {
   const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
   const [tickets, setTickets] = useState(props.tickets);
   const [price, setPrice] = useState(props.price);
-  const [user, setUser ] = useState(null);
+  const [hasTicket, setHasTicket] = useState(false);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -41,24 +41,28 @@ function EventItem(props) {
     props.description
   );
 
-
-
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`/users/getData/${props.user_id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        setUser(await response.json());
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
+    const data = {
+      userId: props.user_id,
+      eventId: props.id
     };
 
-    fetchUserData();
+    fetch('/api/test', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + props.token
+        },
+          body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      setHasTicket(data.ticket);
+    })
+    .catch(error => {
+        console.error('Error fetching ticket status:', error);
+    });
   }, []);
-
 
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
@@ -160,6 +164,7 @@ function EventItem(props) {
       // Handle success
       console.log('Data submitted successfully');
       props.showToastSuccessMessage("Payment ok");
+      setHasTicket(true);
     } catch (error) {
       // Handle error
       console.error('Error submitting data:', error.message);
@@ -248,12 +253,19 @@ function EventItem(props) {
               }
             </div>
             <div>
-              {tickets > 0 ? (
-                <Button variant='contained' color='primary' onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
+              {hasTicket ? (
+                <div>You have a ticket </div>
               ) : (
-                <div>No tickets available</div>
+                <div>
+                  {typeof tickets === 'undefined' || tickets - ticketsSold > 0 ? (
+                    <Button variant='contained' color='primary' onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
+                  ) : (
+                    <div>No tickets available</div>
+                  )}
+                </div>
               )}
             </div>
+            
           </div>
         </div>
   
@@ -295,7 +307,7 @@ function EventItem(props) {
           handlePayment={handlePayment}
           price={price}
           title={title}
-          user={user}
+          user={props.user}
         />
       </div>
     );
