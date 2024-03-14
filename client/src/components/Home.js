@@ -130,6 +130,19 @@ const showToastMessage = (message) =>
         theme: "dark"
         });
 }
+const showToastMessageSuccesfull = (message) =>
+{
+    toast.success(message, {
+        position: "top-center",
+        autoClose: 6000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: "light"
+        });
+}
 
   // POST edited event
   const saveEditedEventOnClick = (e) => {
@@ -160,6 +173,13 @@ const showToastMessage = (message) =>
               mode: "cors"
           })
               .then(response =>{
+                  if(response.status === 409){
+                    console.log("tickets should be more than the tickets already sold");
+                    showToastMessage("tickets should be more than the tickets already sold");
+                  }
+                  if(response.ok){
+                    showToastMessageSuccesfull("Event edition succesfull");
+                  }
                   return response.json()
               } )
               .then(data => {

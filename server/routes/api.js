@@ -166,6 +166,9 @@ router.post("/editEvent",passport.authenticate('jwt', {session: false}), async (
         if (!event) {
             return res.status(404).send('Event not found');
         }
+        if(editedEvent.tickets < event.ticketsSold){
+            return res.status(409).send("tickets should be more than the tickets already sold");
+        }
 
         event.location = editedEvent.location;
         event.description = editedEvent.description;
