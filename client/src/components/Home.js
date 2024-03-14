@@ -177,13 +177,12 @@ const showToastMessageSuccesfull = (message) =>
                     console.log("tickets should be more than the tickets already sold");
                     showToastMessage("tickets should be more than the tickets already sold");
                   }
-                  if(response.ok){
-                    showToastMessageSuccesfull("Event edition succesfull");
-                  }
                   return response.json()
               } )
               .then(data => {
-                  console.log(data)
+                if (data) { 
+                  showToastMessageSuccesfull(`${data.event.ticketsSold} users will be notified of the changes`);
+                }
               })
 
           // Empty the input fields
@@ -286,16 +285,6 @@ const handleJoinDeadlineError = (error) => {
   // Show edit
   const editOnClick = () => {
     // Set editedEvent to contain the original event data
-    console.log({
-      title: title,
-      startDate: startDate,
-      endDate: endDate,
-      joinDeadline: joinDeadline,
-      location: location,
-      description: description,
-      price: props.price,
-      tickets : tickets
-    });
     setEditedEvent({
       title: title,
       startDate: startDate,
