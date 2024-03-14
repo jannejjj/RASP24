@@ -105,7 +105,7 @@ function CreateEventModal(props)
                   onChange={e => props.setTickets(e.target.value)}
                 />
                 <p className='HintParagraphSmall' >Required *</p>
-                <div>
+                <div className='ModalButtonArea'>
                   <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
                   <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit">Save</Button>
                 </div>

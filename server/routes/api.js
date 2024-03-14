@@ -21,8 +21,33 @@ router.use(passport.initialize());
 //finds all the members in the DB if authenticated
 router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
-      const members  = await Member.find({});
-      res.send(members);
+        const members  = await Member.find({});
+        // The password should not be sent back to the frontend.
+        let passwordlesMembers = [];
+
+        members.forEach(member => 
+            {
+                let newMember =
+                {
+                    id: member._id,
+                    firstname: member.firstname,
+                    lastname: member.lastname,
+                    phone: member.phone,
+                    address: member.address,
+                    postalcode: member.postalcode,
+                    city: member.city,
+                    country: member.country,
+                    email: member.email,
+                    admin: member.admin,
+                    role: member.role,
+                };
+
+                passwordlesMembers.push(newMember);
+            }
+        );
+
+        res.send(passwordlesMembers);
+      
     } catch (err) {
       console.error('Error fetching member data:', err);
       res.status(500).json({error: 'Internal Server Error'});
@@ -125,6 +150,7 @@ router.post('/register',
                         country: req.body.country,
                         email: req.body.email,
                         password: hash,
+                        role: "",
                         admin: 0
                     });
                     member.save()
@@ -142,6 +168,42 @@ router.post('/register',
         console.log(err);
     }
       
+});
+
+// Update the role and admin permissions for the member
+router.put('/update/member/', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const newRole = req.body.role;
+    const newPermission = req.body.permission;
+    const memberID = req.body.memberID;
+
+    const updatedMember = await Member.findOneAndUpdate({_id: memberID}, {role: newRole, admin: newPermission});
+
+    if (updatedMember)
+    {
+        return res.json({success: true});
+    }
+    else
+    {
+        return res.json({success: false});
+    }
+});
+
+// Delete the member
+router.delete('/delete/member/:memberID', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const memberID = req.params.memberID;
+
+    const deletedMember = await Member.findOneAndDelete({_id: memberID});
+
+    if (deletedMember)
+    {
+        return res.json({success: true});
+    }
+    else
+    {
+        return res.json({success: false});
+    }
 });
 
 

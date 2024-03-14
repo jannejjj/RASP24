@@ -17,7 +17,7 @@ function DeleteEventModal(props)
           <p style={{textAlign: "center"}}>
             Are you sure you want to delete this event? It has {props.attendees === 0 ? "no attendees" : props.attendees + " attendees"}.
           </p>
-          <div>
+          <div className='ModalButtonArea'>
             <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelDeleteOnClick} >Cancel</Button>
             <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.confirmDeleteOnClick} >Delete</Button>
           </div>

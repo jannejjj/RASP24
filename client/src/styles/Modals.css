@@ -22,10 +22,9 @@
   margin: 10px 0 10px 0;
 }
 
-.ModalBackground div
+.ModalButtonArea
 {
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: right;
 }
