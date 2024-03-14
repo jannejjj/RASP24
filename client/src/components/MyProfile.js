@@ -199,11 +199,16 @@ function MyProfile(props) {
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [selectedView, setSelectedView] = useState("Information");
+  const [updateEvents, setUpdateEvents] = useState(false);
 
   // These used to navigate between the My Information and My Events divs
   const informationRef = useRef(null);
   const eventsRef = useRef(null);
   const currentRef = useRef(null);
+
+  const toggleUpdateEvents = () => {
+    setUpdateEvents(!updateEvents);
+  }
 
   // Used to scroll between the My Information and My Events views
   const scrollToRef = (ref) =>
@@ -290,7 +295,7 @@ function MyProfile(props) {
     {
         window.removeEventListener("resize", handleResize);
     }
-  }, []);
+  }, [updateEvents]);
 
   return (
     <div className='MyProfileBackground'>
@@ -356,6 +361,7 @@ function MyProfile(props) {
                         description={event.description}
                         paid={event.paid}
                         key={index}
+                        toggleUpdateEvents={toggleUpdateEvents}
                         />
                       ))}
                     </div>
