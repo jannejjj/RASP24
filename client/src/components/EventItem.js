@@ -152,7 +152,8 @@ function EventItem(props) {
       });
 
       if (!response.ok) {
-        props.showToastMessage("Payment failed");
+        const errorMessage = await response.json(); 
+        props.showToastMessage(errorMessage.error);
         throw new Error('Payment failed');
       }
 

@@ -228,8 +228,10 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
         if(event_member){
             return res.status(409).json({ error: 'User already have a ticket' });   
         }
+        if(event.tickets === event.ticketsSold){
+            return res.status(409).json({ error: 'There is no tickets left' }); 
+        }
 
-        event.tickets--;
         event.ticketsSold++;
 
 
