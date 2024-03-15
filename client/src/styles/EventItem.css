@@ -8,3 +8,7 @@
 .MuiAccordionSummary-root {
   padding-left: 16px !important;
 }
+
+.MuiAccordionSummary-content > h3 {
+  margin-bottom: 0;
+}
