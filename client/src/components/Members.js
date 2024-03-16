@@ -32,10 +32,14 @@ function Members(props) {
             if(dataJson.error) {
               console.log("Error while fetching members: " + dataJson.error);
             } else {
-              setMembers(dataJson);
+              const index = dataJson.findIndex(member => member._id === props.currentUser.id);
+              if(index !== -1) {
+                dataJson.unshift(dataJson.splice(index, 1)[0]);
+              }
+              setMembers(dataJson)
               setDisplayMembers(dataJson);
             }
-            setLoading(false);  
+            setLoading(false);
         }
     }
     // Only for users that have logged in
