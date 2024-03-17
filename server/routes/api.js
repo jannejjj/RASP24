@@ -9,7 +9,8 @@ const Member_Event = require("../models/member_event");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
-const multer = require("multer")
+const multer = require("multer");
+const member_event = require('../models/member_event');
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 var idFromToken = null;
@@ -19,13 +20,13 @@ require('../auth/passport')(passport)
 router.use(passport.initialize());
 
 //finds all the members in the DB if authenticated
-router.get("/members", passport.authenticate('jwt', {session: false}), async (req, res) => {
+router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
-        const members  = await Member.find({});
-        res.send(members);
+      const members  = await Member.find({});
+      res.send(members);
     } catch (err) {
-        console.error(err);
-        res.send("No members.");
+      console.error('Error fetching member data:', err);
+      res.status(500).json({error: 'Internal Server Error'});
     }
 });
 
@@ -314,6 +315,111 @@ router.delete('/event/:id', passport.authenticate('jwt', {session: false}), asyn
       res.status(500).json({error: "Error deleting event."});
   }
 });
+
+// Add the user as an attendee to a specific event
+router.post('/attend/event', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const eventID = req.body.eventID;
+    const userID = req.body.userID;
+    let succesful = true;
+
+    const member_event = new Member_Event(
+        {
+            date: new Date(),
+            paid: false,
+            member: userID,
+            event: eventID
+        }
+    );
+
+    member_event.save()    
+    .catch(err => 
+        {
+            console.log("Error while attending: " + err);
+            succesful = false;
+            return res.json({success: false});
+        }
+    );
+
+    if (succesful)
+    {
+        // After the attendance has been succesful, increase the amount of attendees for the event.
+        Event.findByIdAndUpdate({_id: eventID}, { $inc: {attendees: 1} })
+        .catch(err =>
+            {
+                if (err)
+                {
+                    console.log(err);
+                }
+            })
+
+        return res.json({success: true});
+    }
+});
+
+// Cancel the attendance to an event
+router.delete('/cancel/attendance/:eventID/:userID', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const eventID = req.params.eventID;
+    const userID = req.params.userID;
+
+    try
+    {
+        const deletedItem = await Member_Event.findOneAndDelete({member: userID, event: eventID});
+
+        if (deletedItem)
+        {
+            try
+            {
+                // Update the amount of attendees the event now has
+                const updatedItem = await Event.findByIdAndUpdate({_id: eventID}, { $inc: {attendees: -1} })
+                
+                if (updatedItem)
+                {
+                    return res.json({success: true});
+                }
+                else
+                {
+                    return res.json({success: false});
+                }
+            }
+            catch (error)
+            {
+                console.log("Error while updating the attendees of the event: " + error);
+                return res.json({success: false});
+            }
+        }
+        else
+        {
+            return res.json({success: false});
+        }
+    }
+    catch (error)
+    {
+        console.log("Error while cancelling the attendance: " + error);
+        return res.json({success: false});
+    }
+})
+
+// Confirm if a user is attending an event or not
+router.get('/is/attending/:eventID/:userID', async (req, res) =>
+{
+    const eventID = req.params.eventID;
+    const userID = req.params.userID;
+
+    await Member_event.find({event: eventID, member: userID})
+    .then((docs) =>
+    {
+        if (docs.length > 0)
+        {
+            return res.json({attending: true});
+        }
+        else
+        {
+            return res.json({attending: false});
+        }
+    });
+})
 
 router.post('/authenticate/token', (req, res) =>
 {

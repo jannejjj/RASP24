@@ -330,6 +330,7 @@ function Home(props) {
         ?
         !loading && events.map((event, index) => (
           <EventItem
+            currentUser={props.currentUser}
             id={event._id}
             user={user}
             user_id={props.currentUser.id}

@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useEffect, useState } from "react";
 import "../styles/HomePage.css";
 import "../App.css";
 import Button from "@mui/material/Button";
@@ -17,7 +17,6 @@ function EventItem(props) {
   const [time, setTime] = useState(props.time);
   const [location, setLocation] = useState(props.location);
   const [description, setDescription] = useState(props.description);
-  const [attendees, setAttendees] = useState(props.attendees);
   const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
   const [tickets, setTickets] = useState(props.tickets);
   const [price, setPrice] = useState(props.price);
@@ -123,16 +122,51 @@ function EventItem(props) {
     setEditedDescription(event.target.value);
   };
 
-  const handleEventAttendance = () => {
+  const handleEventAttendance = async () => {
+    const body =
+    {
+      eventID: props.id,
+      userID: props.currentUser.id
+    }
+
+    await fetch("/api/attend/event", 
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        },
+        body: JSON.stringify(body)
+      }
+    );
+
+    // Close the modal and update the event list
     setOpenAttend(false);
-    setAttending(true);
-    setAttendees(attendees + 1);
+    props.toggleUpdateEvents();
   };
 
-  const handleCancelEventAttendance = () => {
+  const handleCancelEventAttendance = async () => 
+  {
+    await fetch("/api/cancel/attendance/" + props.id + "/" + props.currentUser.id,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application",
+        "Authorization": "Bearer " + props.currentUser.token
+      }
+    })
+    .then(response => response.json)
+    .then(data =>
+      {
+        if (data.success === false)
+        {
+          console.log("Error while trying to cancel attendance");
+        }
+      })
+
+    // Close the modal and update the event list
     setOpenCancelAttendance(false);
-    setAttending(false);
-    setAttendees(attendees - 1);
+    props.toggleUpdateEvents();
   };
 
   const handlePayment = async (e) => {
@@ -199,6 +233,25 @@ function EventItem(props) {
     })
   };
 
+  useEffect(() =>
+  {
+    const confirmAttendance = () => 
+    {
+      fetch(`/api/is/attending/${props.id}/${props.currentUser.id}` , {
+        method: 'GET'
+      })
+      .then(response => response.json())
+      .then(data => 
+        {
+          setAttending(data.attending);
+        }
+      );
+    }
+
+    // Find out if the user is attending this event or not
+    confirmAttendance();
+  }, []);
+
     return (
       <div className="HomeEventItem">
         <div className="HomeEventTop">
@@ -219,7 +272,7 @@ function EventItem(props) {
             </div>
   
             <p>
-              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {attendees}
+              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {props.attendees}
             </p>
           </div>
         </div>
@@ -285,7 +338,7 @@ function EventItem(props) {
 
         <DeleteEventModal
           deleteModal={deleteModal}
-          attendees={attendees}
+          attendees={props.attendees}
           cancelDeleteOnClick={cancelDeleteOnClick}
           confirmDeleteOnClick={confirmDeleteOnClick}
         />
