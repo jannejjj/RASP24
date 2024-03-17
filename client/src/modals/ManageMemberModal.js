@@ -29,7 +29,8 @@ function ManageMemberModal(props)
             <Box className='ModalBackground'>
                 <h2>{props.member.firstname} {props.member.lastname}</h2>
                 <div className='HorizontalSeparator' />
-                <Button variant='contained' onClick={() => setOpenConfirmModal(true)} sx={{width: "100%"}}>Delete Member</Button>
+                {/* THe user can't delete their own account from the members list. */}
+                <Button variant='contained' disabled={props.currentUser.id === props.member._id} onClick={() => setOpenConfirmModal(true)} sx={{width: "100%"}}>Delete Member</Button>
                 <TextField variant='outlined' className='TextField' sx={{mb: 1}} label='Role' value={updatedRole} onChange={handleRoleChange} />
                 <Box sx={{ border: `1px solid #BDBDBD`, borderRadius: 1, pb: 1, pt: 1, width: "calc(100% - 2px)", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
                     <Typography sx={{ml: 1.5}} color='#757575'>Admin permissions</Typography>

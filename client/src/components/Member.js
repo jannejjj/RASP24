@@ -43,7 +43,7 @@ function Member(props) {
     {
       role: updatedRole,
       permission: updatedPermission,
-      memberID: props.member.id
+      memberID: props.member._id
     };
 
     fetch("/api/update/member", 
@@ -104,6 +104,7 @@ function Member(props) {
         setOpenManageMemberModal={setOpenManageMemberModal}
         deleteMember={deleteMember}
         updateMember={updateMember}
+        currentUser={props.currentUser}
       />
     </Box>
   );
@@ -111,7 +112,7 @@ function Member(props) {
   return (
     <div>
         <Box sx={{ border: 0, width: '60%', margin: 'auto', mb: 1.5 }}>
-            <Card variant="outlined" sx={{p: 0, m: 0}}>{card}</Card>
+            <Card variant="outlined" sx={props.currentUser.id === props.member._id && {border: 1, borderColor: '#2C041C'}}>{card}</Card>
         </Box>
     </div>
   )
