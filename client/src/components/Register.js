@@ -265,10 +265,7 @@ const Register = () => {
 
             <ToastContainer />
         </div>
-    )
-
-    
-    
+    ) 
 }
 
 export default Register

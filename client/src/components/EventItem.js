@@ -19,7 +19,6 @@ function EventItem(props) {
   const [time, setTime] = useState(props.time);
   const [location, setLocation] = useState(props.location);
   const [description, setDescription] = useState(props.description);
-  const [attendees, setAttendees] = useState(props.attendees);
   const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
 
   // These states store the data that is edited
@@ -121,10 +120,28 @@ function EventItem(props) {
     props.toggleUpdateEvents();
   };
 
-  const handleCancelEventAttendance = () => {
+  const handleCancelEventAttendance = async () => 
+  {
+    await fetch("/api/cancel/attendance/" + props.id + "/" + props.currentUser.id,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application",
+        "Authorization": "Bearer " + props.currentUser.token
+      }
+    })
+    .then(response => response.json)
+    .then(data =>
+      {
+        if (data.success === false)
+        {
+          console.log("Error while trying to cancel attendance");
+        }
+      })
+
+    // Close the modal and update the event list
     setOpenCancelAttendance(false);
-    setAttending(false);
-    setAttendees(attendees - 1);
+    props.toggleUpdateEvents();
   };
 
   const deleteOnClick = () => {
@@ -192,7 +209,7 @@ function EventItem(props) {
             </div>
   
             <p>
-              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {attendees}
+              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {props.attendees}
             </p>
           </div>
         </div>
@@ -224,7 +241,7 @@ function EventItem(props) {
                 ticketsSold={ticketsSold}
                 price={props.price}
                 paymentDate={props.paymentDate}
-                attendees={attendees}
+                attendees={props.attendees}
               />
             </AccordionDetails>
           </Accordion>
@@ -269,7 +286,7 @@ function EventItem(props) {
 
         <DeleteEventModal
           deleteModal={deleteModal}
-          attendees={attendees}
+          attendees={props.attendees}
           cancelDeleteOnClick={cancelDeleteOnClick}
           confirmDeleteOnClick={confirmDeleteOnClick}
         />
