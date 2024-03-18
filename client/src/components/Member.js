@@ -15,7 +15,7 @@ function Member(props) {
   // Delete the memner from the association
   const deleteMember = async () =>
   {
-    fetch('/api/delete/member/' + props.member.id, {
+    fetch('/api/delete/member/' + props.member._id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
