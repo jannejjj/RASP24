@@ -39,7 +39,7 @@ function EventDetails(props) {
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <PeopleAltIcon />
-        <span>Attendees: {props.attendees}</span>
+        <span>Tickets sold: {props.ticketsSold}</span>
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <EventIcon />
@@ -47,7 +47,7 @@ function EventDetails(props) {
       </Grid>
       <Grid item xs={2} md={1} className="details-grid-item">
         <LocalActivityIcon />
-        <span>Tickets: {props.tickets ? props.tickets : "Unlimited"}</span>
+        <span>Total tickets: {props.tickets ? props.tickets : "Unlimited"}</span>
       </Grid>
 
       <Grid item xs={2}>
