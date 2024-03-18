@@ -228,24 +228,33 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
             member: user._id,
             event: event._id
         });
-        if(event_member){
-            return res.status(409).json({ error: 'User already have a ticket' });   
-        }
         if(event.tickets === event.ticketsSold){
             return res.status(409).json({ error: 'There is no tickets left' }); 
+        }
+        if(event_member){
+            if(event_member.paid){
+                return res.status(409).json({ error: 'User already have a ticket' });
+            }   
         }
 
         event.ticketsSold++;
 
 
-        const member_event = new Member_Event({
-            date: new Date(),
-            paid: true,
-            member: user._id,
-            event: event._id
-        });
+        if(event_member){
+            if(!event_member.paid){
+                event_member.paid = true;
+                await event_member.save();
+            }
+        }else{
+            const member_event = new Member_Event({
+                date: new Date(),
+                paid: true,
+                member: user._id,
+                event: event._id
+            });
+            await member_event.save();
+        }
 
-        await member_event.save();
         await event.save();
         res.status(200).send("ticket sold");
     }catch(err){
@@ -261,7 +270,6 @@ router.post('/test',passport.authenticate('jwt', {session: false}), async (req, 
         const event = await Event.findById(eventId);
         const user = await Member.findById(userId);
 
-        console.log(event, user);
         if(!event || !user){
             return res.status(404).json({ error: 'User or Event not found' });
     
@@ -270,8 +278,11 @@ router.post('/test',passport.authenticate('jwt', {session: false}), async (req, 
             member: user._id,
             event: event._id
         });
+
         if(event_member){
-            return res.json({ticket: true});
+            if(event_member.paid){
+                return res.json({ticket: true});
+            }
         }
 
         return res.json({ticket: false});
