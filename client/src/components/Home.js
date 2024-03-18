@@ -88,6 +88,7 @@ function Details(props) {
 
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
+  const [user, setUser ] = useState(null);
   const [newEventModal, setNewEventModal] = useState(false);
   const [newEvent, setNewEvent] = useState({});
   const [startTimeError, setStartTimeError] = useState(false);
@@ -108,7 +109,7 @@ function Home(props) {
     {
         toast.error(message, {
             position: "top-center",
-            autoClose: 6000,
+            autoClose: 3000,
             hideProgressBar: true,
             closeOnClick: false,
             pauseOnHover: false,
@@ -121,7 +122,7 @@ function Home(props) {
     const showToastSuccessMessage = (message) =>  {
       toast.success(message, {
           position: "top-center",
-          autoClose: 6000,
+          autoClose: 3000,
           hideProgressBar: true,
           closeOnClick: false,
           pauseOnHover: false,
@@ -130,6 +131,25 @@ function Home(props) {
           theme: "dark"
           });
     }
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+        // Check if props.currentUser.id is not null
+        if (props.currentUser.id) {
+          try {
+            const response = await fetch(`/users/getData/${props.currentUser.id}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            setUser(await response.json());
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+          }
+        }
+      };
+    fetchUserData();
+  }, []);
+  
 
   //Resets the amount of tickets and clears the text box.
   const resetTickets = () => {
@@ -309,6 +329,8 @@ function Home(props) {
           <EventItem
             currentUser={props.currentUser}
             id={event._id}
+            user={user}
+            user_id={props.currentUser.id}
             admin={admin}
             loggedIn={props.currentUser.loggedIn}
             title={event.title}
@@ -319,7 +341,9 @@ function Home(props) {
             attending={event.attending}
             description={event.description}
             ticketsSold={event.ticketsSold}
+            tickets={event.tickets}
             key={index}
+            price={event.price}
             showToastMessage={showToastMessage}
             showToastSuccessMessage={showToastSuccessMessage}
             token={props.currentUser.token}

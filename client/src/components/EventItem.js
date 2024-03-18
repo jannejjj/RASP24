@@ -9,6 +9,7 @@ import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
 import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import PaymentModal from "../modals/PaymentModal";
 import Typography from "@mui/material/Typography";
 
 function EventItem(props) {
@@ -20,11 +21,15 @@ function EventItem(props) {
   const [description, setDescription] = useState(props.description);
   const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
   const [paid, setPaid] = useState(props.paid);
+  const [tickets, setTickets] = useState(props.tickets);
+  const [price, setPrice] = useState(props.price);
+  const [hasTicket, setHasTicket] = useState(false);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
   const [openAttend, setOpenAttend] = useState(false);
   const [openCancelAttendance, setOpenCancelAttendance] = useState(false);
+  const [openPayment, setOpenPayment] = useState(false);
   const [editedTitle, setEditedTitle] = useState(props.title);
   const [editedTime, setEditedTime] = useState(props.time);
   const [editedLocation, setEditedLocation] = useState(props.location);
@@ -37,6 +42,29 @@ function EventItem(props) {
   const [descriptionHistory, setDescriptionHistory] = useState(
     props.description
   );
+
+  useEffect(() => {
+    const data = {
+      userId: props.user_id,
+      eventId: props.id
+    };
+
+    fetch('/api/test', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + props.token
+        },
+          body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      setHasTicket(data.ticket);
+    })
+    .catch(error => {
+        console.error('Error fetching ticket status:', error);
+    });
+  }, []);
 
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
@@ -144,6 +172,42 @@ function EventItem(props) {
     props.toggleUpdateEvents();
   };
 
+  const handlePayment = async (e) => {
+    e.preventDefault()
+
+    setOpenPayment(false);
+
+    const data = {
+      userId: props.user_id,
+      eventId: props.id
+    };
+
+    try {
+      const response = await fetch('/api/ticket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": "Bearer " + props.token
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.json(); 
+        props.showToastMessage(errorMessage.error);
+        throw new Error('Payment failed');
+      }
+
+      // Handle success
+      console.log('Data submitted successfully');
+      props.showToastSuccessMessage("Payment ok");
+      setHasTicket(true);
+    } catch (error) {
+      // Handle error
+      console.error('Error submitting data:', error.message);
+    }
+  };
+
   const deleteOnClick = () => {
     setDeleteModal(true);
   };
@@ -207,6 +271,7 @@ function EventItem(props) {
               <h3>Created by: {props.creator}</h3>
               <h3>{time}</h3>
               <h3>{location}</h3>
+              {price && <h3>Ticket price: {price}€</h3>}
             </div>
   
             <p>
@@ -271,6 +336,20 @@ function EventItem(props) {
                 )
               }
             </div>
+            <div>
+              {hasTicket ? (
+                <div>You have a ticket </div>
+              ) : (
+                <div>
+                  {typeof tickets === 'undefined' || tickets - ticketsSold > 0 ? (
+                    <Button variant='contained' color='primary' onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
+                  ) : (
+                    <div>No tickets available</div>
+                  )}
+                </div>
+              )}
+            </div>
+            
           </div>
         </div>
   
@@ -305,6 +384,14 @@ function EventItem(props) {
           openCancelAttendance={openCancelAttendance}
           setOpenCancelAttendance={setOpenCancelAttendance}
           handleCancelEventAttendance={handleCancelEventAttendance}
+        />
+        <PaymentModal
+          openPayment={openPayment}
+          setOpenPayment={setOpenPayment}
+          handlePayment={handlePayment}
+          price={price}
+          title={title}
+          user={props.user}
         />
       </div>
     );

@@ -201,16 +201,112 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
 
   // Add the creator as an attendee in the back-end
   const member_event = new Member_Event({
-    date: new Date(),
+    date: [new Date()],
     paid: false,
     member: req.body.creatorId,
-    event: event._id
+    event: event._id,
+    tickets: 0
   });
   member_event.save()
     .catch(err => {
       console.log(err);
   });
 });
+
+router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+    try{
+        const { userId, eventId } = req.body;
+
+        const event = await Event.findById(eventId);
+        const user = await Member.findById(userId);
+
+        if(!event || !user){
+            return res.status(404).json({ error: 'User or Event not found' });
+    
+        }
+        const event_member = await Member_Event.findOne({
+            member: user._id,
+            event: event._id
+        });
+        if(event_member){
+            return res.status(409).json({ error: 'User already have a ticket' });   
+        }
+        if(event.tickets === event.ticketsSold){
+            return res.status(409).json({ error: 'There is no tickets left' }); 
+        }
+
+        event.ticketsSold++;
+
+
+        const member_event = new Member_Event({
+            date: new Date(),
+            paid: true,
+            member: user._id,
+            event: event._id
+        });
+
+        await member_event.save();
+        await event.save();
+        res.status(200).send("ticket sold");
+    }catch(err){
+        console.error('Error selling tickets:', err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+router.post('/test',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+    try{
+        const { userId, eventId } = req.body;
+
+        const event = await Event.findById(eventId);
+        const user = await Member.findById(userId);
+
+        if(!event || !user){
+            return res.status(404).json({ error: 'User or Event not found' });
+    
+        }
+        const event_member = await Member_Event.findOne({
+            member: user._id,
+            event: event._id
+        });
+        if(event_member){
+            return res.json({ticket: true});
+        }
+
+        return res.json({ticket: false});
+    }catch(err){
+        console.error('Error while checking tickets:', err);
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
+router.post('/checkticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+    try{
+        const { userId, eventId } = req.body;
+
+        const event = await Member_event.findById(eventId);
+        const user = await Member.findById(userId);
+
+        if(!event || !user){
+            return res.status(404).json({ error: 'User or Event not found' });
+    
+        }
+        const event_member = await Member_Event.findOne({
+            member: user._id,
+            event: event._id
+        });
+        if(event_member){
+            return res.json({ticket: true});
+        }
+
+        return res.json({ticket: false});
+    }catch(err){
+        console.error('Error while checking tickets:', err);
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
+
 
 router.delete('/event/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {

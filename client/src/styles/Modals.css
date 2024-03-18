@@ -27,5 +27,30 @@
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: right;
+  justify-content: space-evenly;
+}
+
+.PaymentDetails div
+{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content:flex-start;
+}
+
+.PaymentEventDetails, .PaymentBillingDetails {
+  padding: 2%;
+}
+
+.PaymentEventDetails{
+  flex: 2;
+}
+
+.PaymentBillingDetails {
+  flex: 1.5;
+  align-items: start;;
+}
+
+.price {
+  align-self: end;
 }
