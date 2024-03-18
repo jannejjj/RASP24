@@ -126,6 +126,7 @@ router.post('/register',
                         country: req.body.country,
                         email: req.body.email,
                         password: hash,
+                        role: "",
                         admin: 0
                     });
                     member.save()
@@ -143,6 +144,42 @@ router.post('/register',
         console.log(err);
     }
       
+});
+
+// Update the role and admin permissions for the member
+router.put('/update/member/', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const newRole = req.body.role;
+    const newPermission = req.body.permission;
+    const memberID = req.body.memberID;
+
+    const updatedMember = await Member.findOneAndUpdate({_id: memberID}, {role: newRole, admin: newPermission});
+
+    if (updatedMember)
+    {
+        return res.json({success: true});
+    }
+    else
+    {
+        return res.json({success: false});
+    }
+});
+
+// Delete the member
+router.delete('/delete/member/:memberID', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const memberID = req.params.memberID;
+
+    const deletedMember = await Member.findOneAndDelete({_id: memberID});
+
+    if (deletedMember)
+    {
+        return res.json({success: true});
+    }
+    else
+    {
+        return res.json({success: false});
+    }
 });
 
 

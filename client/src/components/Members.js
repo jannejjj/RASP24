@@ -12,6 +12,9 @@ function Members(props) {
   const [members, setMembers] = useState([{}]);
   const [displayMembers, setDisplayMembers] = useState([{}]);
   const [loading, setLoading] = useState(true);
+  const [update, setUpdate] = useState(false);
+
+  const toggleUpdate = () => { setUpdate(!update); }
 
   const onChangeSearch = (event) => {
     setDisplayMembers(members.filter(member => (member.firstname + " " + member.lastname).toLowerCase().includes(event.target.value.toLowerCase().trim())));
@@ -51,7 +54,7 @@ function Members(props) {
       };
     }
     setLoading(false);
-  }, [])
+  }, [update])
 
   /* If the user is not logged in, they will be shown this */
   if (!props.currentUser.loggedIn) {
@@ -87,9 +90,11 @@ function Members(props) {
         Loading...
       </Typography>}
       {!loading && [...displayMembers].map((member) => (
-          <Member key={member._id} member={member}/>
+          <Member key={member._id} member={member} currentUser={props.currentUser} toggleUpdate={toggleUpdate}/>
       ))}
-      <Typography sx={{ mt: 20 }} variant='h4' align="center">{!members?.length>0 && "No members."}</Typography>
+      {!members?.length>0 &&
+        <Typography sx={{ mt: 20 }} variant='h4' align="center">No members.</Typography>
+      }
     </div>
   )
 }
