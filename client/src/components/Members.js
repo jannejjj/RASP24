@@ -89,11 +89,14 @@ function Members(props) {
       {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">
         Loading...
       </Typography>}
-      {!loading && [...displayMembers].map((member) => (
+      {!loading && members && [...displayMembers].map((member) => (
           <Member key={member._id} member={member} currentUser={props.currentUser} toggleUpdate={toggleUpdate}/>
       ))}
       {!members?.length>0 &&
         <Typography sx={{ mt: 20 }} variant='h4' align="center">No members.</Typography>
+      }
+      {!displayMembers?.length>0 &&
+        <Typography sx={{ mt: 20 }} variant='h4' align="center">No results.</Typography>
       }
     </div>
   )
