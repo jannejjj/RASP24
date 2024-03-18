@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 
 function EventItem(props) {
   // These states store the original event data
-  const [attending, setAttending] = useState(props.attending);
+  const [like, setLiking] = useState(props.attending);
   const [title, setTitle] = useState(props.title);
   const [time, setTime] = useState(props.time);
   const [location, setLocation] = useState(props.location);
@@ -28,7 +28,7 @@ function EventItem(props) {
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
   const [openAttend, setOpenAttend] = useState(false);
-  const [openCancelAttendance, setOpenCancelAttendance] = useState(false);
+  const [openCancelLike, setOpenCancelLike] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
   const [editedTitle, setEditedTitle] = useState(props.title);
   const [editedTime, setEditedTime] = useState(props.time);
@@ -125,12 +125,12 @@ function EventItem(props) {
     setEditedDescription(event.target.value);
   };
 
-  const handleEventAttendance = async () => {
+  const handleEventLike = async () => {
     const body =
     {
       eventID: props.id,
       userID: props.currentUser.id
-    }
+    };
 
     await fetch("/api/attend/event", 
       {
@@ -143,12 +143,10 @@ function EventItem(props) {
       } 
     );
 
-    // Close the modal and update the event list
-    setOpenAttend(false);
     props.toggleUpdateEvents();
   };
 
-  const handleCancelEventAttendance = async () => 
+  const handleCancelEventLike = async () => 
   {
     await fetch("/api/cancel/attendance/" + props.id + "/" + props.currentUser.id,
     {
@@ -167,13 +165,11 @@ function EventItem(props) {
         }
       })
 
-    // Close the modal and update the event list
-    setOpenCancelAttendance(false);
     props.toggleUpdateEvents();
   };
 
   const handlePayment = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     setOpenPayment(false);
 
@@ -233,12 +229,12 @@ function EventItem(props) {
         props.toggleUpdateEvents();
       }
       setDeleteModal(false);
-    })
+    });
   };
 
   useEffect(() =>
   {
-    const confirmAttendance = () => 
+    const confirmLike = () => 
     {
       fetch(`/api/is/attending/${props.id}/${props.currentUser.id}` , {
         method: 'GET'
@@ -246,13 +242,13 @@ function EventItem(props) {
       .then(response => response.json())
       .then(data => 
         {
-          setAttending(data.attending);
+          setLiking(data.attending);
         }
       );
     }
 
-    // Find out if the user is attending this event or not
-    confirmAttendance();
+    // Find out if the user is like this event or not
+    confirmLike();
   }, []);
 
     return (
@@ -286,7 +282,7 @@ function EventItem(props) {
             <p>{description}</p>
           </div>
   
-          <div className='HomeEventAttendanceButtonsArea'>
+          <div className='HomeEventLikeButtonsArea'>
             <div>
               {props.admin && 
                 (
@@ -297,16 +293,16 @@ function EventItem(props) {
                 )
               }
             </div>
-            <div>
-              {attending ? 
+            <div style={{display: "flex", flexDirection:"row", justifyContent: "space-between", position:"relative", marginLeft: "20px"}}>
+              {like ? 
                 (
                   <IconButton sx={{ 
                     border: "1px solid",
                     borderColor: "primary.main",
                     borderRadius: 2, 
-                    mr:2,
+                    mr:1,
                     color: 'primary.main'
-                     }} onClick={() => {setOpenCancelAttendance(true)}}>
+                     }} onClick={() => {setLiking(false); handleEventLike(); }}>
                     <FavoriteIcon fontSize="small"/>
                   </IconButton>
                 )
@@ -321,22 +317,30 @@ function EventItem(props) {
                     '&:hover': {
                       backgroundColor: 'primary.main', // Set the background color on hover
                     },
-                    }} onClick={() => {setOpenAttend(true)}} color='white'>
+                    }} onClick={() => {setLiking(true); handleEventLike();}} color='white'>
                     <FavoriteIcon fontSize="small" />
                   </IconButton>
                 )
               }
-              {paid ? 
-                (
-                  <Button variant='outlined' color='primary' sx={{width: '125px'}} onClick={() => {setPaid(false)}} >Paid</Button>
-                )
-                :
-                ( 
-                  <Button variant='contained' color='primary' sx={{width: '125px'}} onClick={() => {setPaid(true)}} >Buy a ticket</Button>
-                )
-              }
+                {hasTicket ? 
+                  (
+                    <Button variant='outlined' color='primary' sx={{width: '150px'}} onClick={() => {}} >Paid</Button>
+                  )
+                  :
+                  ( 
+                    <div>
+                    {typeof tickets === 'undefined' || tickets - ticketsSold > 0 ?
+                      ( 
+                        <Button variant='contained' color='primary' sx={{width: '150px'}} onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
+                      ): (
+                        <p style={{width: '150px', textAlign: "center", height:"100%"}}>No tickets available</p>  
+                      )
+                    }
+                    </div>
+                  )
+                }
             </div>
-            <div>
+            {/* <div>
               {hasTicket ? (
                 <div>You have a ticket </div>
               ) : (
@@ -348,7 +352,7 @@ function EventItem(props) {
                   )}
                 </div>
               )}
-            </div>
+            </div> */}
             
           </div>
         </div>
@@ -377,13 +381,13 @@ function EventItem(props) {
         <ConfirmAttendanceModal
           openAttend={openAttend}
           setOpenAttend={setOpenAttend}
-          handleEventAttendance={handleEventAttendance}
+          handleEventAttendance={handleEventLike}
         />
   
         <CancelAttendanceModal
-          openCancelAttendance={openCancelAttendance}
-          setOpenCancelAttendance={setOpenCancelAttendance}
-          handleCancelEventAttendance={handleCancelEventAttendance}
+          openCancelAttendance={openCancelLike}
+          setOpenCancelAttendance={setOpenCancelLike}
+          handleCancelEventAttendance={handleCancelEventLike}
         />
         <PaymentModal
           openPayment={openPayment}
@@ -392,7 +396,7 @@ function EventItem(props) {
           price={price}
           title={title}
           user={props.user}
-        />
+          />
       </div>
     );
 }

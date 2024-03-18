@@ -16,7 +16,7 @@ const upload = multer({storage});
 var idFromToken = null;
 
 
-require('../auth/passport')(passport)
+require('../auth/passport')(passport);
 router.use(passport.initialize());
 
 //finds all the members in the DB if authenticated
@@ -62,7 +62,7 @@ router.post('/login',
                     lastname: member.lastname,
                     email: member.email,
                     admin: member.admin
-                }
+                };
                 jwt.sign(
                     jwtPayload,
                     process.env.SECRET,
@@ -261,6 +261,7 @@ router.post('/test',passport.authenticate('jwt', {session: false}), async (req, 
         const event = await Event.findById(eventId);
         const user = await Member.findById(userId);
 
+        console.log(event, user);
         if(!event || !user){
             return res.status(404).json({ error: 'User or Event not found' });
     
