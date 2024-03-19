@@ -148,6 +148,24 @@ router.post('/register',
       
 });
 
+router.post('/pay/membership', async (req, res) => {
+  try {
+    const userId = req.body._id;
+    const user = await Member.findById(userId);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    // Update the user's profile data
+    user.membershipPaid = req.body.user.membershipPaid;
+    user.membershipPaidDate = req.body.user.membershipPaidDate;
+    await user.save();
+    res.status(200).send('Profile updated successfully');
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 // Update the role and admin permissions for the member
 router.put('/update/member/', passport.authenticate('jwt', {session: false}), async (req, res) =>
 {

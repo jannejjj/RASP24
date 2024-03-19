@@ -7,7 +7,7 @@ import PayMembershipModal from '../modals/PayMembershipModal';
 import EventItem from './EventItem';
 
 function ProfileItem(props) {
-  // These states store the original event data
+  // These states store the original member data
   const [firstname, setFirstname] = useState(props.Firstname);
   const [lastname, setLastname] = useState(props.Lastname);
   const [phone, setPhone] = useState(props.Phone);
@@ -16,8 +16,6 @@ function ProfileItem(props) {
   const [city, setCity] = useState(props.City);
   const [country, setCountry] = useState(props.Country);
   const [email, setEmail] = useState(props.Email);
-  const [membershipPaid, setmembershipPaid] = useState(props.membershipPaid);
-  const [membershipPaidDate, setmembershipPaidDate] = useState(props.membershipPaidDate);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -41,9 +39,19 @@ function ProfileItem(props) {
   const [emailHistory, setEmailHistory] = useState(props.Email);
 
 
-  const [payMembership, setPayMembership] = useState(false);
 
+  const localeStringOptions = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Helsinki"
+  }
  
+  const [payMembership, setPayMembership] = useState(false);
+  const [membershipPaid, setmembershipPaid] = useState(props.membershipPaid);
+  const [membershipPaidDate, setMembershipPaidDate] = useState(new Date(props.membershipPaidDate).toLocaleString("fi-FI", localeStringOptions));
 
 
   const payMembershipOnClick = () => {
@@ -54,10 +62,33 @@ function ProfileItem(props) {
     setPayMembership(false);
   };
 
-
-  const paymentOnClick = () => {
-    // TODO: Update membership paid status to current date 
-    setPayMembership(false);
+  const paymentOnClick = async () => {
+    try {
+      const dateNow = new Date();
+      console.log(dateNow);
+      const response = await fetch('/api/pay/membership', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          _id: `${props.currentUser.id}`,
+          user: {
+            membershipPaid: `${true}`,
+            membershipPaidDate: `${dateNow}`
+          }
+        })
+      });
+      if (response.ok) {
+        setmembershipPaid(true);
+        setMembershipPaidDate(new Date(dateNow).toLocaleString("fi-FI", localeStringOptions));
+        setPayMembership(false);
+      } else {
+        console.error('Failed to pay membership fee:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error while paying membership fee:', error.message);
+    }
   };
 
   const editOnClick = () => {
@@ -221,7 +252,7 @@ function ProfileItem(props) {
         {membershipPaid && <p>Membership paid: {membershipPaidDate}</p>}
         {!membershipPaid && <p>Membership has not been paid.</p>}
         
-        <Button variant='outlined' onClick={payMembershipOnClick} disable={membershipPaid}>Pay Membership</Button>
+        <Button variant='outlined' onClick={payMembershipOnClick} disable={true}>Pay Membership</Button>
         
         <PayMembershipModal
           payMembership={payMembership}
