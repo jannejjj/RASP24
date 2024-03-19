@@ -269,10 +269,8 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
         if(event.tickets === event.ticketsSold){
             return res.status(409).json({ error: 'There is no tickets left' }); 
         }
-        if(event_member){
-            if(event_member.paid){
-                return res.status(409).json({ error: 'User already have a ticket' });
-            }   
+        if(event_member && event_member.paid){
+          return res.status(409).json({ error: 'User already have a ticket' });
         }
 
         event.ticketsSold++;
@@ -301,7 +299,7 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
     }
 });
 
-router.post('/test',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+router.post('/hasTicket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
     try{
         const { userId, eventId } = req.body;
 
@@ -310,17 +308,14 @@ router.post('/test',passport.authenticate('jwt', {session: false}), async (req, 
 
         if(!event || !user){
             return res.status(404).json({ error: 'User or Event not found' });
-    
         }
         const event_member = await Member_Event.findOne({
             member: user._id,
             event: event._id
         });
 
-        if(event_member){
-            if(event_member.paid){
-                return res.json({ticket: true});
-            }
+        if(event_member && event_member.paid){
+            return res.json({ticket: true});
         }
 
         return res.json({ticket: false});
@@ -345,7 +340,7 @@ router.post('/checkticket',passport.authenticate('jwt', {session: false}), async
             member: user._id,
             event: event._id
         });
-        if(event_member){
+        if(event_member && event_member.paid){
             return res.json({ticket: true});
         }
 

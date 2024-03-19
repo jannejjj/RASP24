@@ -6,7 +6,8 @@ import { FaUserGroup } from "react-icons/fa6";
 import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import toasts from "../common/Toast";
 import 'react-toastify/dist/ReactToastify.css';
 import Typography from "@mui/material/Typography";
 
@@ -104,33 +105,6 @@ function Home(props) {
   const toggleUpdateEvents = () => {
     setUpdateEvents(!updateEvents);
   }
-
-  const showToastMessage = (message) =>
-    {
-        toast.error(message, {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: false,
-            pauseOnHover: false,
-            draggable: false,
-            progress: undefined,
-            theme: "dark"
-            });
-    }
-  
-    const showToastSuccessMessage = (message) =>  {
-      toast.success(message, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: false,
-          progress: undefined,
-          theme: "dark"
-          });
-    }
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -289,19 +263,19 @@ function Home(props) {
           }
           } else {
             console.log("Starting time needs to be before ending time.");
-            showToastMessage("Starting time needs to be before ending time.");
+            toasts.showToastMessage("Starting time needs to be before ending time.");
           }
         } else {
           console.log("Event joining deadline needs to be before or the same as the starting time of the event.");
-            showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
+          toasts.showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
         }
       } else {
         console.log("Ending time is not valid.");
-        showToastMessage("Ending time is not valid.");
+        toasts.showToastMessage("Ending time is not valid.");
       }
     } else {
       console.log("Starting time is not valid.");
-      showToastMessage("Starting time is not valid.");
+      toasts.showToastMessage("Starting time is not valid.");
     }
   };
 
@@ -348,8 +322,6 @@ function Home(props) {
             joinDeadline={event.joinDeadline}
             key={index}
             price={event.price}
-            showToastMessage={showToastMessage}
-            showToastSuccessMessage={showToastSuccessMessage}
             token={props.currentUser.token}
             toggleUpdateEvents={toggleUpdateEvents}
           />

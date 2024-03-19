@@ -14,6 +14,7 @@ import PaymentModal from "../modals/PaymentModal";
 import EventDetails from "./EventDetails";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import toasts from "../common/Toast";
 
 function EventItem(props) {
   // These states store the original event data
@@ -52,7 +53,7 @@ function EventItem(props) {
       eventId: props.id
     };
 
-    fetch('/api/test', {
+    fetch('/api/hasTicket', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
@@ -195,13 +196,13 @@ function EventItem(props) {
 
       if (!response.ok) {
         const errorMessage = await response.json(); 
-        props.showToastMessage(errorMessage.error);
+        toasts.showToastMessage(errorMessage.error);
         throw new Error('Payment failed');
       }
 
       // Handle success
       console.log('Data submitted successfully');
-      props.showToastSuccessMessage("Payment ok");
+      toasts.showToastSuccessMessage("Payment Done");
       setHasTicket(true);
       setLiking(true);
     } catch (error) {
@@ -229,9 +230,9 @@ function EventItem(props) {
     .then(response => response.json())
     .then(data => {
       if (data.error) {
-        props.showToastMessage(data.error);
+        toasts.showToastMessage(data.error);
       } else {
-        props.showToastSuccessMessage(data.message);
+        toasts.showToastSuccessMessage(data.message);
         props.toggleUpdateEvents();
       }
       setDeleteModal(false);
@@ -357,13 +358,13 @@ function EventItem(props) {
                     <Button variant='outlined' color='primary' sx={{width: '150px'}} >Paid</Button>
                   )
                   :
-                  ( 
+                  (
                     <div>
-                    {typeof tickets === 'undefined' || tickets - ticketsSold > 0 ?
+                    {typeof tickets !== 'undefined' && tickets - ticketsSold <= 0 ?
                       ( 
-                        <Button variant='contained' color='primary' sx={{width: '150px'}} onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
+                        <div style={{width: '150px', textAlign: "center", height:"100%"}}>No tickets available</div>  
                       ): (
-                        <p style={{width: '150px', textAlign: "center", height:"100%"}}>No tickets available</p>  
+                        <Button variant='contained' color='primary' sx={{width: '150px'}} onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
                       )
                     }
                     </div>

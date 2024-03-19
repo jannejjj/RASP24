@@ -4,19 +4,23 @@ import React from 'react';
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 
 function EditEventModal(props)
 {
     return (
         <Modal open={props.openPayment} >
             <Box className='ModalBackground PaymentModal' >
-                <h2>
-                    Purchase  a ticket
-                </h2>
+                <h1>
+                    Ticket purchase
+                </h1>
                 <div className='HorizontalSeparator' />
                 <div className='PaymentDetails'>
                     <div className='PaymentEventDetails'>
-                        <h2>{props.title}</h2>
+                      <div style={{display:"flex", flexDirection:"row"}}>
+                        <ConfirmationNumberIcon style={{marginRight:"10px"}}/>
+                        <h3>{props.title}</h3>
+                      </div>
                         <div className='HorizontalSeparator' />
                         <h3 className='price'>Total: {props.price} €</h3>
                     </div>

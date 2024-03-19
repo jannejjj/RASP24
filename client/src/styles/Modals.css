@@ -22,7 +22,7 @@
   margin: 10px 0 10px 0;
 }
 
-.ModalButtonArea
+.ModalBackground div
 {
   display: flex;
   flex-direction: row;
@@ -30,28 +30,24 @@
   justify-content: space-evenly;
 }
 
-.PaymentModal{
-  width: auto;
-}
-
-.PaymentDetails
+.PaymentDetails div
 {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  width: 100%;
   justify-content:flex-start;
 }
 
 .PaymentEventDetails, .PaymentBillingDetails {
   padding: 2%;
-  width: 100%;
 }
 
 .PaymentEventDetails{
-  flex: flex-grow;
+  flex: 2;
 }
 
 .PaymentBillingDetails {
-  flex: flex-grow;
+  flex: 1.5;
   align-items: start;;
 }
 
