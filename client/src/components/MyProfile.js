@@ -403,6 +403,11 @@ function MyProfile(props) {
                         attending={true}
                         description={event.description}
                         key={index}
+                        price={event.price}
+                        startDate={event.startDate}
+                        endDate={event.endDate}
+                        joinDeadline={event.joinDeadline}
+                        tickets={event.tickets}
                         toggleUpdateEvents={toggleUpdateEvents}
                         />
                       ))}
