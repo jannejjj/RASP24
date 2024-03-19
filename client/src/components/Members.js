@@ -6,8 +6,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import Button from "@mui/material/Button";
 import GetMemberEmailsModal from '../modals/GetMemberEmailsModal';
+import { ToastContainer, toast } from 'react-toastify';
 import "../styles/Members.css";
 import '../App.css';
+import { left } from '@popperjs/core';
 
 function Members(props) {
 
@@ -16,8 +18,22 @@ function Members(props) {
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
   const [getEmailsModal, setGetEmailsModal] = useState(false);
+  const [seperator, setSeperator] = useState("");
 
   const toggleUpdate = () => { setUpdate(!update); }
+
+  const showToastSuccessMessage = (message) =>  {
+    toast.success(message, {
+        position: "top-center",
+        autoClose: 6000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: "dark"
+        });
+  }
 
   const onChangeSearch = (event) => {
     setDisplayMembers(members.filter(member => (member.firstname + " " + member.lastname).toLowerCase().includes(event.target.value.toLowerCase().trim())));
@@ -31,8 +47,19 @@ function Members(props) {
     setGetEmailsModal(false);
   };
 
-  const getEmailsOnClick = () => {
+  const getEmailsOnClick = (e) => {
+    e.preventDefault();
+    var allEmails = "";
+    members.forEach(function(member) {
+      allEmails = allEmails + member.email + seperator;
+    })
+    navigator.clipboard.writeText(allEmails);
+    showToastSuccessMessage("All emails copied to clipboard");
     setGetEmailsModal(false);
+  };
+
+  const handleSeperatorChange = (event) => {
+    setSeperator(event.target.value);
   };
 
   useEffect(() => {
@@ -86,21 +113,20 @@ function Members(props) {
   return (
     <div className="MembersBackground">
       <div className="MembersTitle">
-      <Button color="primary" variant='contained' style={{margin: "10px 0 10px 0"}} onClick={getEmailsModalOnclick}>Get member emails</Button>
-        <h1>Members</h1>
-          <TextField 
-          id="search-term" 
-          label="Search" 
-          variant="outlined" 
-          sx={{ width: 400, ml: 5, mb: 2 }} 
-          onChange={onChangeSearch}  
-          InputProps={{
-          endAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),}} 
-          />
+        <Button color="primary" variant='contained' style={{margin: "10px 0 10px 0"}} onClick={getEmailsModalOnclick}>Get member emails</Button>
+        <h1 style={{marginLeft: 100}}>Members</h1>
+        <TextField 
+        id="search-term" 
+        label="Search" 
+        variant="outlined" 
+        onChange={onChangeSearch}  
+        InputProps={{
+        endAdornment: (
+          <InputAdornment position="start">
+            <SearchIcon />
+          </InputAdornment>
+        ),}} 
+        />
       </div>
       {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">
         Loading...
@@ -118,7 +144,9 @@ function Members(props) {
         getEmailsModal={getEmailsModal}
         getEmailsCancelOnClick={getEmailsCancelOnClick}
         getEmailsOnClick={getEmailsOnClick}
+        handleSeperatorChange={handleSeperatorChange}
       />
+      <ToastContainer />
     </div>
   )
 }

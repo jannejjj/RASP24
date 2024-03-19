@@ -10,12 +10,16 @@ function GetMemberEmailsModal(props) {
     <Modal open={props.getEmailsModal} >
         <Box className='ModalBackground'>
           <h2>
-            Edit profile information
+            Get all member emails
           </h2>
-          <div className='ModalButtonArea'>
-            <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.getEmailsCancelOnClick} >Cancel</Button>
-            <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.getEmailsOnClick} >Get emails</Button>
-          </div>
+          <div className='HorizontalSeparator' />
+          <form onSubmit={props.getEmailsOnClick} className='createNewEventForm' >
+            <TextField fullWidth required label={'Seperator'} onChange={props.handleSeperatorChange} inputProps={{ maxLength: 5 }} type="text" id="seperator" sx={{m: 0.5}} />
+            <div className='ModalButtonArea'>
+              <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.getEmailsCancelOnClick} >Cancel</Button>
+              <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit">Get emails</Button>
+            </div>
+          </form> 
         </Box>
       </Modal>
   )
