@@ -1,5 +1,6 @@
 import { React, useEffect, useState } from "react";
 import "../styles/HomePage.css";
+import "../styles/EventItem.css";
 import "../App.css";
 import Button from "@mui/material/Button";
 import { FaUserGroup } from "react-icons/fa6";
@@ -7,7 +8,9 @@ import CancelAttendanceModal from "../modals/CancelAttendanceModal";
 import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
 import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
-import Typography from "@mui/material/Typography";
+import EventDetails from "./EventDetails";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 function EventItem(props) {
   // These states store the original event data
@@ -202,8 +205,7 @@ function EventItem(props) {
             <div className="HomeEventTitleAndLocationArea">
               <h2>{title}</h2>
               <h3>Created by: {props.creator}</h3>
-              <h3>{time}</h3>
-              <h3>{location}</h3>
+              <h3>Location: {location}</h3>
             </div>
   
             <p>
@@ -215,9 +217,34 @@ function EventItem(props) {
         <div className="HomeEventBottom">
           <div className="HorizontalSeparator" />
           <div className="HomeEventDescriptionArea">
-            <p>{description}</p>
+                <p>{description}</p>
           </div>
-  
+          <Accordion
+            sx={{
+              "&:before": {
+                display: "none",
+              },
+              borderRadius: "4px",
+            }}
+            slotProps={{ transition: {unmountOnExit: true} }}
+            disableGutters={true}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <h3> Details </h3>
+            </AccordionSummary>
+            <AccordionDetails>
+              <EventDetails
+                startDate={props.startDate}
+                endDate={props.endDate}
+                joinDeadline={props.joinDeadline}
+                tickets={props.tickets}
+                ticketsSold={ticketsSold}
+                price={props.price}
+                paymentDate={props.paymentDate}
+                attendees={props.attendees}
+              />
+            </AccordionDetails>
+          </Accordion>
           <div className='HomeEventAttendanceButtonsArea'>
             <div>
               {props.admin && 
