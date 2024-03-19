@@ -5,6 +5,8 @@ import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
 import PayMembershipModal from '../modals/PayMembershipModal';
 import EventItem from './EventItem';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ProfileItem(props) {
   // These states store the original member data
@@ -38,7 +40,32 @@ function ProfileItem(props) {
   const [countryHistory, setCountryHistory] = useState(props.Country);
   const [emailHistory, setEmailHistory] = useState(props.Email);
 
+  const showToastMessage = (message) =>
+  {
+      toast.error(message, {
+          position: "top-center",
+          autoClose: 6000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+          theme: "dark"
+          });
+  }
 
+  const showToastSuccessMessage = (message) =>  {
+    toast.success(message, {
+        position: "top-center",
+        autoClose: 6000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: "dark"
+        });
+  }
 
   const localeStringOptions = {
     year: "numeric",
@@ -51,10 +78,12 @@ function ProfileItem(props) {
  
   const [payMembership, setPayMembership] = useState(false);
   const [membershipPaid, setmembershipPaid] = useState(props.membershipPaid);
+  const [paymentDisabled, setPaymentDisabled] = useState(true);
   const [membershipPaidDate, setMembershipPaidDate] = useState(new Date(props.membershipPaidDate).toLocaleString("fi-FI", localeStringOptions));
-
+  const [membershipExpirationDate, setMembershipExpirationDate] = useState(new Date(props.membershipExpirationDate).toLocaleString("fi-FI", localeStringOptions));
 
   const payMembershipOnClick = () => {
+    checkMembershipStatus();
     setPayMembership(true);
   };
 
@@ -65,7 +94,8 @@ function ProfileItem(props) {
   const paymentOnClick = async () => {
     try {
       const dateNow = new Date();
-      console.log(dateNow);
+      const oneYearLateDate = new Date(dateNow);
+      oneYearLateDate.setFullYear(dateNow.getFullYear() + 1);
       const response = await fetch('/api/pay/membership', {
         method: 'POST',
         headers: {
@@ -75,22 +105,77 @@ function ProfileItem(props) {
           _id: `${props.currentUser.id}`,
           user: {
             membershipPaid: `${true}`,
-            membershipPaidDate: `${dateNow}`
+            membershipPaidDate: `${dateNow}`,
+            membershipExpirationDate: `${oneYearLateDate}`
           }
         })
       });
       if (response.ok) {
         setmembershipPaid(true);
         setMembershipPaidDate(new Date(dateNow).toLocaleString("fi-FI", localeStringOptions));
+        setMembershipExpirationDate(new Date(oneYearLateDate).toLocaleString("fi-FI", localeStringOptions));
+        showToastSuccessMessage("Membership payment successful")
+        setPaymentDisabled(true);
         setPayMembership(false);
+        props.toggleUpdateUser();
       } else {
         console.error('Failed to pay membership fee:', response.statusText);
+        showToastMessage('Failed to pay membership fee:', response.statusText);
       }
     } catch (error) {
       console.error('Error while paying membership fee:', error.message);
+      showToastMessage('Error while paying membership fee:', error.message);
     }
   };
 
+  const updateMembershipStatus = async () => {
+    try {
+      const response = await fetch('/api/pay/membership', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          _id: `${props.currentUser.id}`,
+          user: {
+            membershipPaid: `${false}`,
+          }
+        })
+      });
+      if (response.ok) {
+        setmembershipPaid(false);
+        setPaymentDisabled(false);
+      } else {
+        console.error('Failed to change membership status', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error while changing membership status', error.message);
+    }
+  }
+
+  const checkMembershipStatus = () =>
+  {
+    if(membershipPaid) {
+      console.log("checkMembershipStatus");
+      const currentDate = new Date();
+      const expirationDate = new Date(props.membershipExpirationDate);
+      const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
+      if(currentDate > expirationDate) {
+        console.log("User has not paid membership fee in time");
+        updateMembershipStatus();
+      }
+      if(currentDate >= twoWeeksBeforeExpiration) {
+        console.log("Current date is later than two weeks before expiration. Payment enabled.");
+        setPaymentDisabled(false);
+      } else {
+        console.log("Current date is earlier than two weeks before expiration. Payment disabled.");
+        setPaymentDisabled(true);
+      }    
+    } else {
+      console.log("Membership has not been paid. Payment enabled.");
+      setPaymentDisabled(false);
+    }
+  }
   const editOnClick = () => {
     setEdit(true);
   };
@@ -248,30 +333,32 @@ function ProfileItem(props) {
 
       <div>
         <h2>Membership</h2>
-        
         {membershipPaid && <p>Membership paid: {membershipPaidDate}</p>}
+        {membershipPaid && <p>Membership expiration date: {membershipExpirationDate}</p>}
         {!membershipPaid && <p>Membership has not been paid.</p>}
         
-        <Button variant='outlined' onClick={payMembershipOnClick} disable={true}>Pay Membership</Button>
+        <Button variant='outlined' onClick={payMembershipOnClick}>Pay Membership</Button>
         
         <PayMembershipModal
           payMembership={payMembership}
           cancelPaymentOnClick={cancelPaymentOnClick}
           paymentOnClick={paymentOnClick}
+          paymentDisabled={paymentDisabled}
         />
       </div>
-
+      <ToastContainer />
     </div>
 
   )
 }
 
 function MyProfile(props) {
-  const [user, setUser ] = useState(null);
+  const [user, setUser ] = useState();
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [selectedView, setSelectedView] = useState("Information");
   const [updateEvents, setUpdateEvents] = useState(false);
+  const [updateUser, setUpdateUser] = useState(false);
 
   // These used to navigate between the My Information and My Events divs
   const informationRef = useRef(null);
@@ -280,6 +367,11 @@ function MyProfile(props) {
 
   const toggleUpdateEvents = () => {
     setUpdateEvents(!updateEvents);
+  }
+
+
+  const toggleUpdateUser = () => {
+    setUpdateUser(!updateUser);
   }
 
   // Used to scroll between the My Information and My Events views
@@ -292,6 +384,7 @@ function MyProfile(props) {
     }
   }
 
+
   // Handle the navigation onClick between the information and evetn views
   const handleNavOnClick = (value) =>
   {
@@ -299,13 +392,14 @@ function MyProfile(props) {
     sessionStorage.setItem('AssocEase_MyProfileSelectedView', value);
   }
 
+
   const fetchUserData = async () => {
     try {
       const response = await fetch(`/users/getData/${props.currentUser.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
-      setUser (await response.json());
+      setUser (await response.json()); 
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -367,7 +461,7 @@ function MyProfile(props) {
     {
         window.removeEventListener("resize", handleResize);
     }
-  }, [updateEvents]);
+  }, [updateEvents, updateUser]);
 
   return (
     <div className='MyProfileBackground'>
@@ -399,6 +493,8 @@ function MyProfile(props) {
                 Email={user.email}
                 membershipPaid={user.membershipPaid}
                 membershipPaidDate={user.membershipPaidDate}
+                membershipExpirationDate={user.membershipExpirationDate}
+                toggleUpdateUser={toggleUpdateUser}
                 currentUser={props.currentUser}
               />
             )

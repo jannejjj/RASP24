@@ -129,6 +129,7 @@ router.post('/register',
                         role: "",
                         membershipPaid: false,
                         membershipPaidDate: null,
+                        membershipExpirationDate: null,
                         admin: 0
                     });
                     member.save()
@@ -158,6 +159,7 @@ router.post('/pay/membership', async (req, res) => {
     // Update the user's profile data
     user.membershipPaid = req.body.user.membershipPaid;
     user.membershipPaidDate = req.body.user.membershipPaidDate;
+    user.membershipExpirationDate = req.body.user.membershipExpirationDate;
     await user.save();
     res.status(200).send('Profile updated successfully');
   } catch (error) {
