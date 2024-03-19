@@ -22,8 +22,8 @@ router.use(passport.initialize());
 //finds all the members in the DB if authenticated
 router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
-        const members  = await Member.find({}).select("-password");
-        res.send(members);
+      const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1});
+      res.send(members);
     } catch (err) {
       console.error('Error fetching member data:', err);
       res.status(500).json({error: 'Internal Server Error'});
