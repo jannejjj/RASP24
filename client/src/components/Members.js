@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
+import Button from "@mui/material/Button";
+import GetMemberEmailsModal from '../modals/GetMemberEmailsModal';
 import "../styles/Members.css";
 import '../App.css';
 
@@ -13,12 +15,25 @@ function Members(props) {
   const [displayMembers, setDisplayMembers] = useState([{}]);
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
+  const [getEmailsModal, setGetEmailsModal] = useState(false);
 
   const toggleUpdate = () => { setUpdate(!update); }
 
   const onChangeSearch = (event) => {
     setDisplayMembers(members.filter(member => (member.firstname + " " + member.lastname).toLowerCase().includes(event.target.value.toLowerCase().trim())));
   }
+
+  const getEmailsModalOnclick = () => {
+    setGetEmailsModal(true);
+  };
+
+  const getEmailsCancelOnClick = () => {
+    setGetEmailsModal(false);
+  };
+
+  const getEmailsOnClick = () => {
+    setGetEmailsModal(false);
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -71,6 +86,7 @@ function Members(props) {
   return (
     <div className="MembersBackground">
       <div className="MembersTitle">
+      <Button color="primary" variant='contained' style={{margin: "10px 0 10px 0"}} onClick={getEmailsModalOnclick}>Get member emails</Button>
         <h1>Members</h1>
           <TextField 
           id="search-term" 
@@ -98,6 +114,11 @@ function Members(props) {
       {!displayMembers?.length>0 &&
         <Typography sx={{ mt: 20 }} variant='h4' align="center">No results.</Typography>
       }
+      <GetMemberEmailsModal
+        getEmailsModal={getEmailsModal}
+        getEmailsCancelOnClick={getEmailsCancelOnClick}
+        getEmailsOnClick={getEmailsOnClick}
+      />
     </div>
   )
 }
