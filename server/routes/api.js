@@ -127,6 +127,8 @@ router.post('/register',
                         email: req.body.email,
                         password: hash,
                         role: "",
+                        membershipPaid: false,
+                        membershipPaidDate: null,
                         admin: 0
                     });
                     member.save()

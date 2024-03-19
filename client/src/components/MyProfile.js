@@ -3,6 +3,7 @@ import '../styles/MyProfile.css';
 import '../App.css';
 import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
+import PayMembershipModal from '../modals/PayMembershipModal';
 import EventItem from './EventItem';
 
 function ProfileItem(props) {
@@ -15,6 +16,8 @@ function ProfileItem(props) {
   const [city, setCity] = useState(props.City);
   const [country, setCountry] = useState(props.Country);
   const [email, setEmail] = useState(props.Email);
+  const [membershipPaid, setmembershipPaid] = useState(props.membershipPaid);
+  const [membershipPaidDate, setmembershipPaidDate] = useState(props.membershipPaidDate);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -36,6 +39,26 @@ function ProfileItem(props) {
   const [cityHistory, setCityHistory] = useState(props.City);
   const [countryHistory, setCountryHistory] = useState(props.Country);
   const [emailHistory, setEmailHistory] = useState(props.Email);
+
+
+  const [payMembership, setPayMembership] = useState(false);
+
+ 
+
+
+  const payMembershipOnClick = () => {
+    setPayMembership(true);
+  };
+
+  const cancelPaymentOnClick = () => {
+    setPayMembership(false);
+  };
+
+
+  const paymentOnClick = () => {
+    // TODO: Update membership paid status to current date 
+    setPayMembership(false);
+  };
 
   const editOnClick = () => {
     setEdit(true);
@@ -170,6 +193,7 @@ function ProfileItem(props) {
         <p>{country}</p>
       </div>
       <Button variant='outlined' onClick={editOnClick} >Edit Information</Button>
+      
 
       <EditDetailsModal 
         edit={edit} 
@@ -190,7 +214,24 @@ function ProfileItem(props) {
         cancelEditOnClick={cancelEditOnClick}
         saveEditOnClick={saveEditOnClick}
       />
+
+      <div>
+        <h2>Membership</h2>
+        
+        {membershipPaid && <p>Membership paid: {membershipPaidDate}</p>}
+        {!membershipPaid && <p>Membership has not been paid.</p>}
+        
+        <Button variant='outlined' onClick={payMembershipOnClick} disable={membershipPaid}>Pay Membership</Button>
+        
+        <PayMembershipModal
+          payMembership={payMembership}
+          cancelPaymentOnClick={cancelPaymentOnClick}
+          paymentOnClick={paymentOnClick}
+        />
+      </div>
+
     </div>
+
   )
 }
 
@@ -325,6 +366,8 @@ function MyProfile(props) {
                 City={user.city}
                 Country={user.country}
                 Email={user.email}
+                membershipPaid={user.membershipPaid}
+                membershipPaidDate={user.membershipPaidDate}
                 currentUser={props.currentUser}
               />
             )
