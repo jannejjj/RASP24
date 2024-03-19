@@ -351,6 +351,7 @@ function MyProfile(props) {
                         <EventItem
                         currentUser={props.currentUser}
                         id={event._id}
+                        user_id={props.currentUser.id}
                         admin={props.currentUser.admin}
                         title={event.title}
                         creator={event.creator}
@@ -361,8 +362,11 @@ function MyProfile(props) {
                         description={event.description}
                         paid={event.paid}
                         key={index}
+                        tickets={event.tickets}
+                        ticketsSold={event.ticketsSold}
+                        token={props.currentUser.token}
                         toggleUpdateEvents={toggleUpdateEvents}
-                        />
+                        />  
                       ))}
                     </div>
                   ) 

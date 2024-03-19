@@ -376,7 +376,6 @@ router.delete('/cancel/attendance/:eventID/:userID', passport.authenticate('jwt'
 {
     const eventID = req.params.eventID;
     const userID = req.params.userID;
-
     try
     {
         const deletedItem = await Member_Event.findOneAndDelete({member: userID, event: eventID});

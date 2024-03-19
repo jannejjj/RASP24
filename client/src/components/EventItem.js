@@ -148,24 +148,26 @@ function EventItem(props) {
 
   const handleCancelEventLike = async () => 
   {
-    await fetch("/api/cancel/attendance/" + props.id + "/" + props.currentUser.id,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-type": "application",
-        "Authorization": "Bearer " + props.currentUser.token
-      }
-    })
-    .then(response => response.json)
-    .then(data =>
+    console.log("here");
+    if(! hasTicket){
+      await fetch("/api/cancel/attendance/" + props.id + "/" + props.currentUser.id,
       {
-        if (data.success === false)
-        {
-          console.log("Error while trying to cancel attendance");
+        method: "DELETE",
+        headers: {
+          "Content-type": "application",
+          "Authorization": "Bearer " + props.currentUser.token
         }
       })
-
-    props.toggleUpdateEvents();
+      .then(response => response.json)
+      .then(data =>
+        {
+          if (data.success === false)
+          {
+            console.log("Error while trying to cancel attendance");
+          }
+          props.toggleUpdateEvents();
+        });
+    }
   };
 
   const handlePayment = async (e) => {
@@ -302,7 +304,7 @@ function EventItem(props) {
                     borderRadius: 2, 
                     mr:1,
                     color: 'primary.main'
-                     }} onClick={() => {setLiking(false); handleEventLike(); }}>
+                     }} onClick={() => {if(!hasTicket) {setLiking(false); handleCancelEventLike();} }}>
                     <FavoriteIcon fontSize="small"/>
                   </IconButton>
                 )
@@ -376,18 +378,6 @@ function EventItem(props) {
           attendees={props.attendees}
           cancelDeleteOnClick={cancelDeleteOnClick}
           confirmDeleteOnClick={confirmDeleteOnClick}
-        />
-  
-        <ConfirmAttendanceModal
-          openAttend={openAttend}
-          setOpenAttend={setOpenAttend}
-          handleEventAttendance={handleEventLike}
-        />
-  
-        <CancelAttendanceModal
-          openCancelAttendance={openCancelLike}
-          setOpenCancelAttendance={setOpenCancelLike}
-          handleCancelEventAttendance={handleCancelEventLike}
         />
         <PaymentModal
           openPayment={openPayment}
