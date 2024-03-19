@@ -203,6 +203,7 @@ function EventItem(props) {
       console.log('Data submitted successfully');
       props.showToastSuccessMessage("Payment ok");
       setHasTicket(true);
+      setLiking(true);
     } catch (error) {
       // Handle error
       console.error('Error submitting data:', error.message);
@@ -311,7 +312,7 @@ function EventItem(props) {
               />
             </AccordionDetails>
           </Accordion>
-          <div className='HomeEventAttendanceButtonsArea'>
+          <div className='HomeEventLikeButtonsArea'>
             <div>
               {props.admin && 
                 (
@@ -353,7 +354,7 @@ function EventItem(props) {
               }
                 {hasTicket ? 
                   (
-                    <Button variant='outlined' color='primary' sx={{width: '150px'}} onClick={() => {}} >Paid</Button>
+                    <Button variant='outlined' color='primary' sx={{width: '150px'}} >Paid</Button>
                   )
                   :
                   ( 
@@ -369,20 +370,6 @@ function EventItem(props) {
                   )
                 }
             </div>
-            {/* <div>
-              {hasTicket ? (
-                <div>You have a ticket </div>
-              ) : (
-                <div>
-                  {typeof tickets === 'undefined' || tickets - ticketsSold > 0 ? (
-                    <Button variant='contained' color='primary' onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
-                  ) : (
-                    <div>No tickets available</div>
-                  )}
-                </div>
-              )}
-            </div> */}
-            
           </div>
         </div>
   

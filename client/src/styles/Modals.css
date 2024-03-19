@@ -30,24 +30,28 @@
   justify-content: space-evenly;
 }
 
-.PaymentDetails div
+.PaymentModal{
+  width: auto;
+}
+
+.PaymentDetails
 {
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  flex-direction: row;
   justify-content:flex-start;
 }
 
 .PaymentEventDetails, .PaymentBillingDetails {
   padding: 2%;
+  width: 100%;
 }
 
 .PaymentEventDetails{
-  flex: 2;
+  flex: flex-grow;
 }
 
 .PaymentBillingDetails {
-  flex: 1.5;
+  flex: flex-grow;
   align-items: start;;
 }
 

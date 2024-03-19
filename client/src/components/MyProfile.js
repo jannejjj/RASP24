@@ -362,17 +362,9 @@ function MyProfile(props) {
                         description={event.description}
                         paid={event.paid}
                         key={index}
-<<<<<<< HEAD
                         tickets={event.tickets}
                         ticketsSold={event.ticketsSold}
                         token={props.currentUser.token}
-=======
-                        price={event.price}
-                        startDate={event.startDate}
-                        endDate={event.endDate}
-                        joinDeadline={event.joinDeadline}
-                        tickets={event.tickets}
->>>>>>> main
                         toggleUpdateEvents={toggleUpdateEvents}
                         />  
                       ))}
