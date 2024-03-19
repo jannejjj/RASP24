@@ -9,7 +9,6 @@ import GetMemberEmailsModal from '../modals/GetMemberEmailsModal';
 import { ToastContainer, toast } from 'react-toastify';
 import "../styles/Members.css";
 import '../App.css';
-import { left } from '@popperjs/core';
 
 function Members(props) {
 
