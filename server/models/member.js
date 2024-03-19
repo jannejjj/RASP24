@@ -13,6 +13,7 @@ let memberSchema = new Schema ({
     email: {type: String},
     password: {type: String},
     admin: {type: Boolean},
+    role: {type: String},
     profileImage:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'

@@ -340,8 +340,12 @@ function Home(props) {
             attendees={event.attendees}
             attending={event.attending}
             description={event.description}
-            ticketsSold={event.ticketsSold}
             tickets={event.tickets}
+            ticketsSold={event.ticketsSold}
+            startDate={event.startDate}
+            endDate={event.endDate}
+            price={event.price}
+            joinDeadline={event.joinDeadline}
             key={index}
             price={event.price}
             showToastMessage={showToastMessage}
