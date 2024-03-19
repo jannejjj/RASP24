@@ -91,6 +91,7 @@ function ProfileItem(props) {
     setPayMembership(false);
   };
 
+  // Update member when paying the membership fee
   const paymentOnClick = async () => {
     try {
       const dateNow = new Date();
@@ -128,6 +129,7 @@ function ProfileItem(props) {
     }
   };
 
+  // membershipPaid is set to false
   const updateMembershipStatus = async () => {
     try {
       const response = await fetch('/api/pay/membership', {
@@ -145,6 +147,7 @@ function ProfileItem(props) {
       if (response.ok) {
         setmembershipPaid(false);
         setPaymentDisabled(false);
+        props.toggleUpdateUser();
       } else {
         console.error('Failed to change membership status', response.statusText);
       }
@@ -155,23 +158,26 @@ function ProfileItem(props) {
 
   const checkMembershipStatus = () =>
   {
+    console.log("checkMembershipStatus");
     if(membershipPaid) {
-      console.log("checkMembershipStatus");
       const currentDate = new Date();
       const expirationDate = new Date(props.membershipExpirationDate);
       const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
       if(currentDate > expirationDate) {
+        // User has not paid membership fee in time
         console.log("User has not paid membership fee in time");
         updateMembershipStatus();
-      }
-      if(currentDate >= twoWeeksBeforeExpiration) {
+      } else if(currentDate >= twoWeeksBeforeExpiration) {
+        // Current date is later than two weeks before expiration. Payment enabled.
         console.log("Current date is later than two weeks before expiration. Payment enabled.");
         setPaymentDisabled(false);
       } else {
+        // Current date is earlier than two weeks before expiration. Payment disabled.
         console.log("Current date is earlier than two weeks before expiration. Payment disabled.");
         setPaymentDisabled(true);
       }    
     } else {
+      // Membership has not been paid. Payment enabled.
       console.log("Membership has not been paid. Payment enabled.");
       setPaymentDisabled(false);
     }
@@ -343,7 +349,10 @@ function ProfileItem(props) {
           payMembership={payMembership}
           cancelPaymentOnClick={cancelPaymentOnClick}
           paymentOnClick={paymentOnClick}
+          membershipExpirationDate={props.membershipExpirationDate}
+          twoWeeksBeforeExpiration={new Date((new Date(props.membershipExpirationDate)).getTime() - (2 * 7 * 24 * 60 * 60 * 1000)).toLocaleString("fi-FI", localeStringOptions)}
           paymentDisabled={paymentDisabled}
+          localeStringOptions={localeStringOptions}
         />
       </div>
       <ToastContainer />

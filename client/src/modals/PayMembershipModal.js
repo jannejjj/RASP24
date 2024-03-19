@@ -12,7 +12,8 @@ function PayMembershipModal(props) {
         <h2>
           Pay Membership
         </h2>
-        {props.paymentDisabled && <p>Payment is disabled. You can pay the next years membership fee two weeks before the expiration date.</p>}
+        {props.paymentDisabled && <p>Payment is disabled. You can pay the next year's membership fee two weeks before the expiration date.</p>}
+        {props.paymentDisabled && <p>Next payment available on: {props.twoWeeksBeforeExpiration}</p>}
         <p>TODO: ADD PAYMENT INFORMATION AND PRICE</p>
         <div className='ModalButtonArea'>
           <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelPaymentOnClick} >Cancel</Button>
