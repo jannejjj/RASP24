@@ -279,6 +279,7 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
         if(event_member){
             if(!event_member.paid){
                 event_member.paid = true;
+                event_member.date = new Date();
                 await event_member.save();
             }
         }else{

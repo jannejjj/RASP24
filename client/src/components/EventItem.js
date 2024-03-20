@@ -152,7 +152,6 @@ function EventItem(props) {
 
   const handleCancelEventLike = async () => 
   {
-    console.log("here");
     if(! hasTicket){
       await fetch("/api/cancel/attendance/" + props.id + "/" + props.currentUser.id,
       {

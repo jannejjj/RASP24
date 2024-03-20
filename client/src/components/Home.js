@@ -321,7 +321,6 @@ function Home(props) {
             price={event.price}
             joinDeadline={event.joinDeadline}
             key={index}
-            price={event.price}
             token={props.currentUser.token}
             toggleUpdateEvents={toggleUpdateEvents}
           />

@@ -6,7 +6,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 
-function EditEventModal(props)
+function PaymentModal(props)
 {
     return (
         <Modal open={props.openPayment} >
@@ -46,4 +46,4 @@ function EditEventModal(props)
     )
 }
 
-export default EditEventModal;
+export default PaymentModal;
