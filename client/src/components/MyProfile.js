@@ -350,21 +350,8 @@ function MyProfile(props) {
                       (
                         <EventItem
                         currentUser={props.currentUser}
-                        id={event._id}
-                        admin={props.currentUser.admin}
-                        title={event.title}
-                        creator={event.creator}
-                        time={event.time}
-                        location={event.location}
-                        attendees={event.attendees}
-                        attending={true}
-                        description={event.description}
+                        event={event}
                         key={index}
-                        price={event.price}
-                        startDate={event.startDate}
-                        endDate={event.endDate}
-                        joinDeadline={event.joinDeadline}
-                        tickets={event.tickets}
                         toggleUpdateEvents={toggleUpdateEvents}
                         />
                       ))}

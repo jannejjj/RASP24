@@ -1,6 +1,5 @@
 import { React, useEffect, useState } from "react";
 import "../styles/HomePage.css";
-import "../styles/EventItem.css";
 import "../App.css";
 import Button from "@mui/material/Button";
 import { FaUserGroup } from "react-icons/fa6";
@@ -10,20 +9,17 @@ import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
 import PaymentModal from "../modals/PaymentModal";
 import Typography from "@mui/material/Typography";
-import EventDetails from "./EventDetails";
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 function EventItem(props) {
   // These states store the original event data
-  const [attending, setAttending] = useState(props.attending);
-  const [title, setTitle] = useState(props.title);
-  const [time, setTime] = useState(props.time);
-  const [location, setLocation] = useState(props.location);
-  const [description, setDescription] = useState(props.description);
-  const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
-  const [tickets, setTickets] = useState(props.tickets);
-  const [price, setPrice] = useState(props.price);
+  const [attending, setAttending] = useState(props.event.attending);
+  const [title, setTitle] = useState(props.event.title);
+  const [time, setTime] = useState(props.event.time);
+  const [location, setLocation] = useState(props.event.location);
+  const [description, setDescription] = useState(props.event.description);
+  const [ticketsSold, setTicketsSold] = useState(props.event.ticketsSold);
+  const [tickets, setTickets] = useState(props.event.tickets);
+  const [price, setPrice] = useState(props.event.price);
   const [hasTicket, setHasTicket] = useState(false);
 
   // These states store the data that is edited
@@ -31,23 +27,23 @@ function EventItem(props) {
   const [openAttend, setOpenAttend] = useState(false);
   const [openCancelAttendance, setOpenCancelAttendance] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(props.title);
-  const [editedTime, setEditedTime] = useState(props.time);
-  const [editedLocation, setEditedLocation] = useState(props.location);
-  const [editedDescription, setEditedDescription] = useState(props.description);
+  const [editedTitle, setEditedTitle] = useState(props.event.title);
+  const [editedTime, setEditedTime] = useState(props.event.time);
+  const [editedLocation, setEditedLocation] = useState(props.event.location);
+  const [editedDescription, setEditedDescription] = useState(props.event.description);
 
   // Save the history so that the editing can be cancelled
-  const [titleHistory, setTitleHistory] = useState(props.title);
-  const [timeHistory, setTimeHistory] = useState(props.time);
-  const [locationHistory, setLocationHistory] = useState(props.location);
+  const [titleHistory, setTitleHistory] = useState(props.event.title);
+  const [timeHistory, setTimeHistory] = useState(props.event.time);
+  const [locationHistory, setLocationHistory] = useState(props.event.location);
   const [descriptionHistory, setDescriptionHistory] = useState(
-    props.description
+    props.event.description
   );
 
   useEffect(() => {
     const data = {
       userId: props.currentUser.id,
-      eventId: props._id
+      eventId: props.event._id
     };
 
     fetch('/api/checkticket', {
@@ -129,7 +125,7 @@ function EventItem(props) {
   const handleEventAttendance = async () => {
     const body =
     {
-      eventID: props._id,
+      eventID: props.event._id,
       userID: props.currentUser.id
     }
 
@@ -151,7 +147,7 @@ function EventItem(props) {
 
   const handleCancelEventAttendance = async () => 
   {
-    await fetch("/api/cancel/attendance/" + props._id + "/" + props.currentUser.id,
+    await fetch("/api/cancel/attendance/" + props.event._id + "/" + props.currentUser.id,
     {
       method: "DELETE",
       headers: {
@@ -180,7 +176,7 @@ function EventItem(props) {
 
     const data = {
       userId: props.currentUser.id,
-      eventId: props._id
+      eventId: props.event._id
     };
 
     try {
@@ -218,7 +214,7 @@ function EventItem(props) {
   };
 
   const confirmDeleteOnClick = () => {
-    fetch('/api/event/' + props._id, {
+    fetch('/api/event/' + props.event._id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -241,7 +237,7 @@ function EventItem(props) {
   {
     const confirmAttendance = () => 
     {
-      fetch(`/api/is/attending/${props._id}/${props.currentUser.id}` , {
+      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
         method: 'GET'
       })
       .then(response => response.json())
@@ -269,14 +265,14 @@ function EventItem(props) {
           <div className="HomeEventHeaderArea">
             <div className="HomeEventTitleAndLocationArea">
               <h2>{title}</h2>
-              <h3>Created by: {props.creator}</h3>
+              <h3>Created by: {props.event.creator}</h3>
               <h3>{time}</h3>
               <h3>{location}</h3>
               {price && <h3>Ticket price: {price}€</h3>}
             </div>
   
             <p>
-              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {props.attendees}
+              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {props.event.attendees}
             </p>
           </div>
         </div>
@@ -284,37 +280,12 @@ function EventItem(props) {
         <div className="HomeEventBottom">
           <div className="HorizontalSeparator" />
           <div className="HomeEventDescriptionArea">
-                <p>{description}</p>
+            <p>{description}</p>
           </div>
-          <Accordion
-            sx={{
-              "&:before": {
-                display: "none",
-              },
-              borderRadius: "4px",
-            }}
-            slotProps={{ transition: {unmountOnExit: true} }}
-            disableGutters={true}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <h3> Details </h3>
-            </AccordionSummary>
-            <AccordionDetails>
-              <EventDetails
-                startDate={props.startDate}
-                endDate={props.endDate}
-                joinDeadline={props.joinDeadline}
-                tickets={props.tickets}
-                ticketsSold={ticketsSold}
-                price={props.price}
-                paymentDate={props.paymentDate}
-                attendees={props.attendees}
-              />
-            </AccordionDetails>
-          </Accordion>
+  
           <div className='HomeEventAttendanceButtonsArea'>
             <div>
-              {props.admin && 
+              {props.currentUser.admin && 
                 (
                   <div>
                     <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
@@ -367,7 +338,7 @@ function EventItem(props) {
 
         <DeleteEventModal
           deleteModal={deleteModal}
-          attendees={props.attendees}
+          attendees={props.event.attendees}
           cancelDeleteOnClick={cancelDeleteOnClick}
           confirmDeleteOnClick={confirmDeleteOnClick}
         />
