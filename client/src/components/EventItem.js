@@ -43,14 +43,14 @@ function EventItem(props) {
   useEffect(() => {
     const data = {
       userId: props.currentUser.id,
-      eventId: props.id
+      eventId: props.event._id
     };
 
     fetch('/api/checkticket', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + props.token
+          "Authorization": "Bearer " + props.currentUser.token
         },
           body: JSON.stringify(data)
     })
@@ -125,7 +125,7 @@ function EventItem(props) {
   const handleEventAttendance = async () => {
     const body =
     {
-      eventID: props.id,
+      eventID: props.event._id,
       userID: props.currentUser.id
     }
 
@@ -147,7 +147,7 @@ function EventItem(props) {
 
   const handleCancelEventAttendance = async () => 
   {
-    await fetch("/api/cancel/attendance/" + props.id + "/" + props.currentUser.id,
+    await fetch("/api/cancel/attendance/" + props.event._id + "/" + props.currentUser.id,
     {
       method: "DELETE",
       headers: {
@@ -176,7 +176,7 @@ function EventItem(props) {
 
     const data = {
       userId: props.currentUser.id,
-      eventId: props.id
+      eventId: props.event._id
     };
 
     try {
@@ -184,7 +184,7 @@ function EventItem(props) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          "Authorization": "Bearer " + props.token
+          "Authorization": "Bearer " + props.currentUser.token
         },
         body: JSON.stringify(data)
       });
@@ -214,11 +214,11 @@ function EventItem(props) {
   };
 
   const confirmDeleteOnClick = () => {
-    fetch('/api/event/' + props.id, {
+    fetch('/api/event/' + props.event._id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + props.token,
+        'Authorization': 'Bearer ' + props.currentUser.token,
       }
     })
     .then(response => response.json())
@@ -237,7 +237,7 @@ function EventItem(props) {
   {
     const confirmAttendance = () => 
     {
-      fetch(`/api/is/attending/${props.id}/${props.currentUser.id}` , {
+      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
         method: 'GET'
       })
       .then(response => response.json())

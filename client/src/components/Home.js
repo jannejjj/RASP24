@@ -331,14 +331,12 @@ function Home(props) {
         !loading && events.map((event, index) => (
           <EventItem
             currentUser={props.currentUser}
-            id={event._id}
             user={user}
             admin={admin}
             event={event}
             key={index}
             showToastMessage={showToastMessage}
             showToastSuccessMessage={showToastSuccessMessage}
-            token={props.currentUser.token}
             toggleUpdateEvents={toggleUpdateEvents}
           />
         ))
