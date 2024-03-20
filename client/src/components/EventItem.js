@@ -12,14 +12,14 @@ import Typography from "@mui/material/Typography";
 
 function EventItem(props) {
   // These states store the original event data
-  const [attending, setAttending] = useState(props.attending);
-  const [title, setTitle] = useState(props.title);
-  const [time, setTime] = useState(props.time);
-  const [location, setLocation] = useState(props.location);
-  const [description, setDescription] = useState(props.description);
-  const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
-  const [tickets, setTickets] = useState(props.tickets);
-  const [price, setPrice] = useState(props.price);
+  const [attending, setAttending] = useState(props.event.attending);
+  const [title, setTitle] = useState(props.event.title);
+  const [time, setTime] = useState(props.event.time);
+  const [location, setLocation] = useState(props.event.location);
+  const [description, setDescription] = useState(props.event.description);
+  const [ticketsSold, setTicketsSold] = useState(props.event.ticketsSold);
+  const [tickets, setTickets] = useState(props.event.tickets);
+  const [price, setPrice] = useState(props.event.price);
   const [hasTicket, setHasTicket] = useState(false);
 
   // These states store the data that is edited
@@ -27,26 +27,26 @@ function EventItem(props) {
   const [openAttend, setOpenAttend] = useState(false);
   const [openCancelAttendance, setOpenCancelAttendance] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(props.title);
-  const [editedTime, setEditedTime] = useState(props.time);
-  const [editedLocation, setEditedLocation] = useState(props.location);
-  const [editedDescription, setEditedDescription] = useState(props.description);
+  const [editedTitle, setEditedTitle] = useState(props.event.title);
+  const [editedTime, setEditedTime] = useState(props.event.time);
+  const [editedLocation, setEditedLocation] = useState(props.event.location);
+  const [editedDescription, setEditedDescription] = useState(props.event.description);
 
   // Save the history so that the editing can be cancelled
-  const [titleHistory, setTitleHistory] = useState(props.title);
-  const [timeHistory, setTimeHistory] = useState(props.time);
-  const [locationHistory, setLocationHistory] = useState(props.location);
+  const [titleHistory, setTitleHistory] = useState(props.event.title);
+  const [timeHistory, setTimeHistory] = useState(props.event.time);
+  const [locationHistory, setLocationHistory] = useState(props.event.location);
   const [descriptionHistory, setDescriptionHistory] = useState(
-    props.description
+    props.event.description
   );
 
   useEffect(() => {
     const data = {
-      userId: props.user_id,
+      userId: props.currentUser.id,
       eventId: props.id
     };
 
-    fetch('/api/test', {
+    fetch('/api/checkticket', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ function EventItem(props) {
     })
     .then(response => response.json())
     .then(data => {
-      setHasTicket(data.ticket);
+      setHasTicket(data.hasTicket);
     })
     .catch(error => {
         console.error('Error fetching ticket status:', error);
@@ -175,7 +175,7 @@ function EventItem(props) {
     setOpenPayment(false);
 
     const data = {
-      userId: props.user_id,
+      userId: props.currentUser.id,
       eventId: props.id
     };
 
@@ -265,14 +265,14 @@ function EventItem(props) {
           <div className="HomeEventHeaderArea">
             <div className="HomeEventTitleAndLocationArea">
               <h2>{title}</h2>
-              <h3>Created by: {props.creator}</h3>
+              <h3>Created by: {props.event.creator}</h3>
               <h3>{time}</h3>
               <h3>{location}</h3>
               {price && <h3>Ticket price: {price}€</h3>}
             </div>
   
             <p>
-              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {props.attendees}
+              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {props.event.attendees}
             </p>
           </div>
         </div>
@@ -338,7 +338,7 @@ function EventItem(props) {
 
         <DeleteEventModal
           deleteModal={deleteModal}
-          attendees={props.attendees}
+          attendees={props.event.attendees}
           cancelDeleteOnClick={cancelDeleteOnClick}
           confirmDeleteOnClick={confirmDeleteOnClick}
         />
