@@ -111,13 +111,15 @@ function Members(props) {
   
   return (
     <div className="MembersBackground">
-      <div className="MembersTitle">
-        <Button color="primary" variant='contained' style={{margin: "10px 0 10px 0"}} onClick={getEmailsModalOnclick}>Get member emails</Button>
-        <h1 style={{marginLeft: 100}}>Members</h1>
+      <div>
+        <h1>Members</h1>
+      </div>
+      <div className="MembersTop">
+        <Button color="primary" variant='contained' style={{margin: "2px 0 3px 0"}} onClick={getEmailsModalOnclick}>Get member emails</Button>
         <TextField 
         id="search-term" 
         label="Search" 
-        variant="outlined" 
+        variant="outlined"
         onChange={onChangeSearch}  
         InputProps={{
         endAdornment: (

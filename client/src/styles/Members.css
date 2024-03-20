@@ -5,10 +5,9 @@
   margin: 15px 0 0 0;
 }
 
-.MembersTitle {
+.MembersTop {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin: 0 20% 15px 20%;
 }
 
