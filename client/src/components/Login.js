@@ -6,6 +6,7 @@ import '../styles/Login.css';
 import '../App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { TextField } from "@mui/material";
 
 function Login(props) {
     let navigate = useNavigate();
@@ -52,7 +53,9 @@ function Login(props) {
                             admin: data.admin,
                             loggedIn: true,
                             token: data.token,
-                            id: data.id
+                            id: data.id,
+                            firstname: data.firstname,
+                            lastname: data.lastname
                         }
                       );
                       navigate('/');
@@ -68,8 +71,8 @@ function Login(props) {
         <div className="LoginBackground">
             <h1>Login</h1>
             <form onSubmit={submitForm} onChange={whenChanging} className='LoginForm' >
-                <OutlinedInput fullWidth variant='' required placeholder={'Email'} type="email" id="email" sx={{m: 1}} />
-                <OutlinedInput fullWidth variant="outlined" required placeholder={'Password'} type="password" id="password" sx={{m: 1}} />
+                <TextField fullWidth required label="Email" placeholder={'Email'} type="email" id="email" sx={{m: 1}}/>
+                <TextField fullWidth required label="Password" placeholder={'Password'} type="password" id="password" sx={{m: 1}}/>
                 <Button variant='contained' color="primary" type="submit" id="submit" sx={{m: 1}}>Login</Button>
             </form>
             <p className="HintParagraphBig" style={{margin: "20px 0 0 0"}}>Forgot your password? <a href="">Link</a></p>

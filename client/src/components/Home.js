@@ -3,11 +3,9 @@ import "../styles/HomePage.css";
 import "../App.css";
 import Button from "@mui/material/Button";
 import { FaUserGroup } from "react-icons/fa6";
-import CancelAttendanceModal from "../modals/CancelAttendanceModal";
-import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
 import CreateEventModal from "../modals/CreateEventModal";
-import EditEventModal from "../modals/EditEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
+import EventItem from "./EventItem";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Typography from "@mui/material/Typography";
@@ -426,7 +424,13 @@ function Home(props) {
   const [checkedDeadline, setCheckedDeadline] = useState(false);
   const [tickets, setTickets] = useState("");
   const [loading, setLoading] = useState(true);
+  const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
+
+
+  const toggleUpdateEvents = () => {
+    setUpdateEvents(!updateEvents);
+  }
 
   const showToastMessage = (message) =>
     {
@@ -440,6 +444,19 @@ function Home(props) {
             progress: undefined,
             theme: "dark"
             });
+    }
+  
+    const showToastSuccessMessage = (message) =>  {
+      toast.success(message, {
+          position: "top-center",
+          autoClose: 6000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+          theme: "dark"
+          });
     }
 
   //Resets the amount of tickets and clears the text box.
@@ -537,10 +554,10 @@ function Home(props) {
     };
   }
   setLoading(false);
-  }, [])
+  }, [updateEvents])
 
   // POST new event
-  const saveNewEventOnClick = (e) => {
+  const saveNewEventOnClick = async (e) => {
     e.preventDefault()
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
@@ -554,7 +571,7 @@ function Home(props) {
             newEvent.attendees = 1;
             
             setNewEvent(newEvent);
-            fetch("/api/event", {
+            await fetch("/api/event", {
               method: "POST",
               headers: {
                   "Content-type": "application/json",
@@ -571,6 +588,8 @@ function Home(props) {
           setNewEvent({});
           // Close the Modal
           setNewEventModal(false);
+          // Update events list by toggling the boolean
+          toggleUpdateEvents();
           if(checkedTicket) {
             resetTickets();
           }
@@ -604,14 +623,21 @@ function Home(props) {
       <div className="HomeEventsList">
         <h1>Events</h1>
         <div className="HorizontalSeparator" style={{ width: "95%" }} />
+        
         {admin && (
           <Button color="primary" variant='contained' onClick={() => {setNewEventModal(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
         )}
+
         {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">
             Loading...
           </Typography>}
-        {!loading && events.map((event, index) => (
+
+        {props.currentUser.loggedIn
+        ?
+        !loading && events.map((event, index) => (
           <EventItem
+            currentUser={props.currentUser}
+            id={event._id}
             admin={admin}
             eventID={event._id}
             currentUser={props.currentUser}
@@ -626,11 +652,23 @@ function Home(props) {
             attendees={event.attendees}
             attending={event.attending}
             description={event.description}
+            tickets={event.tickets}
+            ticketsSold={event.ticketsSold}
+            startDate={event.startDate}
+            endDate={event.endDate}
             price={event.price}
             key={index}
-            tickets={event.tickets}
+            showToastMessage={showToastMessage}
+            showToastSuccessMessage={showToastSuccessMessage}
+            token={props.currentUser.token}
+            toggleUpdateEvents={toggleUpdateEvents}
           />
-        ))}
+        ))
+        :
+        <Typography sx={{ mt: 20 }} variant='h4' align="center">
+          Please log in to see events.</Typography>
+        }
+
         <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
       </div>
 

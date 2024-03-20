@@ -1,0 +1,20 @@
+.MembersBackground
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 15px 0 0 0;
+}
+
+.MembersTitle {
+  display: flex;
+  flex-direction: row; 
+  justify-content: space-between;
+  margin: 0 20% 0 20%;
+}
+
+.MemberRole
+{
+  color: #85717c;
+  font-style: italic;
+}

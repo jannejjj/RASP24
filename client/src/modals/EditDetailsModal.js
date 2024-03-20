@@ -12,13 +12,16 @@ function EditDetailsModal(props)
       <Modal open={props.edit} >
         <Box className='ModalBackground' >
           <h2>
-            Edit the details
+            Edit profile information
           </h2>
           <div className='HorizontalSeparator' />
-          <TextField value={props.title} onInput={props.handleTitleChange} className='TextField' label="Title" />
-          <TextField multiline value={props.details} onInput={props.handleDetailsChange}
-            className='TextField' fullWidth label='Description' maxRows={15} />
-          <div>
+          <TextField value={props.editedPhone} onInput={props.handlePhoneChange} className='TextField' fullWidth label="Phone" />
+          <TextField value={props.editedEmail} onInput={props.handleEmailChange} className='TextField' fullWidth label="Email" />
+          <TextField value={props.editedAddress} onInput={props.handleAddressChange} className='TextField' fullWidth label="Address" />
+          <TextField value={props.editedPostalcode} onInput={props.handlePostalcodeChange} className='TextField' fullWidth label="Postalcode" />
+          <TextField value={props.editedCity} onInput={props.handleCityChange} className='TextField' fullWidth label="City" />
+          <TextField value={props.editedCountry} onInput={props.handleCountryChange} className='TextField' fullWidth label="Country" />
+          <div className='ModalButtonArea'>
             <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelEditOnClick} >Cancel</Button>
             <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.saveEditOnClick} >Save</Button>
           </div>

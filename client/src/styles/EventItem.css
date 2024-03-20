@@ -1,0 +1,14 @@
+.MuiAccordion-root {
+  margin-top: 12px !important;
+  box-shadow: none !important;
+  background-color: #ff6fc512 !important;
+  border: 1px solid #2C041C !important;
+}
+
+.MuiAccordionSummary-root {
+  padding-left: 16px !important;
+}
+
+.MuiAccordionSummary-content > h3 {
+  margin-bottom: 0;
+}

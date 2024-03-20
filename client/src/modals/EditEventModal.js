@@ -21,7 +21,6 @@ function EditEventModal(props)
           <h2>
             Edit the event
           </h2>
-          
           <form onSubmit={props.saveEditedEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
                 <h1>{props.title}</h1>
                 <TextField label='Location' fullWidth required type="text" placeholder={'Location'} id="location" sx={{m: 1}} defaultValue={props.location} />
