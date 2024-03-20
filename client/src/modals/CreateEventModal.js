@@ -30,7 +30,7 @@ function CreateEventModal(props)
                     onError={props.handleStartTimeError}
                     label="Select starting time" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
-                    format="DD/MM/YYYY hh:mm"
+                    format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     disablePast={true}
                     slotProps={{
@@ -54,7 +54,7 @@ function CreateEventModal(props)
                     disabled={!props.checkedDeadline}
                     label="Event joining deadline" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
-                    format="DD/MM/YYYY hh:mm"
+                    format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     disablePast={true}
                     slotProps={{
@@ -71,7 +71,7 @@ function CreateEventModal(props)
                     onError={props.handleEndTimeError}
                     label="Select ending time" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
-                    format="DD/MM/YYYY hh:mm"
+                    format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     disablePast={true}
                     slotProps={{
@@ -105,7 +105,7 @@ function CreateEventModal(props)
                   onChange={e => props.setTickets(e.target.value)}
                 />
                 <p className='HintParagraphSmall' >Required *</p>
-                <div>
+                <div className='ModalButtonArea'>
                   <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
                   <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit">Save</Button>
                 </div>

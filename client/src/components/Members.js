@@ -12,6 +12,9 @@ function Members(props) {
   const [members, setMembers] = useState([{}]);
   const [displayMembers, setDisplayMembers] = useState([{}]);
   const [loading, setLoading] = useState(true);
+  const [update, setUpdate] = useState(false);
+
+  const toggleUpdate = () => { setUpdate(!update); }
 
   const onChangeSearch = (event) => {
     setDisplayMembers(members.filter(member => (member.firstname + " " + member.lastname).toLowerCase().includes(event.target.value.toLowerCase().trim())));
@@ -32,10 +35,14 @@ function Members(props) {
             if(dataJson.error) {
               console.log("Error while fetching members: " + dataJson.error);
             } else {
-              setMembers(dataJson);
+              const index = dataJson.findIndex(member => member._id === props.currentUser.id);
+              if(index !== -1) {
+                dataJson.unshift(dataJson.splice(index, 1)[0]);
+              }
+              setMembers(dataJson)
               setDisplayMembers(dataJson);
             }
-            setLoading(false);  
+            setLoading(false);
         }
     }
     // Only for users that have logged in
@@ -47,7 +54,7 @@ function Members(props) {
       };
     }
     setLoading(false);
-  }, [])
+  }, [update])
 
   /* If the user is not logged in, they will be shown this */
   if (!props.currentUser.loggedIn) {
@@ -82,10 +89,15 @@ function Members(props) {
       {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">
         Loading...
       </Typography>}
-      {!loading && [...displayMembers].map((member) => (
-          <Member key={member._id} member={member}/>
+      {!loading && members && [...displayMembers].map((member) => (
+          <Member key={member._id} member={member} currentUser={props.currentUser} toggleUpdate={toggleUpdate}/>
       ))}
-      <Typography sx={{ mt: 20 }} variant='h4' align="center">{!members?.length>0 && "No members."}</Typography>
+      {!members?.length>0 &&
+        <Typography sx={{ mt: 20 }} variant='h4' align="center">No members.</Typography>
+      }
+      {!displayMembers?.length>0 &&
+        <Typography sx={{ mt: 20 }} variant='h4' align="center">No results.</Typography>
+      }
     </div>
   )
 }

@@ -20,7 +20,7 @@ function EditEventModal(props)
           <TextField value={props.editedLocation} onInput={props.handleLocationChange} className='TextField' fullWidth label="Location" />
           <TextField multiline value={props.editedDescription} onInput={props.handleDescriptionChange}
             className='TextField' fullWidth label='Description' maxRows={15} />
-          <div>
+          <div className='ModalButtonArea'>
             <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelEditOnClick} >Cancel</Button>
             <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.saveEditOnClick} >Save</Button>
           </div>

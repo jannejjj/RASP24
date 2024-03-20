@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function TopBar(props) {
   const [language, setLanguage] = useState("EN");
-  const [selectedPage, setSelectedPage] = useState("Home");
+  const [selectedPage, setSelectedPage] = useState("");
   const [anchorElNav, setAnchorElNav] = useState(null);
   let navigate = useNavigate();
 
