@@ -334,6 +334,7 @@ function Home(props) {
             user={user}
             admin={admin}
             loggedIn={props.currentUser.loggedIn}
+            _id = {event._id}
             title={event.title}
             creator={event.creator}
             time={event.time}
