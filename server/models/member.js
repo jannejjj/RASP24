@@ -14,6 +14,9 @@ let memberSchema = new Schema ({
     password: {type: String},
     admin: {type: Boolean},
     role: {type: String},
+    membershipPaid: {type: Boolean},
+    membershipPaidDate: {type: Date},
+    membershipExpirationDate: {type: Date},
     profileImage:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'
