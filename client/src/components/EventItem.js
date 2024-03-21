@@ -9,6 +9,7 @@ import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
 import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
 import EventDetails from "./EventDetails";
+import TicketItem from "./TicketItem";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -242,6 +243,9 @@ function EventItem(props) {
                 price={props.price}
                 paymentDate={props.paymentDate}
                 attendees={props.attendees}
+              />
+              <TicketItem
+                title={title}
               />
             </AccordionDetails>
           </Accordion>
