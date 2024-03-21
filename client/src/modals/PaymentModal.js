@@ -33,7 +33,7 @@ function EditEventModal(props)
                     </div>
                 </div>
 
-                <div>
+                <div  className='ModalButtonArea'>
                     <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={() => {props.setOpenPayment(false)}} >Cancel</Button>
                     <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.handlePayment} >Buy</Button>
                 </div>

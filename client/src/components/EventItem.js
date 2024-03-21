@@ -307,13 +307,13 @@ function EventItem(props) {
             </div>
             <div>
               {hasTicket ? (
-                <div>You have a ticket </div>
+                <Button variant='outlined' color='primary'  >You have a ticket</Button>
               ) : (
                 <div>
                   {typeof tickets === 'undefined' || tickets - ticketsSold > 0 ? (
                     <Button variant='contained' color='primary' onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
                   ) : (
-                    <div>No tickets available</div>
+                    <Button variant='contained' color='primary' disabled={true} >No tickets available</Button>
                   )}
                 </div>
               )}
