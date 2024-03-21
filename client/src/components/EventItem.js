@@ -274,9 +274,8 @@ function EventItem(props) {
               <h3>Location: {location}</h3>
               {price && <h3>Ticket price: {price}€</h3>}
             </div>
-  
             <p>
-              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {props.attendees}
+              <FavoriteIcon fontSize="small" sx={{mr:"5px"}}/>  {props.attendees}
             </p>
           </div>
         </div>
