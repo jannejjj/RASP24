@@ -17,7 +17,7 @@ function Members(props) {
   const [loading, setLoading] = useState(true);
   const [update, setUpdate] = useState(false);
   const [getEmailsModal, setGetEmailsModal] = useState(false);
-  const [seperator, setSeperator] = useState("");
+  const [separator, setSeparator] = useState("");
 
   const toggleUpdate = () => { setUpdate(!update); }
 
@@ -50,15 +50,15 @@ function Members(props) {
     e.preventDefault();
     var allEmails = "";
     members.forEach(function(member) {
-      allEmails = allEmails + member.email + seperator;
+      allEmails = allEmails + member.email + separator;
     })
     navigator.clipboard.writeText(allEmails);
     showToastSuccessMessage("All emails copied to clipboard");
     setGetEmailsModal(false);
   };
 
-  const handleSeperatorChange = (event) => {
-    setSeperator(event.target.value);
+  const handleSeparatorChange = (event) => {
+    setSeparator(event.target.value);
   };
 
   useEffect(() => {
@@ -145,7 +145,7 @@ function Members(props) {
         getEmailsModal={getEmailsModal}
         getEmailsCancelOnClick={getEmailsCancelOnClick}
         getEmailsOnClick={getEmailsOnClick}
-        handleSeperatorChange={handleSeperatorChange}
+        handleSeparatorChange={handleSeparatorChange}
       />
       <ToastContainer />
     </div>
