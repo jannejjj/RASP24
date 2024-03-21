@@ -1,5 +1,6 @@
 import { React, useEffect, useState } from "react";
 import "../styles/HomePage.css";
+import '../styles/EventItem.css';
 import "../App.css";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -14,17 +15,16 @@ import toasts from "../common/Toast";
 
 function EventItem(props) {
   // These states store the original event data
-  const [like, setLiking] = useState(props.attending);
-  const [title, setTitle] = useState(props.title);
-  const [time, setTime] = useState(props.time);
-  const [location, setLocation] = useState(props.location);
-  const [description, setDescription] = useState(props.description);
-  const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
+  const [like, setLiking] = useState(null);
+  const [title, setTitle] = useState(props.event.title);
+  const [time, setTime] = useState(props.event.time);
+  const [location, setLocation] = useState(props.event.location);
+  const [description, setDescription] = useState(props.event.description);
+  const [ticketsSold, setTicketsSold] = useState(props.event.ticketsSold);
   const [paid, setPaid] = useState(props.paid);
-  const [tickets, setTickets] = useState(props.tickets);
-  const [price, setPrice] = useState(props.price);
+  const [tickets, setTickets] = useState(props.event.tickets);
+  const [price, setPrice] = useState(props.event.price);
   const [hasTicket, setHasTicket] = useState(false);
-  const [attending, setAttending] = useState(props.event.attending);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -57,7 +57,6 @@ function EventItem(props) {
     })
     .then(response => response.json())
     .then(data => {
-      setHasTicket(data.hasTicket);
       setHasTicket(data.ticket);
     })
     .catch(error => {
@@ -173,12 +172,12 @@ function EventItem(props) {
     setOpenPayment(false);
 
     const data = {
-      userId: props.currentUser.id,
+      userId: props.currentUser._id,
       eventId: props.event._id
     };
 
     try {
-      const response = await fetch('/api/ticket', {
+      const response = await fetch('/api/ticket/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -264,9 +263,7 @@ function EventItem(props) {
             <div className="HomeEventTitleAndLocationArea">
               <h2>{title}</h2>
               <h3>Created by: {props.event.creator}</h3>
-              <h3>{time}</h3>
-              <h3>{location}</h3>
-              {price && <h3>Ticket price: {price}€</h3>}
+              <h3>Location: {location}</h3>
             </div>
             <p>
               <FavoriteIcon fontSize="small" sx={{mr:"5px"}}/>  {props.event.attendees}
@@ -279,33 +276,33 @@ function EventItem(props) {
           <div className="HomeEventDescriptionArea">
             <p>{description}</p>
           </div>
-          <div className='HomeEventAttendanceButtonsArea'>
-            <Accordion
-              sx={{
-                "&:before": {
-                  display: "none",
-                },
-                borderRadius: "4px",
-              }}
-              slotProps={{ transition: {unmountOnExit: true} }}
-              disableGutters={true}
-            >
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <h3> Details </h3>
-              </AccordionSummary>
-              <AccordionDetails>
-                <EventDetails
-                  startDate={props.startDate}
-                  endDate={props.endDate}
-                  joinDeadline={props.joinDeadline}
-                  tickets={props.tickets}
-                  ticketsSold={ticketsSold}
-                  price={props.price}
-                  paymentDate={props.paymentDate}
-                  attendees={props.attendees}
-                />
-              </AccordionDetails>
-            </Accordion>
+          <Accordion
+            sx={{
+              "&:before": {
+                display: "none",
+              },
+              borderRadius: "4px",
+            }}
+            slotProps={{ transition: {unmountOnExit: true} }}
+            disableGutters={true}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <h3> Details </h3>
+            </AccordionSummary>
+            <AccordionDetails>
+              <EventDetails
+                startDate={props.event.startDate}
+                endDate={props.event.endDate}
+                joinDeadline={props.event.joinDeadline}
+                tickets={tickets}
+                ticketsSold={ticketsSold}
+                price={price}
+                paymentDate={props.event.paymentDate}
+                attendees={props.event.attendees}
+              />
+            </AccordionDetails>
+          </Accordion>
+          <div className='HomeEventLikeButtonsArea'>
             <div>
               {props.currentUser.admin && 
                 (
@@ -325,7 +322,7 @@ function EventItem(props) {
                     borderRadius: 2, 
                     mr:1,
                     color: 'primary.main'
-                     }} onClick={() => {if(!hasTicket) {setLiking(false); handleCancelEventLike();} }}>
+                     }} onClick={() => {setLiking(false); handleCancelEventLike(); }}>
                     <FavoriteIcon fontSize="small"/>
                   </IconButton>
                 )
@@ -333,6 +330,7 @@ function EventItem(props) {
                 ( 
                   <IconButton variant="contained" sx={{ 
                     borderRadius: 2, 
+                    border: "1px solid #2C041C",
                     mr:1, 
                     bgcolor:'primary.main', 
                     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
@@ -363,20 +361,6 @@ function EventItem(props) {
                   )
                 }
             </div>
-            <div>
-              {hasTicket ? (
-                <Button variant='outlined' color='primary'  >You have a ticket</Button>
-              ) : (
-                <div>
-                  {typeof tickets === 'undefined' || tickets - ticketsSold > 0 ? (
-                    <Button variant='contained' color='primary' onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
-                  ) : (
-                    <Button variant='contained' color='primary' disabled={true} >No tickets available</Button>
-                  )}
-                </div>
-              )}
-            </div>
-            
           </div>
         </div>
   

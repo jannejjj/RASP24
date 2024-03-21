@@ -275,12 +275,12 @@ router.post('/hasTicket',passport.authenticate('jwt', {session: false}), async (
         if(!event || !user){
             return res.status(404).json({ error: 'User or Event not found' });
         }
-        const event_member = await Member_Event.findOne({
+        const event_member = await Ticket.findOne({
             member: user._id,
             event: event._id
         });
 
-        if(event_member && event_member.paid){
+        if(event_member){
             return res.json({ticket: true});
         }
 
