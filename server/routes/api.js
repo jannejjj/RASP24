@@ -17,7 +17,7 @@ const upload = multer({storage});
 var idFromToken = null;
 
 
-require('../auth/passport')(passport)
+require('../auth/passport')(passport);
 router.use(passport.initialize());
 
 //finds all the members in the DB if authenticated
@@ -63,7 +63,7 @@ router.post('/login',
                     lastname: member.lastname,
                     email: member.email,
                     admin: member.admin
-                }
+                };
                 jwt.sign(
                     jwtPayload,
                     process.env.SECRET,
@@ -153,13 +153,15 @@ router.get('/get/events/for/:id', async (req, res) =>
     // Initialize the lists where the events will be added
     let events = [];
     let eventIDs = [];
+    let paid = {};
 
-    // Find the IDs of the events that the user is participating in
+    // Find the IDs of the events that the user is interested in or has paid for
     await Member_event.find({member: id})
     .then((docs) =>
     {
         docs.forEach(item => {
             eventIDs.push(item.event);
+            paid[item.event] = item.paid;
         });
     });
 
@@ -176,11 +178,12 @@ router.get('/get/events/for/:id', async (req, res) =>
     await Event.find({_id: {$in: eventIDs}})
     .then((docs) => {
       docs.forEach(event => {
+        let modifiedEvent = {...event, paid: paid[event._id]};
         events.push(event);
       });
     });
 
-    // Returns a list every time. If the user is not partisipating in any events, the list is empty.
+    // Returns a list every time. If the user is not participating in any events, the list is empty.
     return res.json({events});
 });
 
@@ -222,7 +225,8 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
 });
 
 router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
-    try{
+    try
+    {
         const { userId, eventId } = req.body;
 
         const event = await Event.findById(eventId);
@@ -254,8 +258,35 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
         await new_ticket.save();
         await event.save();
         return res.status(200).send("ticket sold");
-    }catch(err){
+    }
+    catch(err)
+    {
         console.error('Error selling tickets:', err);
+    }
+});
+
+router.post('/hasTicket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+    try{
+        const { userId, eventId } = req.body;
+
+        const event = await Event.findById(eventId);
+        const user = await Member.findById(userId);
+
+        if(!event || !user){
+            return res.status(404).json({ error: 'User or Event not found' });
+        }
+        const event_member = await Member_Event.findOne({
+            member: user._id,
+            event: event._id
+        });
+
+        if(event_member && event_member.paid){
+            return res.json({ticket: true});
+        }
+
+        return res.json({ticket: false});
+    }catch(err){
+        console.error('Error while checking tickets:', err);
         return res.status(500).send('Internal Server Error');
     }
 });
@@ -271,6 +302,7 @@ router.post('/checkticket',passport.authenticate('jwt', {session: false}), async
             return res.status(404).json({ error: 'User or Event not found' });
     
         }
+
         const ticket = await Ticket.findOne({
             member: user._id,
             event: event._id
@@ -342,7 +374,6 @@ router.delete('/cancel/attendance/:eventID/:userID', passport.authenticate('jwt'
 {
     const eventID = req.params.eventID;
     const userID = req.params.userID;
-
     try
     {
         const deletedItem = await Member_Event.findOneAndDelete({member: userID, event: eventID});

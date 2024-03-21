@@ -4,6 +4,8 @@ import '../App.css';
 import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
 import EventItem from './EventItem';
+import { ToastContainer } from "react-toastify";
+
 
 function ProfileItem(props) {
   // These states store the original event data
@@ -352,8 +354,9 @@ function MyProfile(props) {
                         currentUser={props.currentUser}
                         event={event}
                         key={index}
+                        attending={true}
                         toggleUpdateEvents={toggleUpdateEvents}
-                        />
+                        />  
                       ))}
                     </div>
                   ) 
@@ -363,6 +366,7 @@ function MyProfile(props) {
           }
         </div>
       </div>
+      <ToastContainer/>
     </div>
   )
 }
