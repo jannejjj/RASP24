@@ -184,20 +184,6 @@ const showToastMessageSuccesfull = (message) =>
       handleDeadlineSwitch();
     }
     setEdit(false);
-    /*// Bring back the old event data
-    setTitle(titleHistory);
-    setTime(timeHistory);
-    setLocation(locationHistory);
-    setDescription(descriptionHistory);
-
-    // Also reset the changes to the edited values
-    setEditedTitle(titleHistory);
-    setEditedTime(timeHistory);
-    setEditedLocation(locationHistory);
-    setEditedDescription(descriptionHistory);
-
-    // Close the edit
-    setEdit(false);*/
   };
 
   //Updates the values for the start time

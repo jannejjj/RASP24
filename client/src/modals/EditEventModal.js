@@ -34,6 +34,7 @@ function EditEventModal(props)
                     ampm={false}
                     disablePast={true}
                     defaultValue={dayjs(props.startDate)}
+                    sx={{ width: '100%' }} 
                     slotProps={{
                       textField: {
                         required: true,
@@ -57,6 +58,7 @@ function EditEventModal(props)
                     ampm={false}
                     disablePast={true}
                     defaultValue={props.joinDeadlineDate !== undefined ? dayjs(props.joinDeadlineDate):undefined}
+                    sx={{ width: '100%', marginBottom: '10px' }} 
                     slotProps={{
                       textField: {
                         id: 'joinDeadline',
@@ -73,6 +75,7 @@ function EditEventModal(props)
                     ampm={false}
                     disablePast={true}
                     defaultValue={props.endDate !== undefined ? dayjs(props.endDate):undefined}
+                    sx={{ width: '100%' }} 
                     slotProps={{
                       textField: {
                         id: 'endDate',
