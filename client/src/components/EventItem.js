@@ -206,8 +206,12 @@ const showToastMessageSuccesfull = (message) =>
 
   // Triggered if there is an error in the date formatting
 const handleStartTimeError = (error) => {
-  console.log("Starting time error: " + error);
-  setStartTimeError(true);
+  if(error == "disablePast"){
+    setStartTimeError(false);
+  }else{
+    console.log("Starting time error: " + error);
+    setStartTimeError(true);
+  }
 }
 
 const handleEndTimeError = (error) => {

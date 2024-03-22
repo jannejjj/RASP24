@@ -34,7 +34,7 @@ function EditEventModal(props)
                     ampm={false}
                     disablePast={true}
                     defaultValue={dayjs(props.startDate)}
-                    sx={{ width: '100%' }} 
+                    sx={{width: '100%'}}
                     slotProps={{
                       textField: {
                         required: true,
