@@ -141,7 +141,7 @@ function EventItem(props) {
       } 
     );
 
-    props.toggleUpdateEvents();
+    setLiking(true);
   };
 
   const handleCancelEventLike = async () => 
@@ -161,7 +161,7 @@ function EventItem(props) {
         {
           console.log("Error while trying to cancel attendance");
         }
-        props.toggleUpdateEvents();
+        setLiking(false);
       }
     );
   };
@@ -172,7 +172,7 @@ function EventItem(props) {
     setOpenPayment(false);
 
     const data = {
-      userId: props.currentUser._id,
+      userId: props.currentUser.id,
       eventId: props.event._id
     };
 
@@ -188,13 +188,13 @@ function EventItem(props) {
 
       if (!response.ok) {
         const errorMessage = await response.json(); 
-        props.showToastMessage(errorMessage.error);
+        toasts.showToastMessage(errorMessage.error);
         throw new Error('Payment failed');
       }
 
       // Handle success
       console.log('Data submitted successfully');
-      props.showToastSuccessMessage("Payment ok");
+      toasts.showToastSuccessMessage("Payment ok");
       setHasTicket(true);
     } catch (error) {
       // Handle error
