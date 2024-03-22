@@ -16,6 +16,7 @@ import toasts from "../common/Toast";
 function EventItem(props) {
   // These states store the original event data
   const [like, setLiking] = useState(null);
+  const [likes, setLikes] = useState(props.event.attendees);
   const [title, setTitle] = useState(props.event.title);
   const [time, setTime] = useState(props.event.time);
   const [location, setLocation] = useState(props.event.location);
@@ -142,6 +143,7 @@ function EventItem(props) {
     );
 
     setLiking(true);
+    setLikes(likes + 1);
   };
 
   const handleCancelEventLike = async () => 
@@ -162,6 +164,7 @@ function EventItem(props) {
           console.log("Error while trying to cancel attendance");
         }
         setLiking(false);
+        setLikes(likes - 1);
       }
     );
   };
@@ -266,7 +269,7 @@ function EventItem(props) {
               <h3>Location: {location}</h3>
             </div>
             <p>
-              <FavoriteIcon fontSize="small" sx={{mr:"5px"}}/>  {props.event.attendees}
+              <FavoriteIcon fontSize="small" sx={{mr:"5px"}}/>  {likes}
             </p>
           </div>
         </div>
