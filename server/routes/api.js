@@ -23,7 +23,7 @@ router.use(passport.initialize());
 //finds all the members in the DB if authenticated
 router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
-      const members  = await Member.find({});
+      const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1});
       res.send(members);
     } catch (err) {
       console.error('Error fetching member data:', err);
@@ -127,6 +127,10 @@ router.post('/register',
                         country: req.body.country,
                         email: req.body.email,
                         password: hash,
+                        role: "",
+                        membershipPaid: false,
+                        membershipPaidDate: null,
+                        membershipExpirationDate: null,
                         admin: 0
                     });
                     member.save()
@@ -146,6 +150,60 @@ router.post('/register',
       
 });
 
+router.post('/pay/membership', async (req, res) => {
+  try {
+    const userId = req.body._id;
+    const user = await Member.findById(userId);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    // Update the user's profile data
+    user.membershipPaid = req.body.user.membershipPaid;
+    user.membershipPaidDate = req.body.user.membershipPaidDate;
+    user.membershipExpirationDate = req.body.user.membershipExpirationDate;
+    await user.save();
+    res.status(200).send('Profile updated successfully');
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Update the role and admin permissions for the member
+router.put('/update/member/', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const newRole = req.body.role;
+    const newPermission = req.body.permission;
+    const memberID = req.body.memberID;
+
+    const updatedMember = await Member.findOneAndUpdate({_id: memberID}, {role: newRole, admin: newPermission});
+
+    if (updatedMember)
+    {
+        return res.json({success: true});
+    }
+    else
+    {
+        return res.json({success: false});
+    }
+});
+
+// Delete the member
+router.delete('/delete/member/:memberID', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const memberID = req.params.memberID;
+
+    const deletedMember = await Member.findOneAndDelete({_id: memberID});
+
+    if (deletedMember)
+    {
+        return res.json({success: true});
+    }
+    else
+    {
+        return res.json({success: false});
+    }
+});
 
 router.get('/get/events/for/:id', async (req, res) =>
 {

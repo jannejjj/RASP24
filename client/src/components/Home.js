@@ -260,7 +260,7 @@ function Home(props) {
           if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
             newEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
             newEvent.creatorId = props.currentUser.id;
-            newEvent.attendees = 1;
+            newEvent.attendees = 0;
             
             setNewEvent(newEvent);
             await fetch("/api/event", {
