@@ -22,12 +22,18 @@ let eventSchema = new Schema ({
     paymentDate:{type: Date},
     link: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'link'
+      ref: 'Image'
     }],
-    notification: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'notification'
-    }]
+  price: {type: Number},
+  paymentDate:{type: Date},
+  link: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'link'
+  }],
+  notification: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'notification'
+  }]
 });
 
 module.exports = mongoose.model("event", eventSchema);

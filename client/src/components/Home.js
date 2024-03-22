@@ -85,8 +85,6 @@ function Details(props) {
     </div>
   );
 }
-
-
   
 
 function Home(props) {
@@ -102,6 +100,7 @@ function Home(props) {
   const [loading, setLoading] = useState(true);
   const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
+
 
   const toggleUpdateEvents = () => {
     setUpdateEvents(!updateEvents);
@@ -219,6 +218,7 @@ function Home(props) {
             setLoading(false);
         }
       }
+  
   // Only for users that have logged in
   if (props.currentUser.loggedIn)
   {
@@ -313,20 +313,21 @@ function Home(props) {
             currentUser={props.currentUser}
             id={event._id}
             admin={admin}
+            eventID={event._id}
             loggedIn={props.currentUser.loggedIn}
             title={event.title}
             creator={event.creator}
-            time={event.time}
+            creatorId={event.creatorId}
+            startDate={event.startDate}
+            joinDeadline={event.joinDeadline}
+            endDate={event.endDate}
             location={event.location}
             attendees={event.attendees}
             attending={event.attending}
             description={event.description}
             tickets={event.tickets}
             ticketsSold={event.ticketsSold}
-            startDate={event.startDate}
-            endDate={event.endDate}
             price={event.price}
-            joinDeadline={event.joinDeadline}
             key={index}
             showToastMessage={showToastMessage}
             showToastSuccessMessage={showToastSuccessMessage}
