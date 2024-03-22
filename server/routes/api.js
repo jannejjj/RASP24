@@ -211,15 +211,13 @@ router.get('/get/events/for/:id', async (req, res) =>
     // Initialize the lists where the events will be added
     let events = [];
     let eventIDs = [];
-    let paid = {};
 
-    // Find the IDs of the events that the user is interested in or has paid for
+    // Find the IDs of the events that the user has liked
     await Member_event.find({member: id})
     .then((docs) =>
     {
         docs.forEach(item => {
             eventIDs.push(item.event);
-            paid[item.event] = item.paid;
         });
     });
 
@@ -236,7 +234,6 @@ router.get('/get/events/for/:id', async (req, res) =>
     await Event.find({_id: {$in: eventIDs}})
     .then((docs) => {
       docs.forEach(event => {
-        let modifiedEvent = {...event, paid: paid[event._id]};
         events.push(event);
       });
     });
@@ -271,7 +268,6 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
   // Add the creator as an attendee in the back-end
   const member_event = new Member_Event({
     date: [new Date()],
-    paid: false,
     member: req.body.creatorId,
     event: event._id,
     tickets: 0
