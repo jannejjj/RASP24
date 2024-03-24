@@ -10,8 +10,11 @@ router.get('/', function(req, res, next) {
 //get to have the members data
 router.get('/getData/:userId', async (req, res) => {
   try {
-    const id   = req.params.userId;
+    const id = req.params.userId;
     if (!id) {
+      return res.status(400).json({ error: 'Name parameter is required' });
+    }
+    if (id == "0") {
       return res.status(400).json({ error: 'Name parameter is required' });
     }
     const userData = await Member.findById(id);
