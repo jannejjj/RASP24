@@ -12,6 +12,7 @@ const jwt = require("jsonwebtoken");
 const passport = require('passport');
 const multer = require("multer");
 const member_event = require('../models/member_event');
+const member = require('../models/member');
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 var idFromToken = null;
@@ -506,5 +507,43 @@ router.post('/authenticate/token', (req, res) =>
         return res.json({success: false});
     }
 })
+
+router.get('/event/participants/:id',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+    try{
+        const eventId = req.params.id;
+
+        const event = await Event.findById(eventId);
+
+        if(!event){
+            return res.status(409).json({ error: 'Event not found' });
+        }
+        const tickets = await Ticket.find({
+            event: event._id
+        });
+
+        if (tickets.length > 0) {
+            const participantsData = [];
+
+            for (const ticket of tickets) { // Find user data and add it to "participantsData"
+                const member = await Member.findById(ticket.member);
+
+                if (member) {
+                    participantsData.push({
+                        member: {
+                            email: member.email,
+                            firstname: member.firstname,
+                            lastname: member.lastname
+                        },
+                    });
+                }
+            }
+            return res.json({ data: participantsData });
+        }
+        return res.json({data: null});
+    }catch(err){
+        console.error('Error while checking participants:', err);
+        return res.status(500).send('Internal Server Error');
+    }
+});
 
 module.exports = router;

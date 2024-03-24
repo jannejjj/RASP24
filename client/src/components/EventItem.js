@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
+import ListModal from "../modals/ListModal";
 import PaymentModal from "../modals/PaymentModal";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import EventDetails from "./EventDetails";
@@ -26,9 +27,11 @@ function EventItem(props) {
   const [tickets, setTickets] = useState(props.event.tickets);
   const [price, setPrice] = useState(props.event.price);
   const [hasTicket, setHasTicket] = useState(false);
+  const [eventParticipantsData, setEventParticipantsData] = useState(null);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
+  const [openParticipantsList, setOpenParticipantsList] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
   const [editedTitle, setEditedTitle] = useState(props.event.title);
   const [editedTime, setEditedTime] = useState(props.event.time);
@@ -40,6 +43,31 @@ function EventItem(props) {
   const [timeHistory, setTimeHistory] = useState(props.event.time);
   const [locationHistory, setLocationHistory] = useState(props.event.location);
   const [descriptionHistory, setDescriptionHistory] = useState(props.event.description);
+
+
+  useEffect(() => { // Get event participants
+    const fetchEventData = async () => {
+      try {
+        const response = await fetch(`api/event/participants/${props.event._id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + props.currentUser.token,
+          }
+        });
+        const responseData = await response.json();
+        if (responseData && responseData.data && Array.isArray(responseData.data)) {
+          setEventParticipantsData(responseData.data);
+        } else {
+          setEventParticipantsData(null);
+        }
+      } catch (error) {
+        console.error('Error fetching event data:', error);
+      }
+    };
+
+    fetchEventData();
+  }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
 
   useEffect(() => {
     const data = 
@@ -71,6 +99,13 @@ function EventItem(props) {
   const editOnClick = () => {
     setEdit(true);
   };
+  const openListOnClick = () => {
+    setOpenParticipantsList(true);
+  };
+  const closeListOnClick = () => {
+    setOpenParticipantsList(false);
+  };
+
 
   const saveEditOnClick = () => {
     // TODO: Send the edited values to the database to actually save the edit
@@ -322,6 +357,15 @@ function EventItem(props) {
                 )
               }
             </div>
+            <div>
+              {props.currentUser.admin && 
+                (
+                  <div>
+                    <Button className='ListEventParticipantsButton' variant='contained' onClick={openListOnClick} >List of event participants</Button>
+                  </div>
+                )
+              }
+            </div>
             <div style={{display: "flex", flexDirection:"row", justifyContent: "space-between", position:"relative", marginLeft: "20px"}}>
               {like ? 
                 (
@@ -401,6 +445,15 @@ function EventItem(props) {
           price={price}
           title={title}
           user={props.user}
+        />
+
+        <ListModal
+          openParticipantsList={openParticipantsList}
+          setOpenParticipantsList={setOpenParticipantsList}
+          closeListOnClick={closeListOnClick}
+          event={props.event}
+          currentUser={props.currentUser}
+          eventParticipantsData={eventParticipantsData}
         />
       </div>
     );

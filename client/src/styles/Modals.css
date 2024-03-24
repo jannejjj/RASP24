@@ -63,3 +63,17 @@
   align-self: end;
 }
 
+.EmailInfo {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content:flex-start;
+}
+
+.MemberInfoContainer {
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+}
