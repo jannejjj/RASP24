@@ -283,7 +283,7 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
     {
         const { userId, eventId } = req.body;
 
-        const event = await Event.findById(eventId);
+        let event = await Event.findById(eventId);
         const user = await Member.findById(userId);
 
         if(!event || !user){
@@ -312,7 +312,9 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
 
         await new_ticket.save();
         await event.save();
-        return res.status(200).send("ticket sold");
+        return res.json({
+          ticket: new_ticket
+        });
     }
     catch(err)
     {
@@ -376,7 +378,7 @@ router.post('/checkticket',passport.authenticate('jwt', {session: false}), async
     }
 });
 
-router.post('/ticket/used/:id',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+router.post('/ticket/use/:id',passport.authenticate('jwt', {session: false}), async (req, res)=>{
   try {
     const ticketId = req.params.id;
     const ticket = await Ticket.findById(ticketId);
@@ -388,7 +390,10 @@ router.post('/ticket/used/:id',passport.authenticate('jwt', {session: false}), a
     } else {
       ticket.used = true;
       await ticket.save();
-      return res.status(200).send("Ticket marked as used.");
+      return res.status(200).json({
+        success: true,
+        ticket: ticket
+      })
     }
   } catch (err) {
     return res.status(500).send("Error using ticket.");
