@@ -44,7 +44,7 @@ function TicketItem(props) {
         <Grid item className='ticket-right'>
           <span className='ticket-title'> Ticket for <b>{props.title}</b></span>
           <div className='horizontal-separator'/>
-          <p className='ticket-date'>Bought at: {localizedTicketDate}</p>
+          <p className='ticket-date'>Bought on: {localizedTicketDate}</p>
           <p className='ticket-date'>ID: {props.ticket._id}</p>
         </Grid>
         <Grid item className='ticket-button'>
