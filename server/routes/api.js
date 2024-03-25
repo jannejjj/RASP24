@@ -305,7 +305,8 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
         const new_ticket = new Ticket({
             date: new Date(),
             member: user._id,
-            event: event._id
+            event: event._id,
+            used: false
         });
         event.ticketsSold++;
 
@@ -329,16 +330,19 @@ router.post('/hasTicket',passport.authenticate('jwt', {session: false}), async (
         if(!event || !user){
             return res.status(404).json({ error: 'User or Event not found' });
         }
-        const event_member = await Ticket.findOne({
+        const ticket = await Ticket.findOne({
             member: user._id,
             event: event._id
         });
 
-        if(event_member){
-            return res.json({ticket: true});
+        if(ticket){
+            return res.json({
+              hasTicket: true,
+              ticket: ticket
+            });
         }
 
-        return res.json({ticket: false});
+        return res.json({hasTicket: false});
     }catch(err){
         console.error('Error while checking tickets:', err);
         return res.status(500).send('Internal Server Error');
@@ -370,6 +374,25 @@ router.post('/checkticket',passport.authenticate('jwt', {session: false}), async
         console.error('Error while checking tickets:', err);
         return res.status(500).send('Internal Server Error');
     }
+});
+
+router.post('/ticket/used/:id',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+  try {
+    const ticketId = req.params.id;
+    const ticket = await Ticket.findById(ticketId);
+
+    if (!ticket) {
+      return res.status(404).send("Ticket not found.");
+    } else if (ticket.used) {
+      return res.status(409).send("Ticket already used.");
+    } else {
+      ticket.used = true;
+      await ticket.save();
+      return res.status(200).send("Ticket marked as used.");
+    }
+  } catch (err) {
+    return res.status(500).send("Error using ticket.");
+  }
 });
 
 router.delete('/event/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
