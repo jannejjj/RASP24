@@ -6,7 +6,8 @@ import { FaUserGroup } from "react-icons/fa6";
 import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import toast from "../common/Toast";
 import 'react-toastify/dist/ReactToastify.css';
 import Typography from "@mui/material/Typography";
 
@@ -86,11 +87,9 @@ function Details(props) {
   );
 }
 
-
-  
-
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
+  const [user, setUser ] = useState(null);
   const [newEventModal, setNewEventModal] = useState(false);
   const [newEvent, setNewEvent] = useState({});
   const [startTimeError, setStartTimeError] = useState(false);
@@ -109,22 +108,9 @@ function Home(props) {
 
   const showToastMessage = (message) =>
     {
-        toast.error(message, {
-            position: "top-center",
-            autoClose: 6000,
-            hideProgressBar: true,
-            closeOnClick: false,
-            pauseOnHover: false,
-            draggable: false,
-            progress: undefined,
-            theme: "dark"
-            });
-    }
-  
-    const showToastSuccessMessage = (message) =>  {
-      toast.success(message, {
+      toast.error(message, {
           position: "top-center",
-          autoClose: 6000,
+          autoClose: 3000,
           hideProgressBar: true,
           closeOnClick: false,
           pauseOnHover: false,
@@ -133,6 +119,38 @@ function Home(props) {
           theme: "dark"
           });
     }
+  
+  const showToastSuccessMessage = (message) =>  
+  {
+    toast.success(message, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: "dark"
+        });
+  }
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+        // Check if props.currentUser.id is not null
+        if (props.currentUser.id) {
+          try {
+            const response = await fetch(`/users/getData/${props.currentUser.id}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            setUser(await response.json());
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+          }
+        }
+      };
+    fetchUserData();
+  }, []);
 
   //Resets the amount of tickets and clears the text box.
   const resetTickets = () => {
@@ -219,15 +237,15 @@ function Home(props) {
             setLoading(false);
         }
       }
-  // Only for users that have logged in
-  if (props.currentUser.loggedIn)
-  {
-    fetchEvents();
-    return () => {
-        mounted = false;
-    };
-  }
-  setLoading(false);
+    // Only for users that have logged in
+    if (props.currentUser.loggedIn)
+    {
+      fetchEvents();
+      return () => {
+          mounted = false;
+      };
+    }
+    setLoading(false);
   }, [updateEvents])
 
   // POST new event
@@ -271,19 +289,15 @@ function Home(props) {
             handleDeadlineSwitch();
           }
           } else {
-            console.log("Starting time needs to be before ending time.");
             showToastMessage("Starting time needs to be before ending time.");
           }
         } else {
-          console.log("Event joining deadline needs to be before or the same as the starting time of the event.");
-            showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
+          showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
         }
       } else {
-        console.log("Ending time is not valid.");
         showToastMessage("Ending time is not valid.");
       }
     } else {
-      console.log("Starting time is not valid.");
       showToastMessage("Starting time is not valid.");
     }
   };
@@ -296,7 +310,7 @@ function Home(props) {
 
       <div className="HomeEventsList">
         <h1>Events</h1>
-        <div className="HorizontalSeparator" style={{ width: "95%" }} />
+        <div className="HorizontalSeparator" style={{ width: "^95%" }} />
         
         {admin && (
           <Button color="primary" variant='contained' onClick={() => {setNewEventModal(true)}} style={{margin: "10px 0 10px 0"}} >Add New Event</Button>
@@ -311,26 +325,12 @@ function Home(props) {
         !loading && events.map((event, index) => (
           <EventItem
             currentUser={props.currentUser}
-            id={event._id}
+            user={user}
             admin={admin}
-            loggedIn={props.currentUser.loggedIn}
-            title={event.title}
-            creator={event.creator}
-            time={event.time}
-            location={event.location}
-            attendees={event.attendees}
-            attending={event.attending}
-            description={event.description}
-            tickets={event.tickets}
-            ticketsSold={event.ticketsSold}
-            startDate={event.startDate}
-            endDate={event.endDate}
-            price={event.price}
-            joinDeadline={event.joinDeadline}
+            event={event}
             key={index}
             showToastMessage={showToastMessage}
             showToastSuccessMessage={showToastSuccessMessage}
-            token={props.currentUser.token}
             toggleUpdateEvents={toggleUpdateEvents}
           />
         ))

@@ -1,43 +1,70 @@
 import { React, useEffect, useState } from "react";
 import "../styles/HomePage.css";
-import "../styles/EventItem.css";
+import '../styles/EventItem.css';
 import "../App.css";
 import Button from "@mui/material/Button";
-import { FaUserGroup } from "react-icons/fa6";
-import CancelAttendanceModal from "../modals/CancelAttendanceModal";
-import ConfirmAttendanceModal from "../modals/ConfirmAttendanceModal";
+import IconButton from "@mui/material/IconButton";
 import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
+import PaymentModal from "../modals/PaymentModal";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import EventDetails from "./EventDetails";
 import TicketItem from "./TicketItem";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import toasts from "../common/Toast";
 
 function EventItem(props) {
   // These states store the original event data
-  const [attending, setAttending] = useState(props.attending);
-  const [title, setTitle] = useState(props.title);
-  const [time, setTime] = useState(props.time);
-  const [location, setLocation] = useState(props.location);
-  const [description, setDescription] = useState(props.description);
-  const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
+  const [like, setLiking] = useState(null);
+  const [likes, setLikes] = useState(props.event.attendees);
+  const [title, setTitle] = useState(props.event.title);
+  const [time, setTime] = useState(props.event.time);
+  const [location, setLocation] = useState(props.event.location);
+  const [description, setDescription] = useState(props.event.description);
+  const [ticketsSold, setTicketsSold] = useState(props.event.ticketsSold);
+  const [paid, setPaid] = useState(props.paid);
+  const [tickets, setTickets] = useState(props.event.tickets);
+  const [price, setPrice] = useState(props.event.price);
+  const [hasTicket, setHasTicket] = useState(false);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
-  const [openAttend, setOpenAttend] = useState(false);
-  const [openCancelAttendance, setOpenCancelAttendance] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(props.title);
-  const [editedTime, setEditedTime] = useState(props.time);
-  const [editedLocation, setEditedLocation] = useState(props.location);
-  const [editedDescription, setEditedDescription] = useState(props.description);
+  const [openPayment, setOpenPayment] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(props.event.title);
+  const [editedTime, setEditedTime] = useState(props.event.time);
+  const [editedLocation, setEditedLocation] = useState(props.event.location);
+  const [editedDescription, setEditedDescription] = useState(props.event.description);
 
   // Save the history so that the editing can be cancelled
-  const [titleHistory, setTitleHistory] = useState(props.title);
-  const [timeHistory, setTimeHistory] = useState(props.time);
-  const [locationHistory, setLocationHistory] = useState(props.location);
-  const [descriptionHistory, setDescriptionHistory] = useState(
-    props.description
-  );
+  const [titleHistory, setTitleHistory] = useState(props.event.title);
+  const [timeHistory, setTimeHistory] = useState(props.event.time);
+  const [locationHistory, setLocationHistory] = useState(props.event.location);
+  const [descriptionHistory, setDescriptionHistory] = useState(props.event.description);
+
+  useEffect(() => {
+    const data = 
+    {
+      userId: props.currentUser.id,
+      eventId: props.event._id
+    };
+
+    fetch('/api/hasTicket', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      setHasTicket(data.ticket);
+    })
+    .catch(error => {
+        console.error('Error fetching ticket status:', error);
+    });
+  }, []);
 
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
@@ -98,12 +125,12 @@ function EventItem(props) {
     setEditedDescription(event.target.value);
   };
 
-  const handleEventAttendance = async () => {
+  const handleEventLike = async () => {
     const body =
     {
-      eventID: props.id,
+      eventID: props.event._id,
       userID: props.currentUser.id
-    }
+    };
 
     await fetch("/api/attend/event", 
       {
@@ -113,17 +140,16 @@ function EventItem(props) {
           "Authorization": "Bearer " + props.currentUser.token
         },
         body: JSON.stringify(body)
-      }
+      } 
     );
 
-    // Close the modal and update the event list
-    setOpenAttend(false);
-    props.toggleUpdateEvents();
+    setLiking(true);
+    setLikes(likes + 1);
   };
 
-  const handleCancelEventAttendance = async () => 
+  const handleCancelEventLike = async () => 
   {
-    await fetch("/api/cancel/attendance/" + props.id + "/" + props.currentUser.id,
+    await fetch("/api/cancel/attendance/" + props.event._id + "/" + props.currentUser.id,
     {
       method: "DELETE",
       headers: {
@@ -138,11 +164,52 @@ function EventItem(props) {
         {
           console.log("Error while trying to cancel attendance");
         }
-      })
+        setLiking(false);
+        setLikes(likes - 1);
 
-    // Close the modal and update the event list
-    setOpenCancelAttendance(false);
-    props.toggleUpdateEvents();
+        // If the user doesn't have a ticket for this event, then update the page.
+        if (!hasTicket)
+        {
+          props.toggleUpdateEvents();
+        }
+      }
+    );
+  };
+
+  const handlePayment = async (e) => {
+    e.preventDefault()
+
+    setOpenPayment(false);
+
+    const data = {
+      userId: props.currentUser.id,
+      eventId: props.event._id
+    };
+
+    try {
+      const response = await fetch('/api/ticket/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": "Bearer " + props.currentUser.token
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.json(); 
+        toasts.showToastMessage(errorMessage.error);
+        throw new Error('Payment failed');
+      }
+
+      // Handle success
+      console.log('Data submitted successfully');
+      toasts.showToastSuccessMessage("Payment ok");
+      setHasTicket(true);
+    } catch (error) {
+      // Handle error
+      console.error('Error submitting data:', error.message);
+    }
   };
 
   const deleteOnClick = () => {
@@ -154,42 +221,42 @@ function EventItem(props) {
   };
 
   const confirmDeleteOnClick = () => {
-    fetch('/api/event/' + props.id, {
+    fetch('/api/event/' + props.event._id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + props.token,
+        'Authorization': 'Bearer ' + props.currentUser.token,
       }
     })
     .then(response => response.json())
     .then(data => {
       if (data.error) {
-        props.showToastMessage(data.error);
+        toasts.showToastMessage(data.error);
       } else {
-        props.showToastSuccessMessage(data.message);
+        toasts.showToastSuccessMessage(data.message);
         props.toggleUpdateEvents();
       }
       setDeleteModal(false);
-    })
+    });
   };
 
   useEffect(() =>
   {
-    const confirmAttendance = () => 
+    const confirmLike = () => 
     {
-      fetch(`/api/is/attending/${props.id}/${props.currentUser.id}` , {
+      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
         method: 'GET'
       })
       .then(response => response.json())
       .then(data => 
         {
-          setAttending(data.attending);
+          setLiking(data.attending);
         }
       );
     }
 
-    // Find out if the user is attending this event or not
-    confirmAttendance();
+    // Find out if the user is like this event or not
+    confirmLike();
   }, []);
 
     return (
@@ -205,12 +272,11 @@ function EventItem(props) {
           <div className="HomeEventHeaderArea">
             <div className="HomeEventTitleAndLocationArea">
               <h2>{title}</h2>
-              <h3>Created by: {props.creator}</h3>
+              <h3>Created by: {props.event.creator}</h3>
               <h3>Location: {location}</h3>
             </div>
-  
             <p>
-              <FaUserGroup style={{ margin: "0 5px 0 0" }} /> {props.attendees}
+              <FavoriteIcon fontSize="small" sx={{mr:"5px"}}/>  {likes}
             </p>
           </div>
         </div>
@@ -218,7 +284,7 @@ function EventItem(props) {
         <div className="HomeEventBottom">
           <div className="HorizontalSeparator" />
           <div className="HomeEventDescriptionArea">
-                <p>{description}</p>
+            <p>{description}</p>
           </div>
           <Accordion
             sx={{
@@ -235,23 +301,23 @@ function EventItem(props) {
             </AccordionSummary>
             <AccordionDetails>
               <EventDetails
-                startDate={props.startDate}
-                endDate={props.endDate}
-                joinDeadline={props.joinDeadline}
-                tickets={props.tickets}
+                startDate={props.event.startDate}
+                endDate={props.event.endDate}
+                joinDeadline={props.event.joinDeadline}
+                tickets={tickets}
                 ticketsSold={ticketsSold}
-                price={props.price}
-                paymentDate={props.paymentDate}
-                attendees={props.attendees}
+                price={price}
+                paymentDate={props.event.paymentDate}
+                attendees={props.event.attendees}
               />
               <TicketItem
                 title={title}
               />
             </AccordionDetails>
           </Accordion>
-          <div className='HomeEventAttendanceButtonsArea'>
+          <div className='HomeEventLikeButtonsArea'>
             <div>
-              {props.admin && 
+              {props.currentUser.admin && 
                 (
                   <div>
                     <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
@@ -260,16 +326,53 @@ function EventItem(props) {
                 )
               }
             </div>
-            <div>
-              {attending ? 
+            <div style={{display: "flex", flexDirection:"row", justifyContent: "space-between", position:"relative", marginLeft: "20px"}}>
+              {like ? 
                 (
-                  <Button variant='outlined' color='primary' onClick={() => {setOpenCancelAttendance(true)}} >Cancel Attendance</Button>
+                  <IconButton sx={{ 
+                    border: "1px solid",
+                    borderColor: "primary.main",
+                    borderRadius: 2, 
+                    mr:1,
+                    color: 'primary.main'
+                     }} onClick={() => {setLiking(false); handleCancelEventLike(); }}>
+                    <FavoriteIcon fontSize="small"/>
+                  </IconButton>
                 )
                 :
-                (
-                  <Button variant='contained' color='primary' onClick={() => {setOpenAttend(true)}} >Attend the Event</Button>
+                ( 
+                  <IconButton variant="contained" sx={{ 
+                    borderRadius: 2, 
+                    border: "1px solid #2C041C",
+                    mr:1, 
+                    bgcolor:'primary.main', 
+                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+                    color:'white',
+                    '&:hover': {
+                      backgroundColor: 'primary.main', // Set the background color on hover
+                    },
+                    }} onClick={() => {setLiking(true); handleEventLike();}} color='white'>
+                    <FavoriteIcon fontSize="small" />
+                  </IconButton>
                 )
               }
+                {hasTicket ? 
+                  (
+                    <Button variant='outlined' color='primary' sx={{width: '150px'}} >Paid</Button>
+                  )
+                  :
+                  (
+                    <div>
+                    {typeof tickets !== 'undefined' && tickets - ticketsSold <= 0 ?
+                      ( 
+                        <div style={{width: '150px', textAlign: "center", height:"100%"}}>No tickets available</div>  
+                      ): (
+                        <Button variant='contained' color='primary' sx={{width: '150px'}} onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
+                      )
+                    }
+                    </div>
+                  )
+                }
             </div>
           </div>
         </div>
@@ -290,21 +393,18 @@ function EventItem(props) {
 
         <DeleteEventModal
           deleteModal={deleteModal}
-          attendees={props.attendees}
+          attendees={props.event.attendees}
           cancelDeleteOnClick={cancelDeleteOnClick}
           confirmDeleteOnClick={confirmDeleteOnClick}
         />
-  
-        <ConfirmAttendanceModal
-          openAttend={openAttend}
-          setOpenAttend={setOpenAttend}
-          handleEventAttendance={handleEventAttendance}
-        />
-  
-        <CancelAttendanceModal
-          openCancelAttendance={openCancelAttendance}
-          setOpenCancelAttendance={setOpenCancelAttendance}
-          handleCancelEventAttendance={handleCancelEventAttendance}
+
+        <PaymentModal
+          openPayment={openPayment}
+          setOpenPayment={setOpenPayment}
+          handlePayment={handlePayment}
+          price={price}
+          title={title}
+          user={props.user}
         />
       </div>
     );

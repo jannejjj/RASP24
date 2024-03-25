@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-let member_eventSchema = new Schema ({
+let ticketSchema = new Schema ({
     date:{type: Date},
     member:[{
         type: mongoose.Schema.Types.ObjectId,
@@ -15,4 +15,4 @@ let member_eventSchema = new Schema ({
     
 });
 
-module.exports = mongoose.model("member_event", member_eventSchema);
+module.exports = mongoose.model("ticket", ticketSchema);

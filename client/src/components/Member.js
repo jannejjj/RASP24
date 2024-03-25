@@ -1,13 +1,14 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { CardMedia, Grid } from '@mui/material';
+import { CardMedia } from '@mui/material';
 import { useState } from 'react';
 import ManageMemberModal from '../modals/ManageMemberModal';
+import EmailIcon from '@mui/icons-material/Email';
+import IconButton from '@mui/material/IconButton';
 
 function Member(props) {
   const [openManageMemberModal, setOpenManageMemberModal] = useState(false);
@@ -69,6 +70,12 @@ function Member(props) {
     props.toggleUpdate();
   }
 
+    const getMemberEmailOnClick = (e) => {
+      e.preventDefault();
+      navigator.clipboard.writeText(props.member.email);
+      props.showToastSuccessMessage('Email "' + props.member.email + '" copied to clipboard.');
+  };
+
   const card = (
     <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: "space-between", width: "100%"}}>
       <Box sx={{display: 'flex', flexDirection: 'row'}}>
@@ -82,9 +89,15 @@ function Member(props) {
           <Typography align='left' variant="h5" sx={{mb: 0.5}} color="primary">
               {props.member.firstname} {props.member.lastname} <span className='MemberRole'>{props.member.role}</span>
           </Typography>
+          <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
           <Typography align='left' color="text.secondary">
-          {props.member.email}
+              {props.member.email}
           </Typography>
+          <IconButton aria-label="getEmail" onClick={getMemberEmailOnClick}>
+              <EmailIcon />
+          </IconButton>
+          </Box>
+          
           <Typography align='left' color="text.secondary">
               {props.member.phone}
           </Typography>

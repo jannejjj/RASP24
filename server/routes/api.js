@@ -6,6 +6,7 @@ const Member = require("../models/member");
 const Member_event = require("../models/member_event");
 const Event = require("../models/event");
 const Member_Event = require("../models/member_event");
+const Ticket = require("../models/ticket");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
@@ -16,7 +17,7 @@ const upload = multer({storage});
 var idFromToken = null;
 
 
-require('../auth/passport')(passport)
+require('../auth/passport')(passport);
 router.use(passport.initialize());
 
 //finds all the members in the DB if authenticated
@@ -62,7 +63,7 @@ router.post('/login',
                     lastname: member.lastname,
                     email: member.email,
                     admin: member.admin
-                }
+                };
                 jwt.sign(
                     jwtPayload,
                     process.env.SECRET,
@@ -127,6 +128,9 @@ router.post('/register',
                         email: req.body.email,
                         password: hash,
                         role: "",
+                        membershipPaid: false,
+                        membershipPaidDate: null,
+                        membershipExpirationDate: null,
                         admin: 0
                     });
                     member.save()
@@ -144,6 +148,25 @@ router.post('/register',
         console.log(err);
     }
       
+});
+
+router.post('/pay/membership', async (req, res) => {
+  try {
+    const userId = req.body._id;
+    const user = await Member.findById(userId);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    // Update the user's profile data
+    user.membershipPaid = req.body.user.membershipPaid;
+    user.membershipPaidDate = req.body.user.membershipPaidDate;
+    user.membershipExpirationDate = req.body.user.membershipExpirationDate;
+    await user.save();
+    res.status(200).send('Profile updated successfully');
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // Update the role and admin permissions for the member
@@ -182,7 +205,6 @@ router.delete('/delete/member/:memberID', passport.authenticate('jwt', {session:
     }
 });
 
-
 router.get('/get/events/for/:id', async (req, res) =>
 {
     const id = req.params.id;
@@ -190,8 +212,17 @@ router.get('/get/events/for/:id', async (req, res) =>
     let events = [];
     let eventIDs = [];
 
-    // Find the IDs of the events that the user is participating in
+    // Find the IDs of the events that the user has liked
     await Member_event.find({member: id})
+    .then((docs) =>
+    {
+        docs.forEach(item => {
+            eventIDs.push(item.event);
+        });
+    });
+
+    // Find the IDs of the events where the user has a ticket
+    await Ticket.find({member: id})
     .then((docs) =>
     {
         docs.forEach(item => {
@@ -207,7 +238,7 @@ router.get('/get/events/for/:id', async (req, res) =>
       });
     });
 
-    // Returns a list every time. If the user is not partisipating in any events, the list is empty.
+    // Returns a list every time. If the user is not participating in any events, the list is empty.
     return res.json({events});
 });
 
@@ -236,15 +267,109 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
 
   // Add the creator as an attendee in the back-end
   const member_event = new Member_Event({
-    date: new Date(),
-    paid: false,
+    date: [new Date()],
     member: req.body.creatorId,
-    event: event._id
+    event: event._id,
+    tickets: 0
   });
   member_event.save()
     .catch(err => {
       console.log(err);
   });
+});
+
+router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+    try
+    {
+        const { userId, eventId } = req.body;
+
+        const event = await Event.findById(eventId);
+        const user = await Member.findById(userId);
+
+        if(!event || !user){
+            return res.status(404).json({ error: 'User or Event not found' });
+    
+        }
+        const ticket = await Ticket.findOne({ // find if the user already has a ticket
+            member: user._id,
+            event: event._id
+        });
+        if(ticket){ // the user has already paid
+            return res.status(409).json({ error: 'User already have a ticket' });   
+        }
+        if(event.tickets === event.ticketsSold){ // if the maximum number of tickets is the same as sold tickets - no tickets left
+            return res.status(409).json({ error: 'There is no tickets left' }); 
+        }
+
+        // if nothing else has happened, a new ticket is created
+        const new_ticket = new Ticket({
+            date: new Date(),
+            member: user._id,
+            event: event._id
+        });
+        event.ticketsSold++;
+
+        await new_ticket.save();
+        await event.save();
+        return res.status(200).send("ticket sold");
+    }
+    catch(err)
+    {
+        console.error('Error selling tickets:', err);
+    }
+});
+
+router.post('/hasTicket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+    try{
+        const { userId, eventId } = req.body;
+
+        const event = await Event.findById(eventId);
+        const user = await Member.findById(userId);
+
+        if(!event || !user){
+            return res.status(404).json({ error: 'User or Event not found' });
+        }
+        const event_member = await Ticket.findOne({
+            member: user._id,
+            event: event._id
+        });
+
+        if(event_member){
+            return res.json({ticket: true});
+        }
+
+        return res.json({ticket: false});
+    }catch(err){
+        console.error('Error while checking tickets:', err);
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
+router.post('/checkticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
+    try{
+        const { userId, eventId } = req.body;
+
+        const event = await Event.findById(eventId);
+        const user = await Member.findById(userId);
+
+        if(!event || !user){
+            return res.status(404).json({ error: 'User or Event not found' });
+    
+        }
+
+        const ticket = await Ticket.findOne({
+            member: user._id,
+            event: event._id
+        });
+        if(ticket){
+            return res.json({hasTicket: true});
+        }
+
+        return res.json({hasTicket: false});
+    }catch(err){
+        console.error('Error while checking tickets:', err);
+        return res.status(500).send('Internal Server Error');
+    }
 });
 
 router.delete('/event/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
@@ -303,7 +428,6 @@ router.delete('/cancel/attendance/:eventID/:userID', passport.authenticate('jwt'
 {
     const eventID = req.params.eventID;
     const userID = req.params.userID;
-
     try
     {
         const deletedItem = await Member_Event.findOneAndDelete({member: userID, event: eventID});
