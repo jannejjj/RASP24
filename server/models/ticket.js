@@ -12,6 +12,7 @@ let ticketSchema = new Schema ({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'event'
     }],
+    used: {type: Boolean}
     
 });
 
