@@ -1,27 +1,73 @@
-.ticket-background {
-  height: 100px;
-  margin-top: 18px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+.ticket-container {
+  max-height: 100%;
+
+  .ticket-background {
+    height: 100%;
+    width: 100%;
+    margin-top: 18px;
+    /* box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); */
+    border: 1px solid black;
+  }
+  
+  .ticket-left {
+    background-color: #ffffff;
+    border-right: 2px dashed rgba(0, 0, 0, 0.389);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+  }
+  
+  .ticket-right {
+    padding: 5px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 65%;
+  }
+  
+  .ticket-button {
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 15%;
+  }
+  
+  .checkmark {
+    width: 60px;
+    height: 60px;
+    color: green;
+  }
+  
+  .horizontal-separator
+  {
+    height: 1px;
+    min-height: 1px;
+    background-color: #888;
+    width: 75%;
+    margin: 10px 0 10px 0;
+  }
+
+  @media screen and (max-width: 525px){
+    .ticket-left {
+      border-right: none;
+      width: 0;
+    }
+
+    .ticket-right {
+      width: 70%;
+    }
+
+    .ticket-button {
+      width: 30%;
+    }
+
+    .checkmark {
+      display: none;
+    }
+  }
 }
 
-.ticket-left {
-  background-color: #ffffff;
-  border-right: 1px dashed rgba(0, 0, 0, 0.389);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ticket-right {
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.checkmark {
-  width: 70px;
-  height: 70px;
-  color: green;
-}
