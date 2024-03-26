@@ -145,7 +145,7 @@ function ProfileItem(props) {
     if(membershipPaid) {
       const currentDate = new Date();
       const expirationDate = new Date(props.membershipExpirationDate);
-      const twoWeeksBeforeExpiration = new Date(expirationDate?.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
+      const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
 
       if(currentDate > expirationDate) {
         // User has not paid membership fee in time
