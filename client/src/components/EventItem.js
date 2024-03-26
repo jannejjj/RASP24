@@ -12,6 +12,7 @@ import EventDetails from "./EventDetails";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { ToastContainer, toast } from 'react-toastify';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import dayjs from 'dayjs';
 
 function EventItem(props) {
 
@@ -207,6 +208,7 @@ const showToastMessageSuccesfull = (message) =>
   // Triggered if there is an error in the date formatting
 const handleStartTimeError = (error) => {
   if(error == "disablePast"){
+    console.log("Here");
     setStartTimeError(false);
   }else{
     console.log("Starting time error: " + error);
@@ -408,7 +410,7 @@ const handleJoinDeadlineError = (error) => {
               {props.admin && 
                 (
                   <div>
-                    <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
+                    <Button className='EditEventButton' variant='contained' disabled={dayjs(endDate) < new Date()} onClick={editOnClick} >Edit</Button>
                     <Button className='DeleteEventButton' variant='contained' disabled={ticketsSold > 0} onClick={deleteOnClick} >Delete</Button>
                   </div>
                 )
