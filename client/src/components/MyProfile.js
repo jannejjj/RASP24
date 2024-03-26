@@ -5,8 +5,13 @@ import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
 import PayMembershipModal from '../modals/PayMembershipModal';
 import EventItem from './EventItem';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import toasts from '../common/Toast';
 import 'react-toastify/dist/ReactToastify.css';
+import { RxCheckCircled } from "react-icons/rx";
+import { RxCrossCircled } from "react-icons/rx";
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
 
 function ProfileItem(props) {
   // These states store the original member data
@@ -40,33 +45,6 @@ function ProfileItem(props) {
   const [countryHistory, setCountryHistory] = useState(props.Country);
   const [emailHistory, setEmailHistory] = useState(props.Email);
 
-  const showToastMessage = (message) =>
-  {
-      toast.error(message, {
-          position: "top-center",
-          autoClose: 6000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: false,
-          progress: undefined,
-          theme: "dark"
-          });
-  }
-
-  const showToastSuccessMessage = (message) =>  {
-    toast.success(message, {
-        position: "top-center",
-        autoClose: 6000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: "dark"
-        });
-  }
-
   const localeStringOptions = {
     year: "numeric",
     month: "numeric",
@@ -79,8 +57,11 @@ function ProfileItem(props) {
   const [payMembership, setPayMembership] = useState(false);
   const [membershipPaid, setmembershipPaid] = useState(props.membershipPaid);
   const [paymentDisabled, setPaymentDisabled] = useState(true);
+  const [membershipPrice, setmembershipPrice] = useState(10);
   const [membershipPaidDate, setMembershipPaidDate] = useState(new Date(props.membershipPaidDate).toLocaleString("fi-FI", localeStringOptions));
   const [membershipExpirationDate, setMembershipExpirationDate] = useState(new Date(props.membershipExpirationDate).toLocaleString("fi-FI", localeStringOptions));
+  const [nextPaymentAvailable, setNextPaymentAvailable] = useState("");
+  const [updateDateThings, setUpdateDateThings] = useState(true);
 
   const payMembershipOnClick = () => {
     checkMembershipStatus();
@@ -90,6 +71,7 @@ function ProfileItem(props) {
   const cancelPaymentOnClick = () => {
     setPayMembership(false);
   };
+
 
   // Update member when paying the membership fee
   const paymentOnClick = async () => {
@@ -115,17 +97,18 @@ function ProfileItem(props) {
         setmembershipPaid(true);
         setMembershipPaidDate(new Date(dateNow).toLocaleString("fi-FI", localeStringOptions));
         setMembershipExpirationDate(new Date(oneYearLateDate).toLocaleString("fi-FI", localeStringOptions));
-        showToastSuccessMessage("Membership payment successful")
+        toasts.showToastSuccessMessage("Membership payment successful");
         setPaymentDisabled(true);
         setPayMembership(false);
+        setUpdateDateThings(!updateDateThings);
         props.toggleUpdateUser();
       } else {
         console.error('Failed to pay membership fee:', response.statusText);
-        showToastMessage('Failed to pay membership fee:', response.statusText);
+        toasts.showToastMessage('Failed to pay membership fee:', response.statusText);
       }
     } catch (error) {
       console.error('Error while paying membership fee:', error.message);
-      showToastMessage('Error while paying membership fee:', error.message);
+      toasts.showToastMessage('Error while paying membership fee:', error.message);
     }
   };
 
@@ -162,7 +145,8 @@ function ProfileItem(props) {
     if(membershipPaid) {
       const currentDate = new Date();
       const expirationDate = new Date(props.membershipExpirationDate);
-      const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
+      const twoWeeksBeforeExpiration = new Date(expirationDate?.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
+
       if(currentDate > expirationDate) {
         // User has not paid membership fee in time
         console.log("User has not paid membership fee in time");
@@ -302,6 +286,27 @@ function ProfileItem(props) {
     setEditedEmail(event.target.value);
   };
 
+  useEffect(() =>
+  {
+    const expirationDate = new Date(props.membershipExpirationDate);
+    if (expirationDate) 
+    { 
+      const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
+      if (twoWeeksBeforeExpiration)
+      {
+        setNextPaymentAvailable(twoWeeksBeforeExpiration.toLocaleString("fi-FI", localeStringOptions));
+      }
+      else
+      {
+        setNextPaymentAvailable("");
+      }
+    }
+    else
+    {
+      setNextPaymentAvailable("");
+    }
+  }, [membershipExpirationDate, updateDateThings])
+
   return (
     <div className='MyInfo'>
       <img className="MyProfilePicture" src='https://www.paxus.com.au/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOW1nQXc9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--c0b8b8e1c6c0819b6eef4fb97c1b80ff9b77717d/7%20linkedin%20photo%20tipes%20to%20maximise%20your%20impact.png' />
@@ -314,8 +319,58 @@ function ProfileItem(props) {
         <p>{city}, {postalcode}</p>
         <p>{country}</p>
       </div>
+
       <Button variant='outlined' onClick={editOnClick} >Edit Information</Button>
-      
+
+      <div className='HorizontalSeparator' style={{maxWidth: "400px"}} />
+
+      <div className='MembershipArea'>
+        {membershipPaid ? 
+          (
+            <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+              <h3 style={{color: "#2C041C"}}>Membership</h3>
+              <Tooltip title={"Paid " + membershipPaidDate}>
+                <IconButton>
+                  <RxCheckCircled  style={{fontSize: "60px", color: "#2C041C"}}/>
+                </IconButton>
+              </Tooltip>
+              <p className='HintParagraphBig'>Expires {membershipExpirationDate}</p>
+
+              {paymentDisabled ?
+              (
+                nextPaymentAvailable != "" && <p className='HintParagraphBig'>Next payment available on {nextPaymentAvailable}</p>
+              )
+              :
+              (
+                <Button variant='outlined' style={{margin: "10px 0 0 0"}} onClick={payMembershipOnClick}>Renew Membership</Button>
+              )
+              }
+            </div>
+          )
+          :
+          (
+            <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+              <h3 style={{color: "#2C041C"}}>Membership</h3>
+              <Tooltip title="Not Active!">
+                <IconButton>
+                  <RxCrossCircled  style={{fontSize: "60px", color: "#2C041C"}}/>
+                </IconButton>
+              </Tooltip>
+              <Button variant='outlined' style={{margin: "10px 0 0 0"}} onClick={payMembershipOnClick}>Pay Membership</Button>
+            </div>
+          )
+        }
+        
+        <PayMembershipModal
+          payMembership={payMembership}
+          cancelPaymentOnClick={cancelPaymentOnClick}
+          paymentOnClick={paymentOnClick}
+          membershipExpirationDate={membershipExpirationDate}
+          paymentDisabled={paymentDisabled}
+          localeStringOptions={localeStringOptions}
+          price={membershipPrice}
+        />
+      </div>
 
       <EditDetailsModal 
         edit={edit} 
@@ -336,26 +391,6 @@ function ProfileItem(props) {
         cancelEditOnClick={cancelEditOnClick}
         saveEditOnClick={saveEditOnClick}
       />
-
-      <div>
-        <h2>Membership</h2>
-        {membershipPaid && <p>Membership paid: {membershipPaidDate}</p>}
-        {membershipPaid && <p>Membership expiration date: {membershipExpirationDate}</p>}
-        {!membershipPaid && <p>Membership has not been paid.</p>}
-        
-        <Button variant='outlined' onClick={payMembershipOnClick}>Pay Membership</Button>
-        
-        <PayMembershipModal
-          payMembership={payMembership}
-          cancelPaymentOnClick={cancelPaymentOnClick}
-          paymentOnClick={paymentOnClick}
-          membershipExpirationDate={props.membershipExpirationDate}
-          twoWeeksBeforeExpiration={new Date((new Date(props.membershipExpirationDate)).getTime() - (2 * 7 * 24 * 60 * 60 * 1000)).toLocaleString("fi-FI", localeStringOptions)}
-          paymentDisabled={paymentDisabled}
-          localeStringOptions={localeStringOptions}
-        />
-      </div>
-      <ToastContainer />
     </div>
 
   )
