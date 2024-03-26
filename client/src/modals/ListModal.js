@@ -7,6 +7,7 @@ import GetMemberEmailsModal from '../modals/GetMemberEmailsModal';
 import EmailIcon from '@mui/icons-material/Email';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
 
 function ListModal(props) {
   const [getEmailsModal, setGetEmailsModal] = useState(false);
@@ -70,7 +71,7 @@ function ListModal(props) {
         {props.eventParticipantsData ? (
           <div className='Participants'>
             {props.eventParticipantsData.map(member => (
-              <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: "space-between", width: "100%"}} key={member.member.email}>
+              <Card sx={{display: 'flex', mb: 1.5, pl: 1.5, pt: 1, flexDirection: 'column', justifyContent: "space-between"}} fullWidth variant="outlined" key={member.member.email}>
                 <Typography align='left' color="primary">
                   {member.member.firstname + " " + member.member.lastname}
                 </Typography>
@@ -82,7 +83,7 @@ function ListModal(props) {
                     <EmailIcon />
                   </IconButton>
                 </Box>
-              </Box>
+              </Card>
             ))}
           </div>
         ) : (
