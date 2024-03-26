@@ -11,6 +11,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
 const multer = require("multer");
+const member_event = require('../models/member_event');
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 var idFromToken = null;
