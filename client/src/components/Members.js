@@ -49,8 +49,11 @@ function Members(props) {
   const getEmailsOnClick = (e) => {
     e.preventDefault();
     var allEmails = "";
-    members.forEach(function(member) {
-      allEmails = allEmails + member.email + separator;
+    members.forEach(function(member, index) {
+      allEmails = allEmails + member.email;
+      if (index !== members.length - 1) {
+        allEmails += separator;
+      }
     })
     navigator.clipboard.writeText(allEmails);
     showToastSuccessMessage("All emails copied to clipboard");

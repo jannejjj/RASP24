@@ -6,12 +6,14 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
+import ListModal from "../modals/ListModal";
 import PaymentModal from "../modals/PaymentModal";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import EventDetails from "./EventDetails";
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Tooltip } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import toasts from "../common/Toast";
+import PeopleIcon from '@mui/icons-material/People';
 
 function EventItem(props) {
   // These states store the original event data
@@ -26,9 +28,11 @@ function EventItem(props) {
   const [tickets, setTickets] = useState(props.event.tickets);
   const [price, setPrice] = useState(props.event.price);
   const [hasTicket, setHasTicket] = useState(false);
+  const [eventParticipantsData, setEventParticipantsData] = useState(null);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
+  const [openParticipantsList, setOpenParticipantsList] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
   const [editedTitle, setEditedTitle] = useState(props.event.title);
   const [editedTime, setEditedTime] = useState(props.event.time);
@@ -40,6 +44,31 @@ function EventItem(props) {
   const [timeHistory, setTimeHistory] = useState(props.event.time);
   const [locationHistory, setLocationHistory] = useState(props.event.location);
   const [descriptionHistory, setDescriptionHistory] = useState(props.event.description);
+
+
+  useEffect(() => { // Get event participants
+    const fetchEventData = async () => {
+      try {
+        const response = await fetch(`api/event/participants/${props.event._id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + props.currentUser.token,
+          }
+        });
+        const responseData = await response.json();
+        if (responseData && responseData.data && Array.isArray(responseData.data)) {
+          setEventParticipantsData(responseData.data);
+        } else {
+          setEventParticipantsData(null);
+        }
+      } catch (error) {
+        console.error('Error fetching event data:', error);
+      }
+    };
+
+    fetchEventData();
+  }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
 
   useEffect(() => {
     const data = 
@@ -71,6 +100,13 @@ function EventItem(props) {
   const editOnClick = () => {
     setEdit(true);
   };
+  const openListOnClick = () => {
+    setOpenParticipantsList(true);
+  };
+  const closeListOnClick = () => {
+    setOpenParticipantsList(false);
+  };
+
 
   const saveEditOnClick = () => {
     // TODO: Send the edited values to the database to actually save the edit
@@ -311,24 +347,30 @@ function EventItem(props) {
               />
             </AccordionDetails>
           </Accordion>
-          <div className='HomeEventLikeButtonsArea'>
-            <div>
+          <div className='HomeEventButtonsArea'>
+            <div className="LeftSideButtons">
               {props.currentUser.admin && 
                 (
                   <div>
                     <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
                     <Button className='DeleteEventButton' variant='contained' disabled={ticketsSold > 0} onClick={deleteOnClick} >Delete</Button>
+                      <Tooltip title={"List of event participants"}>
+                        <IconButton className="ListParticipantsButton" onClick={openListOnClick}>
+                          <PeopleIcon/>
+                        </IconButton>
+                      </Tooltip>
                   </div>
                 )
               }
             </div>
-            <div style={{display: "flex", flexDirection:"row", justifyContent: "space-between", position:"relative", marginLeft: "20px"}}>
+            <div className="RightSideButtons">
               {like ? 
                 (
                   <IconButton sx={{ 
                     border: "1px solid",
                     borderColor: "primary.main",
-                    borderRadius: 2, 
+                    borderRadius: "5px",
+                    height: "100%",
                     mr:1,
                     color: 'primary.main'
                      }} onClick={() => {setLiking(false); handleCancelEventLike(); }}>
@@ -338,7 +380,8 @@ function EventItem(props) {
                 :
                 ( 
                   <IconButton variant="contained" sx={{ 
-                    borderRadius: 2, 
+                    borderRadius: "5px",
+                    height: "100%",
                     border: "1px solid #2C041C",
                     mr:1, 
                     bgcolor:'primary.main', 
@@ -361,7 +404,7 @@ function EventItem(props) {
                     <div>
                     {typeof tickets !== 'undefined' && tickets - ticketsSold <= 0 ?
                       ( 
-                        <div style={{width: '150px', textAlign: "center", height:"100%"}}>No tickets available</div>  
+                        <div style={{display: "flex", width: '150px', justifyContent: "center", alignItems: "center", height:"100%"}}>No tickets available</div>  
                       ): (
                         <Button variant='contained' color='primary' sx={{width: '150px'}} onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
                       )
@@ -401,6 +444,15 @@ function EventItem(props) {
           price={price}
           title={title}
           user={props.user}
+        />
+
+        <ListModal
+          openParticipantsList={openParticipantsList}
+          setOpenParticipantsList={setOpenParticipantsList}
+          closeListOnClick={closeListOnClick}
+          event={props.event}
+          currentUser={props.currentUser}
+          eventParticipantsData={eventParticipantsData}
         />
       </div>
     );
