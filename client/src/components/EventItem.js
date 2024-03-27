@@ -10,9 +10,10 @@ import ListModal from "../modals/ListModal";
 import PaymentModal from "../modals/PaymentModal";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import EventDetails from "./EventDetails";
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Tooltip } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import toasts from "../common/Toast";
+import PeopleIcon from '@mui/icons-material/People';
 
 function EventItem(props) {
   // These states store the original event data
@@ -346,33 +347,30 @@ function EventItem(props) {
               />
             </AccordionDetails>
           </Accordion>
-          <div className='HomeEventLikeButtonsArea'>
-            <div>
+          <div className='HomeEventButtonsArea'>
+            <div className="LeftSideButtons">
               {props.currentUser.admin && 
                 (
                   <div>
                     <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>
                     <Button className='DeleteEventButton' variant='contained' disabled={ticketsSold > 0} onClick={deleteOnClick} >Delete</Button>
+                      <Tooltip title={"List of event participants"}>
+                        <IconButton className="ListParticipantsButton" onClick={openListOnClick}>
+                          <PeopleIcon/>
+                        </IconButton>
+                      </Tooltip>
                   </div>
                 )
               }
             </div>
-            <div>
-              {props.currentUser.admin && 
-                (
-                  <div>
-                    <Button className='ListEventParticipantsButton' variant='contained' onClick={openListOnClick} >List of event participants</Button>
-                  </div>
-                )
-              }
-            </div>
-            <div style={{display: "flex", flexDirection:"row", justifyContent: "space-between", position:"relative", marginLeft: "20px"}}>
+            <div className="RightSideButtons">
               {like ? 
                 (
                   <IconButton sx={{ 
                     border: "1px solid",
                     borderColor: "primary.main",
-                    borderRadius: 2, 
+                    borderRadius: "5px",
+                    height: "100%",
                     mr:1,
                     color: 'primary.main'
                      }} onClick={() => {setLiking(false); handleCancelEventLike(); }}>
@@ -382,7 +380,8 @@ function EventItem(props) {
                 :
                 ( 
                   <IconButton variant="contained" sx={{ 
-                    borderRadius: 2, 
+                    borderRadius: "5px",
+                    height: "100%",
                     border: "1px solid #2C041C",
                     mr:1, 
                     bgcolor:'primary.main', 
@@ -405,7 +404,7 @@ function EventItem(props) {
                     <div>
                     {typeof tickets !== 'undefined' && tickets - ticketsSold <= 0 ?
                       ( 
-                        <div style={{width: '150px', textAlign: "center", height:"100%"}}>No tickets available</div>  
+                        <div style={{display: "flex", width: '150px', justifyContent: "center", alignItems: "center", height:"100%"}}>No tickets available</div>  
                       ): (
                         <Button variant='contained' color='primary' sx={{width: '150px'}} onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
                       )
