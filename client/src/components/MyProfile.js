@@ -101,7 +101,7 @@ function ProfileItem(props) {
         setPaymentDisabled(true);
         setPayMembership(false);
 
-        const expirationDate = new Date(oneYearLateDate).toLocaleString("fi-FI", localeStringOptions);
+        const expirationDate = new Date(oneYearLateDate);
         const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
         setNextPaymentAvailable(twoWeeksBeforeExpiration.toLocaleString("fi-FI", localeStringOptions));
 
@@ -114,8 +114,6 @@ function ProfileItem(props) {
       console.error('Error while paying membership fee:', error.message);
       toasts.showToastMessage('Error while paying membership fee:', error.message);
     }
-
-    setUpdateDateThings(!updateDateThings);
   };
 
   // membershipPaid is set to false
@@ -297,7 +295,7 @@ function ProfileItem(props) {
     const expirationDate = new Date(props.membershipExpirationDate);
     const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
     setNextPaymentAvailable(twoWeeksBeforeExpiration.toLocaleString("fi-FI", localeStringOptions));
-  }, [updateDateThings])
+  }, [])
 
   return (
     <div className='MyInfo'>
