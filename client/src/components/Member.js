@@ -9,6 +9,9 @@ import { useState } from 'react';
 import ManageMemberModal from '../modals/ManageMemberModal';
 import EmailIcon from '@mui/icons-material/Email';
 import IconButton from '@mui/material/IconButton';
+import { RxCheckCircled } from "react-icons/rx";
+import { RxCrossCircled } from "react-icons/rx";
+import Tooltip from '@mui/material/Tooltip';
 
 function Member(props) {
   const [openManageMemberModal, setOpenManageMemberModal] = useState(false);
@@ -86,8 +89,28 @@ function Member(props) {
           alt={'Profile picture for ' + props.member.firstname + ' ' + props.member.lastname + '.'}
         />
         <Box sx={{m: 1}}>
-          <Typography align='left' variant="h5" sx={{mb: 0.5}} color="primary">
-              {props.member.firstname} {props.member.lastname} <span className='MemberRole'>{props.member.role}</span>
+          <Typography align='left' variant="h5" sx={{mb: 0.5, display: 'flex'}} color="primary">
+            {props.currentUser.admin &&
+              (
+                props.member.membershipPaid ?
+                (
+                  <Tooltip title="Membership: ACTIVE!">
+                    <IconButton sx={{p: 0.5}}>
+                      <RxCheckCircled  style={{fontSize: "25px", color: "#237d3c"}}/>
+                    </IconButton>
+                  </Tooltip>
+                )
+                :
+                (
+                  <Tooltip title="Membership: INACTIVE!">
+                    <IconButton sx={{p: 0.5}}>
+                      <RxCrossCircled  style={{fontSize: "25px", color: "#8c1c1c"}}/>
+                    </IconButton>
+                  </Tooltip>
+                )
+              )
+            }   
+            {props.member.firstname} {props.member.lastname} <span className='MemberRole'>{props.member.role}</span>
           </Typography>
           <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
           <Typography align='left' color="text.secondary">

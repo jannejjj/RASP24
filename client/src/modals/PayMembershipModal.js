@@ -12,12 +12,12 @@ function PayMembershipModal(props) {
         <h2>
           Pay Membership
         </h2>
-        {props.paymentDisabled && <p>Payment is disabled. You can pay the next year's membership fee two weeks before the expiration date.</p>}
-        {props.paymentDisabled && <p>Next payment available on: {props.twoWeeksBeforeExpiration}</p>}
-        <p>TODO: ADD PAYMENT INFORMATION AND PRICE</p>
+        <div className='HorizontalSeparator' />
+        <h3 style={{fontSize: "40px", textDecoration: "underline", color: "#6a6a6a"}}>{props.price + " €"}</h3>
+        <p className='HintParagraphSmall'>* Expires in a year</p>
         <div className='ModalButtonArea'>
-          <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelPaymentOnClick} >Cancel</Button>
-          <Button disabled={props.paymentDisabled} style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.paymentOnClick} >Pay</Button>
+          <Button style={{margin: "20px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelPaymentOnClick} >Cancel</Button>
+          <Button disabled={props.paymentDisabled} style={{margin: "20px 0 0 5px"}} color='primary' variant='contained' fullWidth onClick={props.paymentOnClick} >Pay</Button>
         </div>
       </Box>
 
