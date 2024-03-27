@@ -100,7 +100,11 @@ function ProfileItem(props) {
         toasts.showToastSuccessMessage("Membership payment successful");
         setPaymentDisabled(true);
         setPayMembership(false);
-        setUpdateDateThings(!updateDateThings);
+
+        const expirationDate = new Date(oneYearLateDate).toLocaleString("fi-FI", localeStringOptions);
+        const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
+        setNextPaymentAvailable(twoWeeksBeforeExpiration.toLocaleString("fi-FI", localeStringOptions));
+
         props.toggleUpdateUser();
       } else {
         console.error('Failed to pay membership fee:', response.statusText);
@@ -110,6 +114,8 @@ function ProfileItem(props) {
       console.error('Error while paying membership fee:', error.message);
       toasts.showToastMessage('Error while paying membership fee:', error.message);
     }
+
+    setUpdateDateThings(!updateDateThings);
   };
 
   // membershipPaid is set to false
@@ -289,23 +295,9 @@ function ProfileItem(props) {
   useEffect(() =>
   {
     const expirationDate = new Date(props.membershipExpirationDate);
-    if (expirationDate) 
-    { 
-      const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
-      if (twoWeeksBeforeExpiration)
-      {
-        setNextPaymentAvailable(twoWeeksBeforeExpiration.toLocaleString("fi-FI", localeStringOptions));
-      }
-      else
-      {
-        setNextPaymentAvailable("");
-      }
-    }
-    else
-    {
-      setNextPaymentAvailable("");
-    }
-  }, [membershipExpirationDate, updateDateThings])
+    const twoWeeksBeforeExpiration = new Date(expirationDate.getTime() - (2 * 7 * 24 * 60 * 60 * 1000));
+    setNextPaymentAvailable(twoWeeksBeforeExpiration.toLocaleString("fi-FI", localeStringOptions));
+  }, [updateDateThings])
 
   return (
     <div className='MyInfo'>
