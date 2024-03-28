@@ -14,15 +14,19 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import toasts from "../common/Toast";
 
 function EventItem(props) {
+
+  const [editedEvent, setEditedEvent] = useState({});
+  const [startTimeError, setStartTimeError] = useState(false);
+  const [endTimeError, setEndTimeError] = useState(false);
+  const [joinDeadlineError, setJoinDeadlineError] = useState(false);
+
   // These states store the original event data
   const [like, setLiking] = useState(null);
   const [likes, setLikes] = useState(props.event.attendees);
   const [title, setTitle] = useState(props.event.title);
-  const [time, setTime] = useState(props.event.time);
   const [location, setLocation] = useState(props.event.location);
   const [description, setDescription] = useState(props.event.description);
   const [ticketsSold, setTicketsSold] = useState(props.event.ticketsSold);
-  const [paid, setPaid] = useState(props.paid);
   const [tickets, setTickets] = useState(props.event.tickets);
   const [price, setPrice] = useState(props.event.price);
   const [hasTicket, setHasTicket] = useState(false);
@@ -34,12 +38,6 @@ function EventItem(props) {
   const [editedTime, setEditedTime] = useState(props.event.time);
   const [editedLocation, setEditedLocation] = useState(props.event.location);
   const [editedDescription, setEditedDescription] = useState(props.event.description);
-
-  // Save the history so that the editing can be cancelled
-  const [titleHistory, setTitleHistory] = useState(props.event.title);
-  const [timeHistory, setTimeHistory] = useState(props.event.time);
-  const [locationHistory, setLocationHistory] = useState(props.event.location);
-  const [descriptionHistory, setDescriptionHistory] = useState(props.event.description);
 
   useEffect(() => {
     const data = 
