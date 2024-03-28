@@ -87,7 +87,7 @@ const savingRules = () => {
   if(startTimeError || !editedEvent.startDate) return savingErrorMessages[0];
   if(endTimeError)  return savingErrorMessages[1];
   if(!checkedDeadline) {
-    editedEvent.joinDeadline = editedEvent.startDate;
+    editedEvent.joinDeadline = undefined;
   }
   const startDateAux = new Date(editedEvent.startDate);
   const joinDeadlineAux = new Date(editedEvent.joinDeadline);
