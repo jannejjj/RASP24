@@ -1,16 +1,20 @@
-.span {
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-}
 
-.details-grid-item {
-  display: flex;
-  justify-content: flex-start;
-  align-content: center;
-}
-
-.MuiSvgIcon-root {
-  padding-right: 4px !important;
-  color: #2C041C;
+.EventDetailsSection{
+  .span {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  
+  .details-grid-item {
+    display: flex;
+    justify-content: flex-start;
+    align-content: center;
+  }
+  
+  .MuiSvgIcon-root {
+    padding-right: 4px !important;
+    color: #2C041C;
+  }
+  
 }
