@@ -25,7 +25,6 @@ function EventItem(props) {
   // These states store the original event data
   const [attending, setAttending] = useState(props.attending);
   const [title, setTitle] = useState(props.title);
-  const [time, setTime] = useState(props.time);
   const [location, setLocation] = useState(props.location);
   const [description, setDescription] = useState(props.description);
   const [ticketsSold, setTicketsSold] = useState(props.ticketsSold);
@@ -35,7 +34,7 @@ function EventItem(props) {
   const [price, setPrice] = useState(props.price);
   const [tickets, setTickets] = useState(props.tickets);
   const [checkedTicket, setCheckedTicket] = useState(props.tickets !== 0 && props.tickets !== null && props.tickets !== undefined);
-  const [checkedDeadline, setCheckedDeadline] = useState(!(props.joinDeadline !== null && props.joinDeadline !== undefined));
+  const [checkedDeadline, setCheckedDeadline] = useState(props.joinDeadline !== null && props.joinDeadline !== undefined);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -45,15 +44,7 @@ function EventItem(props) {
   const [editedTime, setEditedTime] = useState(props.time);
   const [editedLocation, setEditedLocation] = useState(props.location);
   const [editedDescription, setEditedDescription] = useState(props.description);
-
-  // Save the history so that the editing can be cancelled
-  const [titleHistory, setTitleHistory] = useState(props.title);
-  const [timeHistory, setTimeHistory] = useState(props.time);
-  const [locationHistory, setLocationHistory] = useState(props.location);
-  const [descriptionHistory, setDescriptionHistory] = useState(
-    props.description
-  );
-
+  
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
 
@@ -80,76 +71,82 @@ const showToastMessageSuccesfull = (message) =>
         pauseOnHover: false,
         draggable: false,
         progress: undefined,
-        theme: "light"
+        theme: "dark"
         });
-}
+};
+
+const savingErrorMessages = [
+  "Starting time is not valid.",
+  "Ending time is not valid.",
+  "Event joining deadline needs to be before or the same as the starting time of the event.",
+  "Starting time needs to be before ending time.",
+  "Tickets should be more than the tickets already sold"
+]
+
+const savingRules = () => {
+  if(startTimeError || !editedEvent.startDate) return savingErrorMessages[0];
+  if(endTimeError)  return savingErrorMessages[1];
+  if(!checkedDeadline) {
+    editedEvent.joinDeadline = editedEvent.startDate;
+  }
+  const startDateAux = new Date(editedEvent.startDate);
+  const joinDeadlineAux = new Date(editedEvent.joinDeadline);
+  const endDateAux = new Date(editedEvent.endDate);
+  if(joinDeadlineError || !editedEvent.joinDeadline || joinDeadlineAux > startDateAux)return savingErrorMessages[2];
+  if(editedEvent.endDate && startDateAux >= endDateAux) return savingErrorMessages[3];
+  return "";
+};
 
   const saveEditedEventOnClick = (e) => {
-    e.preventDefault()
-    if(!startTimeError && editedEvent.startDate) {
-      const startDateAux = new Date(editedEvent.startDate);
-      if(!endTimeError) {
-        if(!checkedDeadline) {
-          editedEvent.joinDeadline = editedEvent.startDate;
-        }
-        const joinDeadlineAux = new Date(editedEvent.joinDeadline);
-        if(!joinDeadlineError && editedEvent.joinDeadline && joinDeadlineAux <= startDateAux) {
-          const endDateAux = new Date(editedEvent.endDate);
-          if(!editedEvent.endDate || startDateAux < endDateAux) {
-            editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
-            editedEvent.creatorId = props.currentUser.id;
-            editedEvent.attendees = 1;
-            editedEvent.id = props.eventID;
-            
-            setEditedEvent(editedEvent);
-            fetch("/api/editEvent", { // TODO change url to event edit url
-              method: "POST",
-              headers: {
-                  "Content-type": "application/json",
-                  "Authorization": "Bearer " + props.currentUser.token
-              },
-              body: JSON.stringify(editedEvent),
-              mode: "cors"
-          })
-              .then(response =>{
-                  if(response.status === 409){
-                    console.log("tickets should be more than the tickets already sold");
-                    showToastMessage("tickets should be more than the tickets already sold");
-                  }
-                  return response.json()
-              } )
-              .then(data => {
-                if (data) { 
-                  showToastMessageSuccesfull(`${data.event.ticketsSold} users will be notified of the changes`);
-                }
-              })
-
-          // Empty the input fields
-          setEditedEvent({});
-          // Close the Modal
-          setEdit(false);
-          if(checkedTicket) {
-            resetTickets();
-          }
-          if(checkedDeadline) {
-            handleDeadlineSwitch();
-          }
-          } else {
-            console.log("Starting time needs to be before ending time.");
-            showToastMessage("Starting time needs to be before ending time.");
-          }
-        } else {
-          console.log("Event joining deadline needs to be before or the same as the starting time of the event.");
-            showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
-        }
-      } else {
-        console.log("Ending time is not valid.");
-        showToastMessage("Ending time is not valid.");
-      }
-    } else {
-      console.log("Starting time is not valid.");
-      showToastMessage("Starting time is not valid.");
+    e.preventDefault();
+    let errorMessage = savingRules();
+    let successToast = false; //Doesn't work currently.
+    if (errorMessage != ""){
+      console.log(errorMessage);
+      showToastMessage(errorMessage);
+      return;
     }
+    console.log(checkedDeadline);
+    if(!checkedDeadline) {
+      editedEvent.joinDeadline = undefined;
+    }
+    editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
+    editedEvent.creatorId = props.currentUser.id;
+    editedEvent.attendees = 1;
+    editedEvent.id = props.eventID;
+    
+    setEditedEvent(editedEvent);
+    fetch("/api/editEvent", { // TODO change url to event edit url
+      method: "POST",
+      headers: {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+      },
+      body: JSON.stringify(editedEvent),
+      mode: "cors"
+    })  
+    .then(response =>{
+        if(response.status === 409){
+          errorMessage = "tickets should be more than the tickets already sold";
+          console.log(errorMessage);
+          showToastMessage(errorMessage);
+          return;
+        }
+        return response.json();
+    } )
+    .then(data => {
+      if (data) { 
+        // if(! successToast){
+        //   showToastMessageSuccesfull(`${data.event.ticketsSold} users will be notified of the changes`);
+        //   successToast = true;
+        // }
+        // For some reason the Toast is showing twice.
+        setEditedEvent({});
+        // Close the Modal
+        setEdit(false);
+        props.toggleUpdateEvents();
+      }
+    });
   };
 
 //Resets the amount of tickets and clears the text box.
@@ -162,10 +159,12 @@ const showToastMessageSuccesfull = (message) =>
 
   const handleDeadlineSwitch = () => {
     setCheckedDeadline(!checkedDeadline);
-    if(!checkedDeadline) {
+    if(checkedDeadline) {
       editedEvent.joinDeadline = "";
+      setJoinDeadlineDate("");
     } else {
       editedEvent.joinDeadline = editedEvent.startDate;
+      setJoinDeadlineDate(editedEvent.startDate);
     }
     
     setEditedEvent(editedEvent);
@@ -178,7 +177,7 @@ const showToastMessageSuccesfull = (message) =>
 
   const cancelEditOnClick = () => {
     setEditedEvent({});
-    if(checkedTicket) {
+    if(!checkedTicket) {
       resetTickets();
     }
     if(checkedDeadline) {
@@ -202,13 +201,12 @@ const showToastMessageSuccesfull = (message) =>
   //Updates the values for the join deadline
   const handleJoinDeadlineChange = (value) => {
     setJoinDeadlineError(false); // Sets error to false when changes are made
-    setEditedEvent({...editedEvent, ["joinDeadline"]: value});
+    setEditedEvent({...editedEvent, ["joinDeadline"]: dayjs(value)});
   };
 
   // Triggered if there is an error in the date formatting
 const handleStartTimeError = (error) => {
   if(error == "disablePast"){
-    console.log("Here");
     setStartTimeError(false);
   }else{
     console.log("Starting time error: " + error);

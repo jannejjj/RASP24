@@ -148,7 +148,6 @@ function Home(props) {
     } else {
       newEvent.joinDeadline = newEvent.startDate;
     }
-    
     setNewEvent(newEvent);
   }
 
