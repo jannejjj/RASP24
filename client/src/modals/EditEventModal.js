@@ -55,8 +55,8 @@ function EditEventModal(props)
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
                     format="DD/MM/YYYY hh:mm"
                     ampm={false}
-                    defaultValue={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):undefined}
-                    value={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):undefined}
+                    defaultValue={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):null}
+                    value={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):null}
                     sx={{ width: '100%', marginBottom: '10px' }} 
                     slotProps={{
                       textField: {
@@ -73,7 +73,7 @@ function EditEventModal(props)
                     format="DD/MM/YYYY hh:mm"
                     ampm={false}
                     disablePast={true}
-                    defaultValue={props.endDate !== undefined ? dayjs(props.endDate):undefined}
+                    defaultValue={props.endDate !== undefined ? dayjs(props.endDate):null}
                     sx={{ width: '100%' }} 
                     slotProps={{
                       textField: {

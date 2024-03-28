@@ -21,19 +21,21 @@ function EventItem(props) {
   const [startTimeError, setStartTimeError] = useState(false);
   const [endTimeError, setEndTimeError] = useState(false);
   const [joinDeadlineError, setJoinDeadlineError] = useState(false);
-  const [attendees, setAttendees] = useState(props.attendees);
 
   // These states store the original event data
   const [like, setLiking] = useState(null);
   const [likes, setLikes] = useState(props.event.attendees);
   const [title, setTitle] = useState(props.event.title);
-  const [time, setTime] = useState(props.event.time);
   const [location, setLocation] = useState(props.event.location);
   const [description, setDescription] = useState(props.event.description);
   const [ticketsSold, setTicketsSold] = useState(props.event.ticketsSold);
-  const [paid, setPaid] = useState(props.paid);
   const [tickets, setTickets] = useState(props.event.tickets);
   const [price, setPrice] = useState(props.event.price);
+  const [startDate, setStartDate] = useState(props.event.startDate);
+  const [endDate, setEndDate] = useState(props.event.endDate);
+  const [joinDeadline, setJoinDeadline] = useState(props.event.joinDeadline);
+  const [checkedTicket, setCheckedTicket] = useState(props.event.tickets !== 0 && props.event.tickets !== null && props.event.tickets !== undefined);
+  const [checkedDeadline, setCheckedDeadline] = useState(props.event.joinDeadline !== null && props.event.joinDeadline !== undefined);
   const [hasTicket, setHasTicket] = useState(false);
 
   // These states store the data that is edited
@@ -43,12 +45,6 @@ function EventItem(props) {
   const [editedTime, setEditedTime] = useState(props.event.time);
   const [editedLocation, setEditedLocation] = useState(props.event.location);
   const [editedDescription, setEditedDescription] = useState(props.event.description);
-
-  // Save the history so that the editing can be cancelled
-  const [titleHistory, setTitleHistory] = useState(props.event.title);
-  const [timeHistory, setTimeHistory] = useState(props.event.time);
-  const [locationHistory, setLocationHistory] = useState(props.event.location);
-  const [descriptionHistory, setDescriptionHistory] = useState(props.event.description);
 
   useEffect(() => {
     const data = 
@@ -121,7 +117,8 @@ const savingRules = () => {
   const startDateAux = new Date(editedEvent.startDate);
   const joinDeadlineAux = new Date(editedEvent.joinDeadline);
   const endDateAux = new Date(editedEvent.endDate);
-  if(joinDeadlineError || !editedEvent.joinDeadline || joinDeadlineAux > startDateAux)return savingErrorMessages[2];
+
+  if(joinDeadlineError || (editedEvent.joinDeadline !== undefined && joinDeadlineAux > startDateAux))return savingErrorMessages[2];
   if(editedEvent.endDate && startDateAux >= endDateAux) return savingErrorMessages[3];
   return "";
 };
@@ -141,9 +138,8 @@ const savingRules = () => {
     }
     editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
     editedEvent.creatorId = props.currentUser.id;
-    editedEvent.attendees = 1;
-    editedEvent.id = props.eventID;
-    
+    editedEvent.id = props.event._id;
+    console.log(editedEvent);
     setEditedEvent(editedEvent);
     fetch("/api/editEvent", { // TODO change url to event edit url
       method: "POST",
@@ -190,12 +186,12 @@ const savingRules = () => {
     setCheckedDeadline(!checkedDeadline);
     if(checkedDeadline) {
       editedEvent.joinDeadline = "";
-      setJoinDeadlineDate("");
+      setJoinDeadline(undefined);
     } else {
       editedEvent.joinDeadline = editedEvent.startDate;
-      setJoinDeadlineDate(editedEvent.startDate);
+      setJoinDeadline(editedEvent.startDate); 
     }
-    
+
     setEditedEvent(editedEvent);
   }
 
@@ -230,7 +226,7 @@ const savingRules = () => {
   //Updates the values for the join deadline
   const handleJoinDeadlineChange = (value) => {
     setJoinDeadlineError(false); // Sets error to false when changes are made
-    setEditedEvent({...editedEvent, ["joinDeadline"]: dayjs(value)});
+    setEditedEvent({...editedEvent, ["joinDeadline"]: value});
   };
 
   // Triggered if there is an error in the date formatting
@@ -249,7 +245,7 @@ const handleEndTimeError = (error) => {
 }
 
 const handleJoinDeadlineError = (error) => {
-  console.log("Join deadline error: " + error);
+  console.log("Join deadline error: " + error, joinDeadline);
   setJoinDeadlineError(true);
 } 
   // Show edit
@@ -574,11 +570,10 @@ const handleJoinDeadlineError = (error) => {
 
         <DeleteEventModal
           deleteModal={deleteModal}
-          attendees={props.event.attendees}
+          attendees={likes}
           cancelDeleteOnClick={cancelDeleteOnClick}
           confirmDeleteOnClick={confirmDeleteOnClick}
         />
-  
       
         <PaymentModal
           openPayment={openPayment}

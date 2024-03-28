@@ -21,10 +21,10 @@ function EventDetails(props) {
 
   const localizedStartDate = new Date(props.startDate).toLocaleString("fi-FI", localeStringOptions);
   const localizedEndDate = props.endDate ? new Date(props.endDate).toLocaleString("fi-FI", localeStringOptions) : "Not specified";
-  const localizedDeadline = new Date(props.joinDeadline).toLocaleString("fi-FI", localeStringOptions);
+  const localizedDeadline = props.joinDeadline ? new Date(props.joinDeadline).toLocaleString("fi-FI", localeStringOptions) : "Not specified";
 
   return (
-    <div class="EventDetailsSection">
+    <div className="EventDetailsSection">
     <Grid  container rowSpacing={2} columns={2} columnSpacing={16} justifyContent={"center"} fontFamily={"Poppins"} >
       <Grid item xs={2} md={1} className="details-grid-item">
         <AccessTimeIcon/>
