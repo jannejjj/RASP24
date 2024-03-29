@@ -150,17 +150,51 @@
   text-align: justify;
 }
 
-.HomeEventLikeButtonsArea
+.HomeEventButtonsArea
 {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
+  flex-direction: row;
+  width: 100%;
   position: relative;
   margin: 20px 0 0 0;
+  align-items: center;
 
-  .DeleteEventButton
-  {
-    margin-left: 10px;
+  .LeftSideButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+
+    .EditEventButton {
+      height: 100%;
+    }
+  
+    .DeleteEventButton
+    {
+      margin-left: 10px;
+      height: 100%;
+    }
+    .ListParticipantsButton
+    {
+      margin-left: 10px;
+      height: 100%;
+      border-radius: 5px;
+      border: 1px solid #2C041C;
+      color: white;
+      background-color: #2C041C;
+    }
+    .ListParticipantsButton:hover {
+      background-color: #2C041C;
+    }
+  }
+
+  .RightSideButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+    margin-left: 20px;
   }
 }
 
