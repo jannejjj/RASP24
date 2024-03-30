@@ -123,7 +123,7 @@ function EventItem(props) {
 
     // Update the actual values
     setTitle(editedTitle);
-    setTime(editedTime);
+    setTimeHistory(editedTime);
     setLocation(editedLocation);
     setDescription(editedDescription);
 
@@ -134,7 +134,7 @@ function EventItem(props) {
   const cancelEditOnClick = () => {
     // Bring back the old event data
     setTitle(titleHistory);
-    setTime(timeHistory);
+    setTimeHistory(timeHistory);
     setLocation(locationHistory);
     setDescription(descriptionHistory);
 

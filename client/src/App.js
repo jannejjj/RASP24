@@ -8,6 +8,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import SchedulerComponent from './components/Sceduler';
 import { useState, useEffect } from 'react';
+import "react-big-calendar/lib/css/react-big-calendar.css"
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -83,7 +84,7 @@ function App() {
           <TopBar currentUser={currentUser} setCurrentUser={setCurrentUser} />
           <Routes>
           <Route path="/Members" element={<Members currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
-          <Route path="/Scheduler" element={<SchedulerComponent/>} />
+          <Route path="/Scheduler" element={<SchedulerComponent currentUser={currentUser}/>} />
           <Route path="/" element={<Home currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           {/* If the user is not logged in and they go to the MyProfile url, they are rerouted to the home page */}
           <Route path="/MyProfile" element={currentUser.loggedIn ? ( <MyProfile currentUser={currentUser} setCurrentUser={setCurrentUser} /> ) : ( <Home currentUser={currentUser} setCurrentUser={setCurrentUser} /> )} />
