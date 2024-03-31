@@ -10,6 +10,7 @@ import ListModal from "../modals/ListModal";
 import PaymentModal from "../modals/PaymentModal";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import EventDetails from "./EventDetails";
+import TicketItem from "./TicketItem";
 import { Accordion, AccordionDetails, AccordionSummary, Tooltip } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import toasts from "../common/Toast";
@@ -28,6 +29,7 @@ function EventItem(props) {
   const [tickets, setTickets] = useState(props.event.tickets);
   const [price, setPrice] = useState(props.event.price);
   const [hasTicket, setHasTicket] = useState(false);
+  const [ticket, setTicket] = useState(null);
   const [eventParticipantsData, setEventParticipantsData] = useState(null);
 
   // These states store the data that is edited
@@ -87,7 +89,10 @@ function EventItem(props) {
     })
     .then(response => response.json())
     .then(data => {
-      setHasTicket(data.ticket);
+      if (data.hasTicket) {
+        setTicket(data.ticket);
+      }
+      setHasTicket(data.hasTicket);
     })
     .catch(error => {
         console.error('Error fetching ticket status:', error);
@@ -229,18 +234,18 @@ function EventItem(props) {
           "Authorization": "Bearer " + props.currentUser.token
         },
         body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          toasts.showToastMessage(data.error);
+          throw new Error('Payment failed');
+        } else {
+          toasts.showToastSuccessMessage("Payment ok!");
+          setTicket(data.ticket);
+          setHasTicket(true);
+        }
       });
-
-      if (!response.ok) {
-        const errorMessage = await response.json(); 
-        toasts.showToastMessage(errorMessage.error);
-        throw new Error('Payment failed');
-      }
-
-      // Handle success
-      console.log('Data submitted successfully');
-      toasts.showToastSuccessMessage("Payment ok");
-      setHasTicket(true);
     } catch (error) {
       // Handle error
       console.error('Error submitting data:', error.message);
@@ -345,6 +350,14 @@ function EventItem(props) {
                 paymentDate={props.event.paymentDate}
                 attendees={props.event.attendees}
               />
+              {hasTicket && 
+                <TicketItem
+                  title={title}
+                  ticket={ticket}
+                  setTicket={setTicket}
+                  currentUser={props.currentUser}
+                />
+              }
             </AccordionDetails>
           </Accordion>
           <div className='HomeEventButtonsArea'>

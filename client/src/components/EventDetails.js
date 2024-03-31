@@ -24,7 +24,7 @@ function EventDetails(props) {
   const localizedDeadline = new Date(props.joinDeadline).toLocaleString("fi-FI", localeStringOptions);
 
   return (
-    <div class="EventDetailsSection">
+    <div className="EventDetailsSection">
     <Grid  container rowSpacing={2} columns={2} columnSpacing={16} justifyContent={"center"} fontFamily={"Poppins"} >
       <Grid item xs={2} md={1} className="details-grid-item">
         <AccessTimeIcon/>
