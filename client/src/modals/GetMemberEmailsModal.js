@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 function GetMemberEmailsModal(props) {
   return (
     <Modal open={props.getEmailsModal} >
-        <Box className='ModalBackground'>
+        <Box className='ModalBackground' style={{width: "370px"}}>
           <h2>
             Get all member emails
           </h2>

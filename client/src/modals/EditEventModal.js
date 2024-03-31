@@ -30,7 +30,7 @@ function EditEventModal(props)
                     onError={props.handleStartTimeError}
                     label="Select Starting Time" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
-                    format="DD/MM/YYYY hh:mm"
+                    format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     defaultValue={dayjs(props.startDate)}
                     sx={{width: '100%'}}
@@ -53,7 +53,7 @@ function EditEventModal(props)
                     disabled={!props.checkedDeadline}
                     label="Event join deadline" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
-                    format="DD/MM/YYYY hh:mm"
+                    format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     defaultValue={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):null}
                     value={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):null}
@@ -70,7 +70,7 @@ function EditEventModal(props)
                     onError={props.handleEndTimeError}
                     label="Select Ending Time" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
-                    format="DD/MM/YYYY hh:mm"
+                    format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     disablePast={true}
                     defaultValue={props.endDate !== undefined ? dayjs(props.endDate):null}
@@ -106,7 +106,7 @@ function EditEventModal(props)
                   value={props.tickets}
                   onChange={e => props.setTickets(e.target.value)}
                 />
-                <div>
+                <div style={{display:"flex", flexDirection:'row', width:'100%'}}>
                   <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelEditOnClick} >Cancel</Button>
                   <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit" onClick={props.saveEditOnClick} >Save</Button>
                 </div>
