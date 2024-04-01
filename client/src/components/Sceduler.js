@@ -7,6 +7,9 @@ import timezone from 'dayjs/plugin/timezone';
 import EventItem from "./EventItem";
 import "../styles/Scheduler.css";
 import "../App.css";
+import { Toast } from "react-toastify";
+import toasts from "../common/Toast.js";
+
 dayjs.extend(timezone);
 
 const localizer = dayjsLocalizer(dayjs);
@@ -17,12 +20,7 @@ function SchedulerComponent(props) {
   const [events, setEvents] = useState([{}]);
   const [calendarEvents, setCalendarEvents] = useState([{}]);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const ColoredDateCellWrapper = ({ children }) =>
-  React.cloneElement(React.Children.only(children), {
-    style: {
-      backgroundColor: 'lightblue',
-    },
-  })
+  const [toSet, setToSet] = useState(null);
 
   const traduceEvents = ()=>{
     let temp = [];
@@ -35,7 +33,6 @@ function SchedulerComponent(props) {
         ref:i
       });
     });
-    console.log(temp);
     setCalendarEvents(temp);
   };
 
@@ -69,8 +66,16 @@ function SchedulerComponent(props) {
 
   useEffect(traduceEvents, [events]);
   const handleOnSelectEvent = (e) => {
-    setSelectedEvent(events[e.ref]);
-  }
+    setToSet(e.ref);
+    setSelectedEvent(null);
+  };
+
+  useEffect(()=>{
+    if(toSet !== null){
+      setSelectedEvent(events[toSet]);
+    }
+  }, [toSet]);
+
   return (
     <div>
       <Grid container spacing={2} sx={{ mb:1 }} columns={3}>
@@ -80,13 +85,15 @@ function SchedulerComponent(props) {
         <Grid item xs={1} sx={{pl:1}}>  
           {selectedEvent !== null ? 
             <EventItem
+              className="SchedulerEvent"
               currentUser={props.currentUser}
               user={props.currentUser}
               admin={props.currentUser}
               event={selectedEvent}
-              showToastMessage={()=>{}}
-              showToastSuccessMessage={()=>{}}
-              toggleUpdateEvents={()=>{}}
+              accordionExpanded={true}
+              showToastMessage={toasts.showToastMessage}
+              showToastSuccessMessage={toasts.showToastSuccessMessage}
+              toggleUpdateEvents={()=>{handleOnSelectEvent({ref:toSet})}}
             /> :
             <p>No event selected</p> 
           }
@@ -96,8 +103,6 @@ function SchedulerComponent(props) {
             localizer={localizer}
             events={calendarEvents}
             onSelectEvent={handleOnSelectEvent}
-            startAccessor="start"
-            endAccessor="end"
             views={Object.keys(Views).map((k) => Views[k])}
           />
         </Grid>

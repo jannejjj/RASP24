@@ -334,6 +334,7 @@ function EventItem(props) {
             }}
             slotProps={{ transition: {unmountOnExit: true} }}
             disableGutters={true}
+            defaultExpanded={props.accordionExpanded}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <h3> Details </h3>
