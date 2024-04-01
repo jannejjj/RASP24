@@ -14,8 +14,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import AutocompleteInput from '../components/AutocompleteInput';
 
 function CreateEventModal(props) {
-    const [result, setResult] = useState();
-
     return (
       <Modal open={props.newEventModal} >
         <Box className='ModalBackground' >
@@ -25,7 +23,7 @@ function CreateEventModal(props) {
           <div className='HorizontalSeparator' />
           <form onSubmit={props.saveNewEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
                 <TextField fullWidth required label={'Title'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 0.5}} />
-                <AutocompleteInput setResult={setResult}/>
+                <AutocompleteInput handleLocationChange={props.handleLocationChange} onChange={() => {return null;}} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker sx={{m: 0.5, width: '100%'}}
                     onChange={props.handleStartTimeChange}
