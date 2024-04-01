@@ -313,7 +313,7 @@ function EventItem(props) {
             <div className="HomeEventTitleAndLocationArea">
               <h2>{title}</h2>
               <h3>Created by: {props.event.creator}</h3>
-              <h3>Location: {location}</h3>
+              <h3>Location: {location.name}</h3>
             </div>
             <p>
               <FavoriteIcon fontSize="small" sx={{mr:"5px"}}/>  {likes}
@@ -333,7 +333,6 @@ function EventItem(props) {
               },
               borderRadius: "4px",
             }}
-            slotProps={{ transition: {unmountOnExit: true} }}
             disableGutters={true}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -349,6 +348,7 @@ function EventItem(props) {
                 price={price}
                 paymentDate={props.event.paymentDate}
                 attendees={props.event.attendees}
+                placeId={location.placeId}
               />
               {hasTicket && 
                 <TicketItem
