@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useMemo} from "react";
+import "../styles/Map.css";
 
 const placesService = { current: null };
 
@@ -8,7 +9,7 @@ function Map (props) {
     const map = useRef();
 
     const renderMap = useMemo(() => {
-      return <div ref={mapContainerRef} style={{ height: "35vh", width: "100%"}} />
+      return <div ref={mapContainerRef} className="map-container-div" />
     }, [mapCenter]);
 
     let placeId = props.placeId;
