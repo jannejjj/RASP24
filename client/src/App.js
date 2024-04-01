@@ -56,7 +56,7 @@ function App() {
     setLoading(true);
     if (!document.querySelector('#google-maps')) {
       loadScript(
-        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&libraries=places&loading=async`,
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&region=EN&language=en&libraries=places&loading=async`,
         document.querySelector('head'),
         'google-maps',
       );
