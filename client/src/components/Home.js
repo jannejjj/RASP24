@@ -194,6 +194,13 @@ function Home(props) {
     setNewEvent({...newEvent, ["joinDeadline"]: value});
   };
 
+  const handleLocationChange = (value) => {
+    if (value === null) {
+      return;
+    }
+    setNewEvent({...newEvent, ["location"]: {name: value.structured_formatting.main_text, placeId: value.place_id}});
+  }
+
   const cancelCreationOnClick = () => {
     setNewEvent({});
     if(checkedTicket) {
@@ -354,6 +361,7 @@ function Home(props) {
         handleStartTimeChange={handleStartTimeChange}
         handleEndTimeChange={handleEndTimeChange}
         handleJoinDeadlineChange={handleJoinDeadlineChange}
+        handleLocationChange={handleLocationChange}
         cancelCreationOnClick={cancelCreationOnClick}
         saveNewEventOnClick={saveNewEventOnClick}
         handleStartTimeError={handleStartTimeError}
