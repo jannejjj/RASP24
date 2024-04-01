@@ -6,10 +6,23 @@ import MyProfile from './components/MyProfile';
 import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef} from 'react';
+
+function loadScript(src, position, id) {
+  if (!position) {
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.setAttribute('async', '');
+  script.setAttribute('id', id);
+  script.src = src;
+  position.appendChild(script);
+}
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const googleLoaded = useRef(false);
   const [currentUser, setCurrentUser] = useState({
     admin: false,
     loggedIn: false,
@@ -38,6 +51,19 @@ function App() {
       }    
     }
   );
+
+  if (typeof window !== 'undefined' && !googleLoaded.current) {
+    setLoading(true);
+    if (!document.querySelector('#google-maps')) {
+      loadScript(
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&libraries=places&loading=async`,
+        document.querySelector('head'),
+        'google-maps',
+      );
+    }
+    googleLoaded.current = true;
+    setLoading(false);
+  }
 
   useEffect(() =>
   {
