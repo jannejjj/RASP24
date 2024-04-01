@@ -8,38 +8,13 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-function loadScript(src, position, id) {
-  if (!position) {
-    return;
-  }
-
-  const script = document.createElement('script');
-  script.setAttribute('async', '');
-  script.setAttribute('id', id);
-  script.src = src;
-  position.appendChild(script);
-  console.log('script loaded');
-}
-
 const autocompleteService = { current: null };
 
 function AutocompleteInput(props) {
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState([]);
-  const loaded = useRef(false);
 
-  if (typeof window !== 'undefined' && !loaded.current) {
-    if (!document.querySelector('#google-maps')) {
-      loadScript(
-        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&libraries=places&loading=async`,
-        document.querySelector('head'),
-        'google-maps',
-      );
-    }
-    loaded.current = true;
-  }
-  
   const fetch = useMemo(
     () =>
       debounce((request, callback) => {
