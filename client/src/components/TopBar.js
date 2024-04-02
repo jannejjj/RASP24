@@ -177,6 +177,7 @@ export default function TopBar(props) {
           {props.currentUser.loggedIn && <Button component={RouterLink} to='/MyProfile'
             color="inherit"
             disabled={selectedPage === "MyProfile"}
+            className="profile-button"
             disableRipple
             sx={{
               letterSpacing: ".1rem",
@@ -187,6 +188,19 @@ export default function TopBar(props) {
           >
             My profile
           </Button>}
+          <Button component={RouterLink} to='/Scheduler'
+            color="inherit"
+            disabled={selectedPage === "Scheduler"}
+            disableRipple
+            sx={{
+              letterSpacing: ".1rem",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+            }}
+            onClick={() => { setSelectedPage("Scheduler") }}
+          >
+            Scheduler
+          </Button>
           {!props.currentUser.loggedIn && <Button component={RouterLink} to='/Register'
             color="inherit"
             disabled={selectedPage === "Register"}
