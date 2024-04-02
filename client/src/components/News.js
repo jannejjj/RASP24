@@ -53,7 +53,7 @@ function News(props) {
   return (
     <div className="NewsBackground">
       <h1>News</h1>
-      <div className="HorizontalSeparator" style={{ width: "^95%" }} />
+      <div className="HorizontalSeparator" style={{ width: "50%" }} />
       {admin && (
           <Button color="primary" variant='contained' onClick={newPostModalOnlick} style={{margin: "10px 0 10px 0"}} >Add New Post</Button>
         )}
