@@ -47,6 +47,8 @@ function EventItem(props) {
   const [locationHistory, setLocationHistory] = useState(props.event.location);
   const [descriptionHistory, setDescriptionHistory] = useState(props.event.description);
 
+  const [loadingParticipation, setLoadingParticipation] = useState(true);
+  const [loadingLikes, setLoadingLikes] = useState(true);
 
   useEffect(() => { // Get event participants
     const fetchEventData = async () => {
@@ -64,6 +66,7 @@ function EventItem(props) {
         } else {
           setEventParticipantsData(null);
         }
+        setLoadingParticipation(false);
       } catch (error) {
         console.error('Error fetching event data:', error);
       }
@@ -291,6 +294,7 @@ function EventItem(props) {
       .then(data => 
         {
           setLiking(data.attending);
+          setLoadingLikes(false);
         }
       );
     }
@@ -298,7 +302,11 @@ function EventItem(props) {
     // Find out if the user is like this event or not
     confirmLike();
   }, []);
-
+    
+    if(loadingLikes || loadingParticipation) {
+      return null;
+    }
+    
     return (
       <div className="HomeEventItem">
         <div className="HomeEventTop">
