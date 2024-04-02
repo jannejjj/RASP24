@@ -4,6 +4,7 @@ var router = express.Router();
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
 const Member_event = require("../models/member_event");
+const Member_Event = require("../models/member_event");
 const Event = require("../models/event");
 const NewsPost = require("../models/newsPost");
 const Ticket = require("../models/ticket");
