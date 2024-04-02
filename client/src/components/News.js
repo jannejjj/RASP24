@@ -9,9 +9,18 @@ import CreateNewNewsPostModal from "../modals/CreateNewNewsPostModal";
 function News(props) {
 
   const [loading, setLoading] = useState(true);
+  const [newPost, setNewPost] = useState({});
   const [news, setNews] = useState([{}]);
+  const [update, setUpdate] = useState(false);
   const [admin, setAdmin] = useState(props.currentUser.admin);
   const [newPostModal, setNewPostModal] = useState(false);
+
+  const whenChanging = (event) => {
+    setNewPost({ ...newPost, [event.target.id]: event.target.value });
+  };
+
+  const toggleUpdate = () => { setUpdate(!update); }
+
   useEffect(() => {
     let mounted = true;
     setLoading(true);
@@ -19,7 +28,7 @@ function News(props) {
         let url = '/api/news';
         let response = await fetch(url, {headers: {
           "Content-type": "application/json",
-          "Authorization": "Bearer " + props.currentUser.token
+          "Authorization": "Bearer " + props.currentUser.token 
         }});
         let dataJson = await response.json();
         if (mounted) {
@@ -36,7 +45,7 @@ function News(props) {
       };
     }
     setLoading(false);
-  }, [])
+  }, [update])
 
   const newPostModalOnlick = () => {
     setNewPostModal(true);
@@ -46,7 +55,22 @@ function News(props) {
     setNewPostModal(false);
   };
 
-  const saveNewPostOnClick = () => {
+  const saveNewPostOnClick = async (e) => {
+    e.preventDefault();
+    await fetch("/api/news", {
+      method: "POST",
+      headers: {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+      },
+      body: JSON.stringify(newPost),
+      mode: "cors"
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log(data)
+      })
+    toggleUpdate();
     setNewPostModal(false);
   };
 
@@ -63,11 +87,12 @@ function News(props) {
 
         {props.currentUser.loggedIn
         ?
-        !loading && news.map((event, index) => (
+        !loading && news.map((post, index) => (
           <NewsItem
             currentUser={props.currentUser}
-            event={event}
+            post={post}
             key={index}
+            toggleUpdate={toggleUpdate}
           />
         ))
         :
@@ -80,6 +105,7 @@ function News(props) {
           newPostModal={newPostModal}
           cancelCreationOnClick={cancelCreationOnClick}
           saveNewPostOnClick={saveNewPostOnClick}
+          whenChanging={whenChanging}
         />
     </div>
   )

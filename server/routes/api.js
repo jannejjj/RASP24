@@ -287,14 +287,14 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
   });
 });
 
-router.post('/newsPost', passport.authenticate('jwt', {session: false}), async (req, res) => {
-  const NewsPost = new Event({
+router.post('/news', passport.authenticate('jwt', {session: false}), async (req, res) => {
+  const newsPost = new NewsPost({
       title: req.body.title,
       creator: req.body.creator,
       creatorId: req.body.creatorId,
       text: req.body.text
   });
-  NewsPost.save()
+  newsPost.save()
     .then(result => {
       res.json(result);
     })
