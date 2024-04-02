@@ -5,14 +5,12 @@ const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
 const Member_event = require("../models/member_event");
 const Event = require("../models/event");
-const Member_Event = require("../models/member_event");
+const NewsPost = require("../models/newsPost");
 const Ticket = require("../models/ticket");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
 const multer = require("multer");
-const member_event = require('../models/member_event');
-const member = require('../models/member');
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 var idFromToken = null;
@@ -39,6 +37,16 @@ router.get("/events",passport.authenticate('jwt', {session: false}), async (req,
   } catch (err) {
       console.error(err);
       res.send("No events.");
+  }
+});
+
+router.get("/news",passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+      const news  = await NewsPost.find({});
+      res.send(news);
+  } catch (err) {
+      console.error(err);
+      res.send("No news.");
   }
 });
 
@@ -274,6 +282,22 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
     tickets: 0
   });
   member_event.save()
+    .catch(err => {
+      console.log(err);
+  });
+});
+
+router.post('/newsPost', passport.authenticate('jwt', {session: false}), async (req, res) => {
+  const NewsPost = new Event({
+      title: req.body.title,
+      creator: req.body.creator,
+      creatorId: req.body.creatorId,
+      text: req.body.text
+  });
+  NewsPost.save()
+    .then(result => {
+      res.json(result);
+    })
     .catch(err => {
       console.log(err);
   });

@@ -107,6 +107,7 @@ export default function TopBar(props) {
             }}
           >
             <MenuItem component={RouterLink} to='/'>Home</MenuItem>
+            <MenuItem component={RouterLink} to='/News'>News</MenuItem>
             <MenuItem component={RouterLink} to='/Members'>Members</MenuItem>
             {props.currentUser.loggedIn && <MenuItem component={RouterLink} to='/MyProfile'>My Profile</MenuItem>}
             {!props.currentUser.loggedIn && <MenuItem component={RouterLink} to='/Register'>Register</MenuItem>}
@@ -159,6 +160,20 @@ export default function TopBar(props) {
             onClick={() => { setSelectedPage("Home") }}
           >
             Home
+          </Button>
+          <Button component={RouterLink} to='/News'
+            color="inherit"
+            className="members-button"
+            disabled={selectedPage === "News"}
+            disableRipple
+            sx={{
+              letterSpacing: ".1rem",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+            }}
+            onClick={() => { setSelectedPage("News") }}
+          >
+            News
           </Button>
           <Button component={RouterLink} to='/Members'
             color="inherit"
