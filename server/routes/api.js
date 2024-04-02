@@ -214,6 +214,23 @@ router.delete('/delete/member/:memberID', passport.authenticate('jwt', {session:
     }
 });
 
+// Delete the news post
+router.delete('/delete/post/:postID', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const postID = req.params.postID;
+
+    const deletedPost = await NewsPost.findOneAndDelete({_id: postID});
+
+    if (deletedPost)
+    {
+        return res.json({success: true});
+    }
+    else
+    {
+        return res.json({success: false});
+    }
+});
+
 router.get('/get/events/for/:id', async (req, res) =>
 {
     const id = req.params.id;
