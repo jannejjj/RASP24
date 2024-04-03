@@ -33,6 +33,7 @@ function News(props) {
         let dataJson = await response.json();
         if (mounted) {
             setNews(dataJson);
+            console.log(dataJson);
             setLoading(false);
         }
       }
@@ -87,7 +88,7 @@ function News(props) {
 
         {props.currentUser.loggedIn
         ?
-        !loading && news.map((post, index) => (
+        !loading && news.slice().reverse().map((post, index) => (
           <NewsItem
             currentUser={props.currentUser}
             post={post}

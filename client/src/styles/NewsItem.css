@@ -1,0 +1,28 @@
+.NewsItemBackground {
+    border-radius: 10px;
+    box-shadow: 0 0 5px #888;
+    padding: 15px;
+    width: 90%;
+    max-width: 700px;
+    margin: 10px 0 10px 0;
+}
+
+.NewsItemTop{
+    display: flex;
+}
+.NewsTitle{
+    flex: 3;
+    text-align: start;
+}
+.NewsItemTopDetails{
+    flex-direction: column;
+}
+.NewsItemCenter
+{
+    text-align: justify;
+}
+
+.NewsItemBottom {
+    margin: 10px 0 0 0;
+    display: flex;
+}

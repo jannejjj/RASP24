@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
-import { CardMedia } from '@mui/material';
 import Button from '@mui/material/Button';
 import ConfirmDeletePostModal from '../modals/ConfirmDeletePostModal';
+import "../styles/NewsItem.css";
+import "../App.css";
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PersonIcon from '@mui/icons-material/Person';
 
 function NewsItem(props) {
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
@@ -30,27 +30,34 @@ function NewsItem(props) {
     props.toggleUpdate();
   }
 
-  const card = (
-    <Box>
-      <CardMedia 
-        sx={{ width: '60%'}}
-      />
-      <Typography align='left' variant="h3" color="primary">
-        {props.post.title}
-      </Typography>
-      <Typography align='left' variant="h5" color="primary">
-        {props.post.text}
-      </Typography>
-      {props.currentUser.admin && <Button  sx={{ maxWidth: '110px', maxHeight: '40px', minWidth: '110px', minHeight: '40px'}}  size="medium" variant="contained" onClick={() => setOpenConfirmModal(true)}>Delete</Button>}  
-    </Box>
-  );
-
   return (
-    <div>
-       <Box sx={{width: '60%', margin: 'auto', mb: 1.5 }}>
-            <Card variant="outlined">{card}</Card>
-        </Box>
-        <ConfirmDeletePostModal openConfirmModal={openConfirmModal} setOpenConfirmModal={setOpenConfirmModal} deletePost={deletePost} />
+    <div className="NewsItemBackground">
+      <div className='NewsItemTop'>
+        <h2 className='NewsTitle'> {props.post.title}</h2>
+        <div className='NewsItemTopDetails'>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <PersonIcon sx={{ fontSize: '17px' }}/>
+            <p style={{ marginLeft: '5px' }}>
+              {props.post.creator}
+            </p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <AccessTimeIcon sx={{ fontSize: '17px' }}/>
+            <p style={{ marginLeft: '5px' }}>
+              {new Date(props.post.lastedited).toLocaleString()}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="HorizontalSeparator"/>
+      <div className='NewsItemCenter'>
+        <p>{props.post.text}</p>
+      </div>
+      <div className='NewsItemBottom'>
+        {props.currentUser.admin && <Button className='DeleteNewsButton' variant="contained" onClick={() => setOpenConfirmModal(true)}>Delete</Button>} 
+      </div>
+
+      <ConfirmDeletePostModal openConfirmModal={openConfirmModal} setOpenConfirmModal={setOpenConfirmModal} deletePost={deletePost} />
     </div> 
   )
 }
