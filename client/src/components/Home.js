@@ -7,7 +7,7 @@ import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
 import { ToastContainer } from 'react-toastify';
-import toast from "../common/Toast";
+import toasts from "../common/Toast";
 import 'react-toastify/dist/ReactToastify.css';
 import Typography from "@mui/material/Typography";
 
@@ -106,34 +106,6 @@ function Home(props) {
 
   const toggleUpdateEvents = () => {
     setUpdateEvents(!updateEvents);
-  }
-
-  const showToastMessage = (message) =>
-    {
-      toast.error(message, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: false,
-          progress: undefined,
-          theme: "dark"
-          });
-    }
-  
-  const showToastSuccessMessage = (message) =>  
-  {
-    toast.success(message, {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: "dark"
-        });
   }
 
   useEffect(() => {
@@ -297,16 +269,16 @@ function Home(props) {
             handleDeadlineSwitch();
           }
           } else {
-            showToastMessage("Starting time needs to be before ending time.");
+            toasts.showToastMessage("Starting time needs to be before ending time.");
           }
         } else {
-          showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
+          toasts.showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
         }
       } else {
-        showToastMessage("Ending time is not valid.");
+        toasts.showToastMessage("Ending time is not valid.");
       }
     } else {
-      showToastMessage("Starting time is not valid.");
+      toasts.showToastMessage("Starting time is not valid.");
     }
   };
 
@@ -337,8 +309,6 @@ function Home(props) {
             admin={admin}
             event={event}
             key={index}
-            showToastMessage={showToastMessage}
-            showToastSuccessMessage={showToastSuccessMessage}
             toggleUpdateEvents={toggleUpdateEvents}
           />
         ))
