@@ -12,7 +12,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import EventDetails from "./EventDetails";
 import TicketItem from "./TicketItem";
 import { Accordion, AccordionDetails, AccordionSummary, Tooltip } from "@mui/material";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import toasts from "../common/Toast";
 import dayjs from 'dayjs';
@@ -140,33 +140,6 @@ function EventItem(props) {
     setOpenParticipantsList(false);
   };
 
-  const showToastMessage = (message) =>
-{
-    toast.error(message, {
-        position: "top-center",
-        autoClose: 6000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: "dark"
-        });
-}
-const showToastMessageSuccesfull = (message) =>
-{
-    toast.success(message, {
-        position: "top-center",
-        autoClose: 6000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: "dark"
-        });
-};
-
 const savingErrorMessages = [
   "Starting time is not valid.",
   "Ending time is not valid.",
@@ -193,22 +166,18 @@ const savingRules = () => {
   const saveEditedEventOnClick = (e) => {
     e.preventDefault();
     let errorMessage = savingRules();
-    let successToast = false; //Doesn't work currently.
     if (errorMessage != ""){
-      console.log(errorMessage);
-      showToastMessage(errorMessage);
+      toasts.showToastMessage(errorMessage);
       return;
     }
-    console.log(checkedDeadline);
     if(!checkedDeadline) {
       editedEvent.joinDeadline = undefined;
     }
     editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
     editedEvent.creatorId = props.currentUser.id;
     editedEvent.id = props.event._id;
-    console.log(editedEvent);
     setEditedEvent(editedEvent);
-    fetch("/api/editEvent", { // TODO change url to event edit url
+    fetch("/api/editEvent", {
       method: "POST",
       headers: {
           "Content-type": "application/json",
@@ -220,20 +189,14 @@ const savingRules = () => {
     .then(response =>{
         if(response.status === 409){
           errorMessage = "tickets should be more than the tickets already sold";
-          console.log(errorMessage);
-          showToastMessage(errorMessage);
+          toasts.showToastMessage(errorMessage);
           return;
         }
         return response.json();
     } )
     .then(data => {
-      if (data) { 
-        // if(! successToast){
-        //   showToastMessageSuccesfull(`${data.event.ticketsSold} users will be notified of the changes`);
-        //   successToast = true;
-        // }
-        // For some reason the Toast is showing twice.
-        setEditedEvent({});
+      if (data) {
+        toasts.showToastSuccessMessage(`${data.event.ticketsSold} users will be notified of the changes`);
         // Close the Modal
         setEdit(false);
         props.toggleUpdateEvents();
@@ -301,7 +264,6 @@ const handleStartTimeError = (error) => {
   if(error == "disablePast"){
     setStartTimeError(false);
   }else{
-    console.log("Starting time error: " + error);
     setStartTimeError(true);
   }
 }
@@ -335,15 +297,11 @@ const handleJoinDeadlineError = (error) => {
     setEditedTitle(event.target.value);
   };
 
-  const handleTimeChange = (event) => {
-    setEditedTime(event.target.value);
-  };
-
   const handleLocationChange = (value) => {
     if (value === null) {
       return;
     }
-    setEditedLocation({name: value.structured_formatting.main_text, placeId: value.place_id});
+    setEditedEvent({...editedEvent, ["location"]: {name: value.structured_formatting.main_text, placeId: value.place_id}});
   }
 
   const handleDescriptionChange = (event) => {
@@ -480,7 +438,7 @@ const handleJoinDeadlineError = (error) => {
       );
     }
 
-    // Find out if the user is like this event or not
+    // Find out if the user is liking this event or not
     confirmLike();
   }, []);
 
@@ -615,14 +573,12 @@ const handleJoinDeadlineError = (error) => {
         </div>
   
         <EditEventModal
-        // visible
-          edit={edit}
+          edit={edit} // visibilty of the modal
           editedDescription={editedDescription}
           editedLocation={editedLocation}
           editedTime={editedTime}
           editedTitle={editedTitle}
           handleTitleChange={handleTitleChange}
-          handleTimeChange={handleTimeChange}
           handleLocationChange={handleLocationChange}
           handleDescriptionChange={handleDescriptionChange}
           cancelEditOnClick={cancelEditOnClick}
