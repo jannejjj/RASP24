@@ -86,6 +86,7 @@ function Details(props) {
     </div>
   );
 }
+  
 
 function Home(props) {
   const [admin, setAdmin] = useState(props.currentUser.admin);
@@ -101,6 +102,7 @@ function Home(props) {
   const [loading, setLoading] = useState(true);
   const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
+
 
   const toggleUpdateEvents = () => {
     setUpdateEvents(!updateEvents);
@@ -167,7 +169,6 @@ function Home(props) {
     } else {
       newEvent.joinDeadline = newEvent.startDate;
     }
-    
     setNewEvent(newEvent);
   }
 
