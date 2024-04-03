@@ -196,7 +196,6 @@ const savingRules = () => {
     } )
     .then(data => {
       if (data) {
-        toasts.showToastSuccessMessage(`${data.event.ticketsSold} users will be notified of the changes`);
         // Close the Modal
         setEdit(false);
         props.toggleUpdateEvents();
