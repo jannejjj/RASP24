@@ -38,9 +38,11 @@ function NewsItem(props) {
         if (!data.success) 
         {
           console.log("Error while deleting post!");
+          props.showToastMessage("Error while deleting post!");
         } 
       }
     );
+    props.showToastSuccessMessage("Post deleted.");    
     props.toggleUpdate();
   }
 

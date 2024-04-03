@@ -5,6 +5,8 @@ import "../styles/News.css";
 import '../App.css';
 import Button from "@mui/material/Button";
 import CreateNewNewsPostModal from "../modals/CreateNewNewsPostModal";
+import { ToastContainer } from 'react-toastify';
+import toast from "../common/Toast";
 
 /* Page that contains news. Admins can create news by pressing the 'add new post' button. */
 
@@ -82,6 +84,7 @@ function News(props) {
           console.log(data)
       })
     toggleUpdate();
+    toast.showToastSuccessMessage("New post created.");
     setNewPostModal(false);
   };
 
@@ -101,6 +104,8 @@ function News(props) {
           post={post}
           key={index}
           toggleUpdate={toggleUpdate}
+          showToastMessage={toast.showToastMessage}
+          showToastSuccessMessage={toast.showToastSuccessMessage}
         />
       ))
       :
@@ -116,6 +121,7 @@ function News(props) {
         saveNewPostOnClick={saveNewPostOnClick}
         whenChanging={whenChanging}
       />
+      <ToastContainer />
     </div>
   )
 }
