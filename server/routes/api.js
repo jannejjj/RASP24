@@ -452,6 +452,37 @@ router.post('/attend/event', passport.authenticate('jwt', {session: false}), asy
     }
 });
 
+router.post("/editEvent",passport.authenticate('jwt', {session: false}), async (req, res) => {
+    try {
+        const eventID = req.body.id;
+        const editedEvent = req.body;
+
+        const event = await Event.findById(eventID);
+
+        if (!event) {
+            return res.status(404).send('Event not found');
+        }
+        if(editedEvent.tickets < event.ticketsSold){
+            return res.status(409).send("tickets should be more than the tickets already sold");
+        }
+
+        event.location = editedEvent.location;
+        event.description = editedEvent.description;
+        event.price = editedEvent.price;
+        event.startDate = editedEvent.startDate;
+        event.joinDeadline = editedEvent.joinDeadline;   
+        event.endDate = editedEvent.endDate;
+        event.tickets = editedEvent.tickets;       
+
+        await event.save();
+        res.status(200).json({"event": event})
+    } catch (err) {
+        console.error(err);
+        res.json({success: false});
+    }
+});
+
+
 // Cancel the attendance to an event
 router.delete('/cancel/attendance/:eventID/:userID', passport.authenticate('jwt', {session: false}), async (req, res) =>
 {
@@ -514,6 +545,7 @@ router.get('/is/attending/:eventID/:userID', async (req, res) =>
         }
     });
 })
+
 
 router.post('/authenticate/token', (req, res) =>
 {

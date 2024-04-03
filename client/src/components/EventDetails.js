@@ -22,7 +22,7 @@ function EventDetails(props) {
 
   const localizedStartDate = new Date(props.startDate).toLocaleString("fi-FI", localeStringOptions);
   const localizedEndDate = props.endDate ? new Date(props.endDate).toLocaleString("fi-FI", localeStringOptions) : "Not specified";
-  const localizedDeadline = new Date(props.joinDeadline).toLocaleString("fi-FI", localeStringOptions);
+  const localizedDeadline = props.joinDeadline ? new Date(props.joinDeadline).toLocaleString("fi-FI", localeStringOptions) : "Not specified";
 
   return (
     <div className="EventDetailsSection">
