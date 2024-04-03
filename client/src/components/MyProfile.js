@@ -441,6 +441,7 @@ function MyProfile(props) {
 
   const fetchUsersEvents = async () =>
   {
+    setLoadingEvents(true);
     const response = await fetch('/api/get/events/for/' + props.currentUser.id, {
       method: "GET"
     })
@@ -449,6 +450,7 @@ function MyProfile(props) {
     {
       const data = await response.json();
       setEvents(data.events);
+      setLoadingEvents(false);
     }
   }
 
