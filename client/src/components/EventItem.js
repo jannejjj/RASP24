@@ -88,29 +88,29 @@ function EventItem(props) {
 
   }, [props.event]);
 
-  useEffect(() => { // Get event participants
-    const fetchEventData = async () => {
-      try {
-        const response = await fetch(`api/event/participants/${props.event._id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + props.currentUser.token,
-          }
-        });
-        const responseData = await response.json();
-        if (responseData && responseData.data && Array.isArray(responseData.data)) {
-          setEventParticipantsData(responseData.data);
-        } else {
-          setEventParticipantsData(null);
-        }
-      } catch (error) {
-        console.error('Error fetching event data:', error);
-      }
-    };
+  // useEffect(() => { // Get event participants
+  //   const fetchEventData = async () => {
+  //     try {
+  //       const response = await fetch(`api/event/participants/${props.event._id}`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': 'Bearer ' + props.currentUser.token,
+  //         }
+  //       });
+  //       const responseData = await response.json();
+  //       if (responseData && responseData.data && Array.isArray(responseData.data)) {
+  //         setEventParticipantsData(responseData.data);
+  //       } else {
+  //         setEventParticipantsData(null);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching event data:', error);
+  //     }
+  //   };
 
-    fetchEventData();
-  }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
+  //   fetchEventData();
+  // }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
 
   useEffect(() => {
     const data = 
@@ -137,7 +137,7 @@ function EventItem(props) {
     .catch(error => {
         console.error('Error fetching ticket status:', error);
     });
-  }, []);
+  }, [props.event]);
 
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);

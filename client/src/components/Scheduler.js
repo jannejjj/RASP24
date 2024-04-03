@@ -79,7 +79,13 @@ function SchedulerComponent(props) {
         <Grid item xs={5} sx={{mt:4, mb: 4}}>
           <h1> Calendar </h1>
         </Grid>
-        {props.currentUser.loggedIn ? 
+        {!props.currentUser.loggedIn && 
+        <Grid item xs={5} sx={{mt:4, mb: 4}}>
+        <Typography sx={{ mt: 20 }} variant='h4' align="center">
+          Please log in to see the Calendar.</Typography>
+        </Grid>
+          }
+        {props.currentUser.loggedIn && 
         <Grid item xs={2} sx={{pl:4 }} className="SchedulerEventContainer">  
           {selectedEvent !== null ? 
             <EventItem
@@ -94,11 +100,8 @@ function SchedulerComponent(props) {
             /> :
             <p>No event selected</p> 
           }
-        </Grid>
-        : 
-        <Typography sx={{ mt: 20 }} variant='h4' align="center">
-          Please log in to see events.</Typography>
-        }
+        </Grid>}
+        {props.currentUser.loggedIn && 
         <Grid item xs={3} sx={{height:"70vh", p:1, pr:4}}
           >
           <Calendar
@@ -109,7 +112,7 @@ function SchedulerComponent(props) {
             endAccessor="end"
             onSelectEvent={handleOnSelectEvent}
           />
-        </Grid>
+        </Grid>}
       </Grid>
       <ToastContainer />
     </div>
