@@ -88,30 +88,6 @@ function EventItem(props) {
 
   }, [props.event]);
 
-  // useEffect(() => { // Get event participants
-  //   const fetchEventData = async () => {
-  //     try {
-  //       const response = await fetch(`api/event/participants/${props.event._id}`, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': 'Bearer ' + props.currentUser.token,
-  //         }
-  //       });
-  //       const responseData = await response.json();
-  //       if (responseData && responseData.data && Array.isArray(responseData.data)) {
-  //         setEventParticipantsData(responseData.data);
-  //       } else {
-  //         setEventParticipantsData(null);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching event data:', error);
-  //     }
-  //   };
-
-  //   fetchEventData();
-  // }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
-
   useEffect(() => {
     const data = 
     {
@@ -247,6 +223,7 @@ const savingRules = () => {
         // Close the Modal
         setEdit(false);
         props.toggleUpdateEvents();
+        
       }
     });
   };
@@ -467,6 +444,9 @@ const handleJoinDeadlineError = (error) => {
       } else {
         toasts.showToastSuccessMessage(data.message);
         props.toggleUpdateEvents();
+        if(props.onDeletedEvent !== undefined){
+          props.onDeletedEvent();
+        }
       }
       setDeleteModal(false);
     });

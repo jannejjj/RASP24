@@ -62,9 +62,15 @@ function SchedulerComponent(props) {
   }, [updateEvents]);
 
   useEffect(traduceEvents, [events]);
+
   const handleOnSelectEvent = (e) => {
-    setSelectedEvent(events[e.ref]);
+      setSelectedEvent(events[e.ref]);
   };
+  const handleOnDeletedEvent = ()=>{
+    setSelectedEvent(null);
+    setUpdateEvents(!updateEvents);
+    console.log("here");
+  }
 
   const { views } = useMemo(
     () => ({
@@ -96,7 +102,8 @@ function SchedulerComponent(props) {
               accordionExpanded={true}
               showToastMessage={toasts.showToastMessage}
               showToastSuccessMessage={toasts.showToastSuccessMessage}
-              toggleUpdateEvents={handleOnSelectEvent}
+              toggleUpdateEvents={()=>{}}
+              onDeletedEvent={handleOnDeletedEvent}
             /> :
             <p>No event selected</p> 
           }
