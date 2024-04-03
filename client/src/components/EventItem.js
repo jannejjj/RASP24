@@ -77,6 +77,8 @@ function EventItem(props) {
     fetchEventData();
   }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
 
+  const [loadingParticipation, setLoadingParticipation] = useState(true);
+  const [loadingLikes, setLoadingLikes] = useState(true);
 
   useEffect(() => { // Get event participants
     const fetchEventData = async () => {
@@ -94,6 +96,7 @@ function EventItem(props) {
         } else {
           setEventParticipantsData(null);
         }
+        setLoadingParticipation(false);
       } catch (error) {
         console.error('Error fetching event data:', error);
       }
@@ -473,6 +476,7 @@ const handleJoinDeadlineError = (error) => {
       .then(data => 
         {
           setLiking(data.attending);
+          setLoadingLikes(false);
         }
       );
     }
@@ -480,7 +484,11 @@ const handleJoinDeadlineError = (error) => {
     // Find out if the user is like this event or not
     confirmLike();
   }, []);
-
+    
+    if(loadingLikes || loadingParticipation) {
+      return null;
+    }
+    
     return (
       <div className="HomeEventItem">
         <div className="HomeEventTop">
