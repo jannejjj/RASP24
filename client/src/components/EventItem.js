@@ -17,11 +17,6 @@ import PeopleIcon from '@mui/icons-material/People';
 
 function EventItem(props) {
 
-  const [editedEvent, setEditedEvent] = useState({});
-  const [startTimeError, setStartTimeError] = useState(false);
-  const [endTimeError, setEndTimeError] = useState(false);
-  const [joinDeadlineError, setJoinDeadlineError] = useState(false);
-
   // These states store the original event data
   const [like, setLiking] = useState(null);
   const [likes, setLikes] = useState(props.event.attendees);
@@ -49,6 +44,16 @@ function EventItem(props) {
   const [locationHistory, setLocationHistory] = useState(props.event.location);
   const [descriptionHistory, setDescriptionHistory] = useState(props.event.description);
 
+  useEffect(() => {
+    setLikes(props.event.attendees);
+    setTitle(props.event.title);
+    setLocation(props.event.location);
+    setDescription(props.event.description);
+    setTicketsSold(props.event.ticketsSold);
+    setTickets(props.event.tickets);
+    setPrice(props.event.price);
+
+  }, [props.event]);
 
   useEffect(() => { // Get event participants
     const fetchEventData = async () => {

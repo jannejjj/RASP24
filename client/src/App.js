@@ -6,7 +6,7 @@ import MyProfile from './components/MyProfile';
 import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
-import SchedulerComponent from './components/Sceduler';
+import SchedulerComponent from './components/Scheduler';
 import { useState, useEffect } from 'react';
 import "react-big-calendar/lib/css/react-big-calendar.css"
 

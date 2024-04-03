@@ -7,12 +7,12 @@
   flex-direction: row;
 }
 
-.SchedulerEventSelected{
-  flex: 1;
-}
-
 .SchedulerEvent{
   height: 100%;
+}
+
+.SchedulerEventContainer>div{
+  margin-top: 0px;
 }
 
 /* Custom styling of the Big calendar default theme */
