@@ -11,7 +11,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 const autocompleteService = { current: null };
 
 function AutocompleteInput(props) {
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState(props.value || null);
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState([]);
 
@@ -83,8 +83,8 @@ function AutocompleteInput(props) {
         <TextField {...params} label="Location" fullWidth required/>
       )}
       renderOption={(props, option) => {
-        const matches =
-          option.structured_formatting.main_text_matched_substrings || [];
+        if (!option.structured_formatting) return null;
+        const matches = option.structured_formatting.main_text_matched_substrings || [];
 
         const parts = parse(
           option.structured_formatting.main_text,
