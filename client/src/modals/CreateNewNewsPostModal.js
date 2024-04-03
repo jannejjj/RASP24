@@ -7,6 +7,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
+/* Modal with a form that opens when the button for creating a news post is pressed. Submit creates the post. */
 function CreateNewNewsPostModal(props)
 {
     return (

@@ -6,21 +6,26 @@ import '../App.css';
 import Button from "@mui/material/Button";
 import CreateNewNewsPostModal from "../modals/CreateNewNewsPostModal";
 
-function News(props) {
+/* Page that contains news. Admins can create news by pressing the 'add new post' button. */
 
+function News(props) {
   const [loading, setLoading] = useState(true);
   const [newPost, setNewPost] = useState({});
   const [news, setNews] = useState([{}]);
   const [update, setUpdate] = useState(false);
   const [admin, setAdmin] = useState(props.currentUser.admin);
+  /* True/False for opening the new post creation modal */
   const [newPostModal, setNewPostModal] = useState(false);
 
+  /* Updating the textfield information when creating a new post */
   const whenChanging = (event) => {
     setNewPost({ ...newPost, [event.target.id]: event.target.value });
   };
 
+  /* when used, fetches the news posts from the backend */
   const toggleUpdate = () => { setUpdate(!update); }
 
+  /* Fetches news from the backend */
   useEffect(() => {
     let mounted = true;
     setLoading(true);
@@ -48,16 +53,21 @@ function News(props) {
     setLoading(false);
   }, [update])
 
+  /* Opens the new post creation modal */
   const newPostModalOnlick = () => {
     setNewPostModal(true);
   };
 
+  /* Closes the new post creation modal */
   const cancelCreationOnClick = () => {
     setNewPostModal(false);
   };
 
+  /* Saves the new news post to the backend */
   const saveNewPostOnClick = async (e) => {
     e.preventDefault();
+    newPost.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
+    newPost.creatorId = props.currentUser.id;
     await fetch("/api/news", {
       method: "POST",
       headers: {
@@ -82,32 +92,30 @@ function News(props) {
       {admin && (
           <Button color="primary" variant='contained' onClick={newPostModalOnlick} style={{margin: "10px 0 10px 0"}} >Add New Post</Button>
         )}
-      {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">
-            Loading...
-          </Typography>}
-
-        {props.currentUser.loggedIn
-        ?
-        !loading && news.slice().reverse().map((post, index) => (
-          <NewsItem
-            currentUser={props.currentUser}
-            post={post}
-            key={index}
-            toggleUpdate={toggleUpdate}
-          />
-        ))
-        :
-        <Typography sx={{ mt: 20 }} variant='h4' align="center">
-          Please log in to see news.</Typography>
-        }
-        <Typography sx={{ mt: 20 }} variant='h4' align="center">{!news?.length>0 && "No news."}</Typography>
-
-        <CreateNewNewsPostModal
-          newPostModal={newPostModal}
-          cancelCreationOnClick={cancelCreationOnClick}
-          saveNewPostOnClick={saveNewPostOnClick}
-          whenChanging={whenChanging}
+      {loading && <Typography sx={{ mt: 20 }} variant='h4' align="center">Loading...</Typography>}
+      {props.currentUser.loggedIn
+      ?
+      !loading && news.slice().reverse().map((post, index) => (
+        <NewsItem
+          currentUser={props.currentUser}
+          post={post}
+          key={index}
+          toggleUpdate={toggleUpdate}
         />
+      ))
+      :
+      <Typography sx={{ mt: 20 }} variant='h4' align="center">
+        Please log in to see news.</Typography>
+      }
+
+      <Typography sx={{ mt: 20 }} variant='h4' align="center">{!news?.length>0 && "No news."}</Typography>
+
+      <CreateNewNewsPostModal
+        newPostModal={newPostModal}
+        cancelCreationOnClick={cancelCreationOnClick}
+        saveNewPostOnClick={saveNewPostOnClick}
+        whenChanging={whenChanging}
+      />
     </div>
   )
 }

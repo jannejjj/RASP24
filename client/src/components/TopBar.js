@@ -13,7 +13,6 @@ import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 
 export default function TopBar(props) {
-  const [language, setLanguage] = useState("EN");
   const [selectedPage, setSelectedPage] = useState("");
   const [anchorElNav, setAnchorElNav] = useState(null);
   let navigate = useNavigate();
@@ -25,12 +24,7 @@ export default function TopBar(props) {
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-
   // These 2 functions are just here to show that the buttons are clickable and do something
-
-  const toggleLanguage = (lan) => {
-    setLanguage(lan);
-  };
 
   //Removes Token from localStorage
   const logout = () => {
@@ -218,27 +212,6 @@ export default function TopBar(props) {
         </Box>
 
         <Box sx={{ display: { xs: "none", md: "flex" } }}>
-          <Button
-            color="inherit"
-            className="fi-button"
-            disabled={language === "FI"}
-            sx={{ letterSpacing: ".1rem" }}
-            onClick={() => {
-              toggleLanguage("FI");
-            }}
-          >
-            FI
-          </Button>
-          <Button
-            color="inherit"
-            disabled={language === "EN"}
-            sx={{ letterSpacing: ".1rem" }}
-            onClick={() => {
-              toggleLanguage("EN");
-            }}
-          >
-            EN
-          </Button>
           {props.currentUser.loggedIn && <Button
             color="inherit"
             onClick={logout}

@@ -6,9 +6,23 @@ import "../App.css";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PersonIcon from '@mui/icons-material/Person';
 
+/* Contains a single news post with details and a delete button */
+
+/* Options for displaying the time */
+const localeStringOptions = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Europe/Helsinki"
+}
+
 function NewsItem(props) {
+  /* True/False for opening the deletion confirmation modal */
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
+  /* Deletes the post */
   const deletePost = async () =>
   {
     fetch('/api/delete/post/' + props.post._id, {
@@ -44,7 +58,7 @@ function NewsItem(props) {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <AccessTimeIcon sx={{ fontSize: '17px' }}/>
             <p style={{ marginLeft: '5px' }}>
-              {new Date(props.post.lastedited).toLocaleString()}
+              {new Date(props.post.lastedited).toLocaleString("fi-FI", localeStringOptions)}
             </p>
           </div>
         </div>

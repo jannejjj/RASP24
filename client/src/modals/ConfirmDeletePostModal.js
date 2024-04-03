@@ -5,6 +5,8 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 
+
+/* Confirmation modal that opens when an admin tries to delete a news post. */
 function ConfirmDeletePostModal(props)
 {
     return (

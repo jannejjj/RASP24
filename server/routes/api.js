@@ -31,6 +31,7 @@ router.get("/members/", passport.authenticate('jwt', {session: false}), async (r
     }
 });
 
+/* Finds all events */
 router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
       const events  = await Event.find({});
@@ -41,6 +42,7 @@ router.get("/events",passport.authenticate('jwt', {session: false}), async (req,
   }
 });
 
+/* Finds all news */
 router.get("/news",passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
       const news  = await NewsPost.find({});
@@ -305,6 +307,7 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
   });
 });
 
+/* Creates news post */
 router.post('/news', passport.authenticate('jwt', {session: false}), async (req, res) => {
   const newsPost = new NewsPost({
       title: req.body.title,
