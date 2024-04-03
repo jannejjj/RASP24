@@ -157,9 +157,12 @@ function EventItem(props) {
     setEditedTime(event.target.value);
   };
 
-  const handleLocationChange = (event) => {
-    setEditedLocation(event.target.value);
-  };
+  const handleLocationChange = (value) => {
+    if (value === null) {
+      return;
+    }
+    setEditedLocation({name: value.structured_formatting.main_text, placeId: value.place_id});
+  }
 
   const handleDescriptionChange = (event) => {
     setEditedDescription(event.target.value);
