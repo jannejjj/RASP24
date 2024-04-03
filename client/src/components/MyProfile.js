@@ -4,6 +4,7 @@ import '../App.css';
 import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
 import PayMembershipModal from '../modals/PayMembershipModal';
+import UploadImageModal from '../modals/UploadImageModal';
 import EventItem from './EventItem';
 import { ToastContainer } from 'react-toastify';
 import toasts from '../common/Toast';
@@ -44,6 +45,9 @@ function ProfileItem(props) {
   const [cityHistory, setCityHistory] = useState(props.City);
   const [countryHistory, setCountryHistory] = useState(props.Country);
   const [emailHistory, setEmailHistory] = useState(props.Email);
+
+  const[uploadImage, setUploadImage] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const localeStringOptions = {
     year: "numeric",
@@ -290,6 +294,35 @@ function ProfileItem(props) {
     setEditedEmail(event.target.value);
   };
 
+  const handleImageChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+  const saveImageOnClick = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+
+      const response = await fetch(`/users/updateImage/${props.currentUser.id}`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      console.log(data);
+      return data._id; 
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  }
+  const cancelImageOnClick = () => {
+    setUploadImage(false);
+  }
+
+  const uploadOnClick = () => {
+    setUploadImage(true);
+  };
+
   useEffect(() =>
   {
     const expirationDate = new Date(props.membershipExpirationDate);
@@ -311,6 +344,7 @@ function ProfileItem(props) {
       </div>
 
       <Button variant='outlined' onClick={editOnClick} >Edit Information</Button>
+      <Button variant='outlined' onClick={uploadOnClick} >Upload Profile Image</Button>
 
       <div className='HorizontalSeparator' style={{maxWidth: "400px"}} />
 
@@ -361,6 +395,12 @@ function ProfileItem(props) {
           price={membershipPrice}
         />
       </div>
+      <UploadImageModal
+        upload = {uploadImage}
+        handleImageChange = {handleImageChange}
+        saveImageOnClick = {saveImageOnClick}
+        cancelImageOnClick = {cancelImageOnClick}
+      />
 
       <EditDetailsModal 
         edit={edit} 
@@ -388,6 +428,7 @@ function ProfileItem(props) {
 
 function MyProfile(props) {
   const [user, setUser ] = useState();
+  const [image, setImage] = useState("");
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [selectedView, setSelectedView] = useState("Information");
@@ -451,6 +492,18 @@ function MyProfile(props) {
       setEvents(data.events);
     }
   }
+  const fetchUsersImage = async () =>
+  {
+    const response = await fetch(`/users/getImage/${props.currentUser.id}`, {
+      method: "GET"
+    })
+    
+    if (response)
+    {
+      const data = await response.json();
+      console.log(data);
+    }
+  }
 
   useEffect(() => {
     // Fetches the users personal information
@@ -458,6 +511,9 @@ function MyProfile(props) {
 
     // Fetches the events the user is currently participating in
     fetchUsersEvents();
+
+    // Fetches the profile image of the current user 
+    fetchUsersImage();
     
     // When the user refreshes the page, check which of the views was selected and scroll into that
     const selectedView_stored = sessionStorage.getItem('AssocEase_MyProfileSelectedView');

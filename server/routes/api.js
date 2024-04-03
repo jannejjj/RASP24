@@ -132,6 +132,7 @@ router.post('/register',
                         membershipPaid: false,
                         membershipPaidDate: null,
                         membershipExpirationDate: null,
+                        profileImage: null,
                         admin: 0
                     });
                     member.save()

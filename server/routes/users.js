@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
+const multer = require('multer');
 const Member = require("../models/member");
+const Image = require("../models/image");
+
+const storage = multer.memoryStorage(); 
+const upload = multer({ storage: storage });
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -25,6 +30,50 @@ router.get('/getData/:userId', async (req, res) => {
   } catch (error) {
     console.error('Error fetching user data:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.get('/getImage/:userId', upload.single('image'), async (req, res) => {
+  try{
+    const id   = req.params.userId;
+    if (!id) {
+      return res.status(400).json({ error: 'id parameter is required' });
+    }
+    const userData = await Member.findById(id);
+    if (!userData) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const imageId = userData.profileImage;
+    const imageData = await Image.findById(imageId);
+    res.json(imageData);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.post('/updateImage/:userId', upload.single('image'), async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const newImage = new Image({
+      buffer: req.file.buffer,
+      mimetype: req.file.mimetype,
+      name: req.file.originalname,
+      encoding: 'base64'
+    });
+  
+    const savedImage = await newImage.save();
+
+    const user = await Member.findById(userId);
+    if(!user){
+      return res.status(404).json({message: "no hay usuario"});
+    }
+    user.profileImage = savedImage._id;
+    await user.save();
+
+    res.status(201).json(savedImage);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to upload image', error: error.message });
   }
 });
 

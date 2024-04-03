@@ -17,10 +17,10 @@ let memberSchema = new Schema ({
     membershipPaid: {type: Boolean},
     membershipPaidDate: {type: Date},
     membershipExpirationDate: {type: Date},
-    profileImage:[{
+    profileImage:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'
-      }]
+      }
 });
 
 module.exports = mongoose.model("member", memberSchema);
