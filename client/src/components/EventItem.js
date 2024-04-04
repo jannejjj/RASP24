@@ -199,6 +199,7 @@ const savingRules = () => {
         // Close the Modal
         setEdit(false);
         props.toggleUpdateEvents();
+        toasts.showToastSuccessMessage("Event edited successfully!");
       }
     });
   };
@@ -415,7 +416,7 @@ const handleJoinDeadlineError = (error) => {
       if (data.error) {
         toasts.showToastMessage(data.error);
       } else {
-        toasts.showToastSuccessMessage(data.message);
+        toasts.showToastSuccessMessage("Event deleted succesfully!");
         props.toggleUpdateEvents();
       }
       setDeleteModal(false);
@@ -632,7 +633,6 @@ const handleJoinDeadlineError = (error) => {
           currentUser={props.currentUser}
           eventParticipantsData={eventParticipantsData}
         />
-        <ToastContainer />
       </div>
     );
 }

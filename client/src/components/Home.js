@@ -262,6 +262,7 @@ function Home(props) {
           setNewEventModal(false);
           // Update events list by toggling the boolean
           toggleUpdateEvents();
+          toasts.showToastSuccessMessage("Event created successfully!");
           if(checkedTicket) {
             resetTickets();
           }
