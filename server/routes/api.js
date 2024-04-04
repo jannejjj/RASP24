@@ -606,14 +606,16 @@ cron.schedule("0 0 * * * *", async () =>
                 secure: true,
                 auth:
                 {
-                    user: process.env.EMAIL,
-                    pass: process.env.PASS
+                    user: "assocease@gmail.com",
+                    // This password is an App Password that was created for this example email address.
+                    // It can't be used to normally login to the gmail service.
+                    pass: "izdn grhs ymwm lxmx"
                 }
             }
         );
     
         const mailOptions = {
-            from: process.env.EMAIL,
+            from: "assocease@gmail.com",
             to: emails_string,
             subject: 'Event reminder from AssocEase',
             text: message
