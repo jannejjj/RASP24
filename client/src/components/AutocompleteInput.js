@@ -10,11 +10,15 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const autocompleteService = { current: null };
 
+/* MUI Autocomplete input field for searching locations using Google Places API.
+   For reference, see https://mui.com/material-ui/react-autocomplete/#google-maps-place */
+
 function AutocompleteInput(props) {
   const [value, setValue] = useState(props.value || null);
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState([]);
 
+  /* Debounce to limit the number of requests */
   const fetch = useMemo(
     () =>
       debounce((request, callback) => {
@@ -23,9 +27,11 @@ function AutocompleteInput(props) {
     [],
   );
 
+  /* useEffect hook to fetch location predictions when input changes */
   useEffect(() => {
     let active = true;
 
+    /* Check if autocompleteservice is loaded */
     if (!autocompleteService.current && window.google) {
       autocompleteService.current = new window.google.maps.places.AutocompleteService();
     }
@@ -33,19 +39,23 @@ function AutocompleteInput(props) {
       return undefined;
     }
 
+    /* If input is empty, return an empty array */
     if (inputValue === "") {
       setOptions(value ? [value] : []);
       return undefined;
     }
 
+    /* If not, fetch location predictions */
     fetch({ input: inputValue, language: "en", componentRestrictions: {country: "fi"}}, (results) => {
       if (active) {
         let newOptions = [];
 
+        /* Include search value in the options */
         if (value) {
           newOptions = [value];
         }
 
+        /* Include search results in the options */
         if (results) {
           newOptions = [...newOptions, ...results];
         }
@@ -79,13 +89,16 @@ function AutocompleteInput(props) {
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
+      /* The input field to be rendered */
       renderInput={(params) => (
         <TextField {...params} label="Location" fullWidth required/>
       )}
+      /* The format of the location options in the dropdown */
       renderOption={(props, option) => {
         if (!option.structured_formatting) return null;
-        const matches = option.structured_formatting.main_text_matched_substrings || [];
 
+        /* Parse the option parts returned from the Places API for highlighting */
+        const matches = option.structured_formatting.main_text_matched_substrings || [];
         const parts = parse(
           option.structured_formatting.main_text,
           matches.map((match) => [match.offset, match.offset + match.length]),
