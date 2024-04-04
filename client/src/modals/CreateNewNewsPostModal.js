@@ -19,7 +19,7 @@ function CreateNewNewsPostModal(props)
           <div className='HorizontalSeparator' />
           <form onSubmit={props.saveNewPostOnClick} onChange={props.whenChanging} className='createNewEventForm' >
                 <TextField fullWidth required label={'Title'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 0.5}} />
-                <TextField fullWidth multiline required label={'Text'} type="text" id="text" sx={{m: 0.5}} maxRows={10} />
+                <TextField fullWidth multiline required label={'Text'} type="text" id="text" sx={{m: 0.5}} minRows={10} maxRows={20} />
                 <p className='HintParagraphSmall' >Required *</p>
                 <div className='ModalButtonArea'>
                   <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>

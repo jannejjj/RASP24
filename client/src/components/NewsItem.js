@@ -67,7 +67,7 @@ function NewsItem(props) {
       </div>
       <div className="HorizontalSeparator"/>
       <div className='NewsItemCenter'>
-        <p>{props.post.text}</p>
+        <p style={{whiteSpace: "pre-wrap"}}>{props.post.text}</p>
       </div>
       <div className='NewsItemBottom'>
         {props.currentUser.admin && <Button className='DeleteNewsButton' variant="contained" onClick={() => setOpenConfirmModal(true)}>Delete</Button>} 
