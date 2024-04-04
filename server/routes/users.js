@@ -44,8 +44,12 @@ router.get('/getImage/:userId', upload.single('image'), async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     const imageId = userData.profileImage;
-    const imageData = await Image.findById(imageId);
-    res.json(imageData);
+    if(imageId!= null){
+      const imageData = await Image.findById(imageId);
+      res.json(imageData);
+    }else{
+      return res.status(404).json({error: "the user doesn't have a profile picture"});
+    }
   } catch (error) {
     console.error('Error fetching user data:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -55,6 +59,13 @@ router.get('/getImage/:userId', upload.single('image'), async (req, res) => {
 router.post('/updateImage/:userId', upload.single('image'), async (req, res) => {
   try {
     const userId = req.params.userId;
+    const user = await Member.findById(userId);
+    if(!user){
+      return res.status(404).json({message: "no hay usuario"});
+    }
+    if(user.profileImage != null){
+      await Image.findByIdAndDelete(user.profileImage);
+    }
     const newImage = new Image({
       buffer: req.file.buffer,
       mimetype: req.file.mimetype,
@@ -64,10 +75,7 @@ router.post('/updateImage/:userId', upload.single('image'), async (req, res) => 
   
     const savedImage = await newImage.save();
 
-    const user = await Member.findById(userId);
-    if(!user){
-      return res.status(404).json({message: "no hay usuario"});
-    }
+    
     user.profileImage = savedImage._id;
     await user.save();
 
