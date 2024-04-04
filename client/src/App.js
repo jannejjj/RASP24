@@ -52,11 +52,12 @@ function App() {
     }
   );
 
+  /* Load Google Maps API */
   if (typeof window !== 'undefined' && !googleLoaded.current) {
     setLoading(true);
     if (!document.querySelector('#google-maps')) {
       loadScript(
-        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&region=EN&language=en&libraries=places&loading=async`,
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&region=EN&language=en&libraries=places,marker&loading=async`,
         document.querySelector('head'),
         'google-maps',
       );
@@ -65,6 +66,7 @@ function App() {
     setLoading(false);
   }
 
+  /* Authenticate user */
   useEffect(() =>
   {
     const tokenFromStorage = localStorage.getItem("AssocEase_Token");
