@@ -47,6 +47,22 @@ router.get("/events",passport.authenticate('jwt', {session: false}), async (req,
   }
 });
 
+router.get("/old/events/", passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    try 
+    {
+        const currentTime = new Date();
+
+        const events  = await Event.find({ endDate: { $lt: currentTime } }).sort({ startDate: 1 });
+        return res.send(events);
+    } 
+    catch (err) 
+    {
+        console.error("Error while fetching old events:\n" + err);
+        return res.send("No events.");
+    }
+});
+
 router.post('/login',
   upload.none(),
   body("email").trim().escape(),

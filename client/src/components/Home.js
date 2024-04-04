@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import toast from "../common/Toast";
 import 'react-toastify/dist/ReactToastify.css';
 import Typography from "@mui/material/Typography";
+import { IoIosArrowDown } from "react-icons/io";
 
 function Details(props) {
   const [admin, setAdmin] = useState(props.admin);
@@ -102,6 +103,8 @@ function Home(props) {
   const [loading, setLoading] = useState(true);
   const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
+  const [pastEvents, setPastEvents] = useState([]);
+  const [showPastEvents, setShowPastEvents] = useState(false);
 
 
   const toggleUpdateEvents = () => {
@@ -226,6 +229,7 @@ function Home(props) {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
+
     async function fetchEvents() {
         let url = '/api/events';
         let response = await fetch(url, {headers: {
@@ -238,10 +242,33 @@ function Home(props) {
             setLoading(false);
         }
       }
+    
+    async function fetchOldEvents()
+    {
+      const response = await fetch('/api/old/events', 
+      {
+        headers: 
+        {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        }
+      });
+
+      const dataJson = await response.json();
+      if (mounted) {
+          setPastEvents(dataJson);
+          setLoading(false);
+      }
+    }
     // Only for users that have logged in
     if (props.currentUser.loggedIn)
     {
       fetchEvents();
+      if (props.currentUser.admin)
+      {
+        fetchOldEvents();
+      }
+
       return () => {
           mounted = false;
       };
@@ -340,7 +367,35 @@ function Home(props) {
           Please log in to see events.</Typography>
         }
 
-        <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
+        {!events?.length > 0 &&
+          <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
+        }
+
+        {(props.currentUser.admin && pastEvents.length > 0) &&
+          <div className="HomePastEvents">
+            <div className="ShowPastEventsButton" onClick={() => {setShowPastEvents(!showPastEvents)}}>
+              <h3>{showPastEvents ? "Hide" : "Show"} Past Events</h3>
+              <div className="HorizontalSeparator" />
+              <IoIosArrowDown className="ShowPastEventsArrow" style={showPastEvents && {transform: "rotate(180deg)"}} />
+            </div>
+
+            {showPastEvents &&
+              !loading && pastEvents.map((event, index) => (
+                <EventItem
+                  currentUser={props.currentUser}
+                  user={user}
+                  admin={admin}
+                  event={event}
+                  key={index}
+                  oldEvent={true}
+                  showToastMessage={showToastMessage}
+                  showToastSuccessMessage={showToastSuccessMessage}
+                  toggleUpdateEvents={toggleUpdateEvents}
+                />
+                ))
+            }
+          </div>
+        }
       </div>
 
       <CreateEventModal
