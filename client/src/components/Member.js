@@ -16,6 +16,20 @@ import Tooltip from '@mui/material/Tooltip';
 function Member(props) {
   const [openManageMemberModal, setOpenManageMemberModal] = useState(false);
 
+  // Function to convert buffer to base64 URL
+  const bufferToDataURL = (buffer, mimeType) => {
+
+    const uint8Array = new Uint8Array(buffer);
+      // Convert the Uint8Array to a Base64 string
+      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const imageUrl = `data:${mimeType};base64,${btoa(base64String)}`; 
+    return imageUrl;
+  };
+
+  const imageUrl = props.profilePicture
+    ? bufferToDataURL(props.profilePicture.buffer.data, props.profilePicture.mimetype) 
+    : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+
   // Delete the memner from the association
   const deleteMember = async () =>
   {
@@ -85,7 +99,7 @@ function Member(props) {
         <CardMedia 
           component='img'
           sx={{ width: '100px', height: '100px', m: 1, borderRadius: 1}}
-          image='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
+          image={imageUrl}
           alt={'Profile picture for ' + props.member.firstname + ' ' + props.member.lastname + '.'}
         />
         <Box sx={{m: 1}}>

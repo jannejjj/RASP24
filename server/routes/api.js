@@ -5,6 +5,7 @@ const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
 const Member_event = require("../models/member_event");
 const Event = require("../models/event");
+const Image = require("../models/image");
 const Member_Event = require("../models/member_event");
 const Ticket = require("../models/ticket");
 const bcrypt = require("bcryptjs");
@@ -24,7 +25,7 @@ router.use(passport.initialize());
 //finds all the members in the DB if authenticated
 router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
-      const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1});
+      const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1}).populate('profileImage');
       res.send(members);
     } catch (err) {
       console.error('Error fetching member data:', err);
