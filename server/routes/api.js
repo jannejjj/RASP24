@@ -33,12 +33,17 @@ router.get("/members/", passport.authenticate('jwt', {session: false}), async (r
 });
 
 router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
-  try {
-      const events  = await Event.find({});
-      res.send(events);
-  } catch (err) {
-      console.error(err);
-      res.send("No events.");
+  try 
+  {
+    const currentTime = new Date();
+
+    const events  = await Event.find({ endDate: { $gte: currentTime } }).sort({ startDate: 1 });
+    return res.send(events);
+  } 
+  catch (err) 
+  {
+    console.error("Error while fetching events:\n" + err);
+    return res.send("No events.");
   }
 });
 
