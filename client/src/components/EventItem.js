@@ -573,7 +573,7 @@ const handleJoinDeadlineError = (error) => {
         </div>
   
         <EditEventModal
-          edit={edit} // visibilty of the modal
+          edit={edit} // Visibility of the modal
           editedDescription={editedDescription}
           editedLocation={editedLocation}
           editedTime={editedTime}
