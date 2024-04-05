@@ -714,7 +714,7 @@ cron.schedule("0 0 * * * *", async () =>
 
 // I created this non-async function that calls the actual async function that sends the emails.
 // This way the route that does the event update doesn't have to wait for this to finish before
-// before notifying the frontend.
+// notifying the frontend.
 const SendEventEditionNotification = (event) =>
 {
     CreateAndSendNotifications(event)
