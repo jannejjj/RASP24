@@ -4,8 +4,9 @@ var router = express.Router();
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
 const Member_event = require("../models/member_event");
-const Event = require("../models/event");
 const Member_Event = require("../models/member_event");
+const Event = require("../models/event");
+const NewsPost = require("../models/newsPost");
 const Ticket = require("../models/ticket");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -33,13 +34,25 @@ router.get("/members/", passport.authenticate('jwt', {session: false}), async (r
     }
 });
 
-router.get("/events", passport.authenticate('jwt', {session: false}), async (req, res) => {
+/* Finds all events */
+router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
       const events  = await Event.find({});
       res.send(events);
   } catch (err) {
       console.error(err);
       res.send("No events.");
+  }
+});
+
+/* Finds all news */
+router.get("/news",passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+      const news  = await NewsPost.find({});
+      res.send(news);
+  } catch (err) {
+      console.error(err);
+      res.send("No news.");
   }
 });
 
@@ -207,6 +220,23 @@ router.delete('/delete/member/:memberID', passport.authenticate('jwt', {session:
     }
 });
 
+// Delete the news post
+router.delete('/delete/post/:postID', passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    const postID = req.params.postID;
+
+    const deletedPost = await NewsPost.findOneAndDelete({_id: postID});
+
+    if (deletedPost)
+    {
+        return res.json({success: true});
+    }
+    else
+    {
+        return res.json({success: false});
+    }
+});
+
 router.get('/get/events/for/:id', async (req, res) =>
 {
     const id = req.params.id;
@@ -275,6 +305,23 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
     tickets: 0
   });
   member_event.save()
+    .catch(err => {
+      console.log(err);
+  });
+});
+
+/* Creates news post */
+router.post('/news', passport.authenticate('jwt', {session: false}), async (req, res) => {
+  const newsPost = new NewsPost({
+      title: req.body.title,
+      creator: req.body.creator,
+      creatorId: req.body.creatorId,
+      text: req.body.text
+  });
+  newsPost.save()
+    .then(result => {
+      res.json(result);
+    })
     .catch(err => {
       console.log(err);
   });

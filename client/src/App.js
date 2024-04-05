@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Members from './components/Members';
 import Home from './components/Home';
 import MyProfile from './components/MyProfile';
+import News from './components/News';
 import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -82,6 +83,7 @@ function App() {
           <TopBar currentUser={currentUser} setCurrentUser={setCurrentUser} />
           <Routes>
           <Route path="/Members" element={<Members currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
+          <Route path="/News" element={<News currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           <Route path="/" element={<Home currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           {/* If the user is not logged in and they go to the MyProfile url, they are rerouted to the home page */}
           <Route path="/MyProfile" element={currentUser.loggedIn ? ( <MyProfile currentUser={currentUser} setCurrentUser={setCurrentUser} /> ) : ( <Home currentUser={currentUser} setCurrentUser={setCurrentUser} /> )} />
