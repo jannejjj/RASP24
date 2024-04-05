@@ -14,6 +14,9 @@ const passport = require('passport');
 const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({storage});
+const nodemailer = require('nodemailer');
+const cron = require("node-cron");
+const ticket = require('../models/ticket');
 var idFromToken = null;
 
 
@@ -497,6 +500,37 @@ router.post('/attend/event', passport.authenticate('jwt', {session: false}), asy
     }
 });
 
+router.post("/editEvent",passport.authenticate('jwt', {session: false}), async (req, res) => {
+    try {
+        const eventID = req.body.id;
+        const editedEvent = req.body;
+
+        const event = await Event.findById(eventID);
+
+        if (!event) {
+            return res.status(404).send('Event not found');
+        }
+        if(editedEvent.tickets < event.ticketsSold){
+            return res.status(409).send("tickets should be more than the tickets already sold");
+        }
+
+        event.location = editedEvent.location;
+        event.description = editedEvent.description;
+        event.price = editedEvent.price;
+        event.startDate = editedEvent.startDate;
+        event.joinDeadline = editedEvent.joinDeadline;   
+        event.endDate = editedEvent.endDate;
+        event.tickets = editedEvent.tickets;       
+
+        await event.save();
+        res.status(200).json({"event": event})
+    } catch (err) {
+        console.error(err);
+        res.json({success: false});
+    }
+});
+
+
 // Cancel the attendance to an event
 router.delete('/cancel/attendance/:eventID/:userID', passport.authenticate('jwt', {session: false}), async (req, res) =>
 {
@@ -560,6 +594,7 @@ router.get('/is/attending/:eventID/:userID', async (req, res) =>
     });
 })
 
+
 router.post('/authenticate/token', (req, res) =>
 {
     try
@@ -617,6 +652,107 @@ router.get('/event/participants/:id',passport.authenticate('jwt', {session: fals
         console.error('Error while checking participants:', err);
         return res.status(500).send('Internal Server Error');
     }
+});
+
+// Send reminders about the event that will start in 24 hours. This function will run every hour
+cron.schedule("0 0 * * * *", async () =>
+{
+    const sendReminders = async (emails, event) =>
+    {
+        // The email allows to send emails to multiple addresses at the same time.
+        // They only need to be separated by a comma and a space. Turn the list of
+        // emails in to a string of emails.
+        let emails_string = '';
+
+        for(let i = 0; i < emails.length; i++)
+        {
+            emails_string += emails[i].email;
+
+            // If the email is not the last one in the list, add the separator.
+            if (i < emails.length - 1)
+            {
+                emails_string += ', ';
+            }
+        }
+
+        const message = "Reminder about event: " + event.title + "\nEvent starts at: " + event.startDate;
+
+        // Finally send the reminder about the event
+        const transporter = nodemailer.createTransport(
+            {
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth:
+                {
+                    user: "assocease@gmail.com",
+                    // This password is an App Password that was created for this example email address.
+                    // It can't be used to normally login to the gmail service.
+                    pass: "izdn grhs ymwm lxmx"
+                }
+            }
+        );
+    
+        const mailOptions = {
+            from: "assocease@gmail.com",
+            to: emails_string,
+            subject: 'Event reminder from AssocEase',
+            text: message
+        };
+    
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+            }
+        });
+    }
+
+    const fetchMemberData = async (memberIDs, event) =>
+    {
+        const emails = await Member.find({_id: { $in: memberIDs}}).select("email");
+
+        sendReminders(emails, event);
+    }
+
+    const fetchTicketData = async (event) =>
+    {
+        const tickets = await Ticket.find({event: event._id});
+
+        let memberIDs = [];
+
+        tickets.forEach((ticket) =>
+        {
+            memberIDs.push(ticket.member);
+        });
+
+        fetchMemberData(memberIDs, event);
+    }
+
+    const fetchEventData = async () =>
+    {
+        const twentyThreeHoursFromNow = new Date();
+        twentyThreeHoursFromNow.setHours(twentyThreeHoursFromNow.getHours() + 23);
+    
+        const twentyFourHoursFromNow = new Date();
+        twentyFourHoursFromNow.setHours(twentyFourHoursFromNow.getHours() + 24);    
+
+        // Get the events that will start in 24 hours. Because this function will run every hour, get every event that
+        // starts in 23 - 24 hours.
+        const events = await Event.find({startDate: {
+            $gte: twentyThreeHoursFromNow,
+            $lt: twentyFourHoursFromNow 
+            }
+        })
+
+        events.forEach((event) =>
+        {
+            fetchTicketData(event);
+        })
+    }
+
+    fetchEventData();
 });
 
 module.exports = router;
