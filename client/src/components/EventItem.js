@@ -52,58 +52,9 @@ function EventItem(props) {
   const [editedLocation, setEditedLocation] = useState(props.event.location);
   const [editedDescription, setEditedDescription] = useState(props.event.description);
 
-
-  useEffect(() => { // Get event participants
-    const fetchEventData = async () => {
-      try {
-        const response = await fetch(`api/event/participants/${props.event._id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + props.currentUser.token,
-          }
-        });
-        const responseData = await response.json();
-        if (responseData && responseData.data && Array.isArray(responseData.data)) {
-          setEventParticipantsData(responseData.data);
-        } else {
-          setEventParticipantsData(null);
-        }
-      } catch (error) {
-        console.error('Error fetching event data:', error);
-      }
-    };
-
-    fetchEventData();
-  }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
-
-  const [loadingParticipation, setLoadingParticipation] = useState(true);
-  const [loadingLikes, setLoadingLikes] = useState(true);
-
-  useEffect(() => { // Get event participants
-    const fetchEventData = async () => {
-      try {
-        const response = await fetch(`api/event/participants/${props.event._id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + props.currentUser.token,
-          }
-        });
-        const responseData = await response.json();
-        if (responseData && responseData.data && Array.isArray(responseData.data)) {
-          setEventParticipantsData(responseData.data);
-        } else {
-          setEventParticipantsData(null);
-        }
-        setLoadingParticipation(false);
-      } catch (error) {
-        console.error('Error fetching event data:', error);
-      }
-    };
-
-    fetchEventData();
-  }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
+  const [loadingLike, setLoadingLike] = useState(true);
+  const [loadingTicket, setLoadingTicket] = useState(true);
+  
 
   useEffect(() => {
     const data = 
@@ -126,6 +77,7 @@ function EventItem(props) {
         setTicket(data.ticket);
       }
       setHasTicket(data.hasTicket);
+      setLoadingTicket(false);
     })
     .catch(error => {
         console.error('Error fetching ticket status:', error);
@@ -137,8 +89,30 @@ function EventItem(props) {
 
   
   const openListOnClick = () => {
+    const fetchEventData = async () => {
+      try {
+        const response = await fetch(`api/event/participants/${props.event._id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + props.currentUser.token,
+          }
+        });
+        const responseData = await response.json();
+        if (responseData && responseData.data && Array.isArray(responseData.data)) {
+          setEventParticipantsData(responseData.data);
+        } else {
+          setEventParticipantsData(null);
+        }
+      } catch (error) {
+        console.error('Error fetching event data:', error);
+      }
+    };
+    fetchEventData();
     setOpenParticipantsList(true);
   };
+
+
   const closeListOnClick = () => {
     setOpenParticipantsList(false);
   };
@@ -476,7 +450,7 @@ const handleJoinDeadlineError = (error) => {
       .then(data => 
         {
           setLiking(data.attending);
-          setLoadingLikes(false);
+          setLoadingLike(false);
         }
       );
     }
@@ -484,11 +458,11 @@ const handleJoinDeadlineError = (error) => {
     // Find out if the user is like this event or not
     confirmLike();
   }, []);
-    
-    if(loadingLikes || loadingParticipation) {
+
+    if(loadingLike || loadingTicket) {
       return null;
     }
-    
+
     return (
       <div className="HomeEventItem">
         <div className="HomeEventTop">
