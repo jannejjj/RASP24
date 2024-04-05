@@ -52,7 +52,9 @@ function EventItem(props) {
   const [editedLocation, setEditedLocation] = useState(props.event.location);
   const [editedDescription, setEditedDescription] = useState(props.event.description);
 
-
+  const [loadingParticipation, setLoadingParticipation] = useState(true);
+  const [loadingLikes, setLoadingLikes] = useState(true);
+  
   useEffect(() => { // Get event participants
     const fetchEventData = async () => {
       try {
@@ -69,6 +71,7 @@ function EventItem(props) {
         } else {
           setEventParticipantsData(null);
         }
+        setLoadingParticipation(false);
       } catch (error) {
         console.error('Error fetching event data:', error);
       }
@@ -77,8 +80,6 @@ function EventItem(props) {
     fetchEventData();
   }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
 
-  const [loadingParticipation, setLoadingParticipation] = useState(true);
-  const [loadingLikes, setLoadingLikes] = useState(true);
 
   useEffect(() => {
     setLikes(props.event.attendees);
@@ -142,19 +143,6 @@ function EventItem(props) {
         theme: "dark"
         });
 }
-const showToastMessageSuccesfull = (message) =>
-{
-    toast.success(message, {
-        position: "top-center",
-        autoClose: 6000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: "dark"
-        });
-};
 
 const savingErrorMessages = [
   "Starting time is not valid.",
