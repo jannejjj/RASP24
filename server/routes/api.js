@@ -323,36 +323,7 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
     }
 });
 
-router.post('/hasTicket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
-    try{
-        const { userId, eventId } = req.body;
-
-        const event = await Event.findById(eventId);
-        const user = await Member.findById(userId);
-
-        if(!event || !user){
-            return res.status(404).json({ error: 'User or Event not found' });
-        }
-        const ticket = await Ticket.findOne({
-            member: user._id,
-            event: event._id
-        });
-
-        if(ticket){
-            return res.json({
-              hasTicket: true,
-              ticket: ticket
-            });
-        }
-
-        return res.json({hasTicket: false});
-    }catch(err){
-        console.error('Error while checking tickets:', err);
-        return res.status(500).send('Internal Server Error');
-    }
-});
-
-// Confirm if a user is attending an event or not
+// Check if the user has a ticket or not
 router.get('/has/ticket/:eventID/:userID',passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const eventID = req.params.eventID;
@@ -377,34 +348,6 @@ router.get('/has/ticket/:eventID/:userID',passport.authenticate('jwt', {session:
     console.error('Error while checking ticket', err);
     return res.status(500).send('Internal Server Error');
   }
-});
-
-// TODO: IS THIS USED?
-router.post('/checkticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
-    try{
-        const { userId, eventId } = req.body;
-
-        const event = await Event.findById(eventId);
-        const user = await Member.findById(userId);
-
-        if(!event || !user){
-            return res.status(404).json({ error: 'User or Event not found' });
-    
-        }
-
-        const ticket = await Ticket.findOne({
-            member: user._id,
-            event: event._id
-        });
-        if(ticket){
-            return res.json({hasTicket: true});
-        }
-
-        return res.json({hasTicket: false});
-    }catch(err){
-        console.error('Error while checking tickets:', err);
-        return res.status(500).send('Internal Server Error');
-    }
 });
 
 router.post('/ticket/use/:id',passport.authenticate('jwt', {session: false}), async (req, res)=>{
