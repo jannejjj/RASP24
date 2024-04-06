@@ -3,7 +3,6 @@ var router = express.Router();
 // const controller = require("./controller");
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
-const Member_event = require("../models/member_event");
 const Event = require("../models/event");
 const Member_Event = require("../models/member_event");
 const Ticket = require("../models/ticket");
@@ -215,7 +214,7 @@ router.get('/get/events/for/:id', async (req, res) =>
     let eventIDs = [];
 
     // Find the IDs of the events that the user has liked
-    await Member_event.find({member: id})
+    await Member_Event.find({member: id})
     .then((docs) =>
     {
         docs.forEach(item => {
@@ -533,7 +532,7 @@ router.get('/is/attending/:eventID/:userID', async (req, res) =>
     const eventID = req.params.eventID;
     const userID = req.params.userID;
 
-    await Member_event.find({event: eventID, member: userID})
+    await Member_Event.find({event: eventID, member: userID})
     .then((docs) =>
     {
         if (docs.length > 0)
