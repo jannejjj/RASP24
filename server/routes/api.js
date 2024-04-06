@@ -23,7 +23,7 @@ var idFromToken = null;
 require('../auth/passport')(passport);
 router.use(passport.initialize());
 
-//finds all the members in the DB if authenticated
+// Finds all the members in the DB if authenticated
 router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
       const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1});
@@ -33,6 +33,17 @@ router.get("/members/", passport.authenticate('jwt', {session: false}), async (r
       res.status(500).json({error: 'Internal Server Error'});
     }
 });
+
+/* Gets total number of members */
+router.get("/membercount/", async (req, res) => {
+    try {
+        const memberCount = (await Member.find({})).length;
+        res.json({memberCount: memberCount});
+    } catch (err) {
+        console.error("Error getting member count:" , err);
+        res.status(500).json({error: "Couldn't get member count."})
+    }
+})
 
 /* Finds all events */
 router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
