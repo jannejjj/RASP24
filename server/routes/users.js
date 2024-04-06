@@ -61,7 +61,7 @@ router.post('/updateImage/:userId', upload.single('image'), async (req, res) => 
     const userId = req.params.userId;
     const user = await Member.findById(userId);
     if(!user){
-      return res.status(404).json({message: "no hay usuario"});
+      return res.status(404).json({message: "User not found"});
     }
     if(user.profileImage != null){
       await Image.findByIdAndDelete(user.profileImage);

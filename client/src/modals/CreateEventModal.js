@@ -3,6 +3,7 @@ import '../styles/HomePage.css';
 import '../App.css';
 import { React } from "react";
 import Button from "@mui/material/Button";
+import { Input } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -105,6 +106,12 @@ function CreateEventModal(props)
                   onChange={e => props.setTickets(e.target.value)}
                 />
                 <p className='HintParagraphSmall' >Required *</p>
+                <h3>
+                  Upload profile image
+                </h3>
+                <div>
+                  <Input style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="file" onChange={props.handleImageChange} />
+                </div>
                 <div className='ModalButtonArea'>
                   <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
                   <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit">Save</Button>

@@ -1,6 +1,7 @@
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
 import { React, useState } from "react";
+import { Input } from '@mui/material';
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -106,6 +107,12 @@ function EditEventModal(props)
                   value={props.tickets}
                   onChange={e => props.setTickets(e.target.value)}
                 />
+                <h3>
+                  Upload profile image
+                </h3>
+                <div>
+                  <Input style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="file" onChange={props.handleImageChange} />
+                </div>
                 <div style={{display:"flex", flexDirection:'row', width:'100%'}}>
                   <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelEditOnClick} >Cancel</Button>
                   <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit" onClick={props.saveEditOnClick} >Save</Button>

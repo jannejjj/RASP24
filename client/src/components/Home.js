@@ -6,8 +6,7 @@ import { FaUserGroup } from "react-icons/fa6";
 import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
-import { ToastContainer } from 'react-toastify';
-import toast from "../common/Toast";
+import {toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Typography from "@mui/material/Typography";
 
@@ -102,6 +101,7 @@ function Home(props) {
   const [loading, setLoading] = useState(true);
   const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
+  const [selectedFile, setSelectedFile] = useState(null);
 
 
   const toggleUpdateEvents = () => {
@@ -194,6 +194,9 @@ function Home(props) {
     setJoinDeadlineError(false); // Sets error to false when changes are made
     setNewEvent({...newEvent, ["joinDeadline"]: value});
   };
+  const handleImageChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
 
   const cancelCreationOnClick = () => {
     setNewEvent({});
@@ -262,9 +265,10 @@ function Home(props) {
             newEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
             newEvent.creatorId = props.currentUser.id;
             newEvent.attendees = 1;
-            
+
+            var eventId = "";
             setNewEvent(newEvent);
-            await fetch("/api/event", {
+           await fetch("/api/event", {
               method: "POST",
               headers: {
                   "Content-type": "application/json",
@@ -276,7 +280,14 @@ function Home(props) {
               .then(response => response.json())
               .then(data => {
                   console.log(data)
+                  eventId = data._id;
               })
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+                await fetch(`/api/updateImage/${eventId}`, {
+                  method: 'POST',
+                  body: formData
+                });
           // Empty the input fields
           setNewEvent({});
           // Close the Modal
@@ -362,6 +373,7 @@ function Home(props) {
         handleJoinDeadlineError={handleJoinDeadlineError}
         resetTickets={resetTickets}
         handleDeadlineSwitch={handleDeadlineSwitch}
+        handleImageChange={handleImageChange}
       />
       <ToastContainer />
     </div>

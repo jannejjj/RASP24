@@ -258,7 +258,8 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
       tickets: req.body.tickets,
       ticketsSold: 0,
       joinDeadline: req.body.joinDeadline,
-      price: req.body.price
+      price: req.body.price,
+      logo: null
   });
   event.save()
     .then(result => {
@@ -607,5 +608,57 @@ router.get('/event/participants/:id',passport.authenticate('jwt', {session: fals
         return res.status(500).send('Internal Server Error');
     }
 });
+
+router.get('/getImage/:eventId', upload.single('image'), async (req, res) => {
+    try{
+      const id   = req.params.eventId;
+      if (!id) {
+        return res.status(400).json({ error: 'id parameter is required' });
+      }
+      const eventData = await Event.findById(id);
+      if (!eventData) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+      const imageId = eventData.logo;
+      if(imageId!= null){
+        const imageData = await Image.findById(imageId);
+        res.json(imageData);
+      }else{
+        return res.status(404).json({error: "the event doesn't have a logo picture"});
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+  router.post('/updateImage/:eventId', upload.single('image'), async (req, res) => {
+    try {
+      const eventId = req.params.eventId;
+      const event = await Event.findById(eventId);
+      if(!event){
+        return res.status(404).json({message: "Event not found"});
+      }
+      if(event.logo != null){
+        await Image.findByIdAndDelete(event.logo);
+      }
+      const newImage = new Image({
+        buffer: req.file.buffer,
+        mimetype: req.file.mimetype,
+        name: req.file.originalname,
+        encoding: 'base64'
+      });
+    
+      const savedImage = await newImage.save();
+  
+      
+      event.logo = savedImage._id;
+      await event.save();
+  
+      res.status(201).json(savedImage);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to upload image', error: error.message });
+    }
+  });
 
 module.exports = router;
