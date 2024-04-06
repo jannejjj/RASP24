@@ -7,6 +7,9 @@ const Image = require("../models/image");
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage });
 
+const jwt = require("jsonwebtoken");
+const passport = require('passport');
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -87,7 +90,7 @@ router.post('/updateImage/:userId', upload.single('image'), async (req, res) => 
 
 
 // Handle POST request to update user profile
-router.post('/updateProfile', async (req, res) => {
+router.post('/updateProfile', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const userId = req.body._id;
     const updatedProfileData  = req.body.user;
@@ -110,7 +113,32 @@ router.post('/updateProfile', async (req, res) => {
     // Save the updated user object back to the database
     await user.save();
 
-    res.status(200).send('Profile updated successfully');
+    // Update the JWT
+    const jwtPayload = {
+      id: user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: updatedProfileData.email,
+      admin: user.admin
+    };
+    jwt.sign(
+      jwtPayload,
+      process.env.SECRET,
+      {
+      expiresIn: '24h' //expires on 24 hours and log in is needed again.
+      },
+      (err, token) => {
+        if (token)
+        {
+          return res.json({success: true, token, admin: user.admin, id: user._id, firstname: user.firstname, lastname: user.lastname});
+        }
+        else if (err)
+        {
+          console.log("Error while editing member data\n" + err);
+          return res.json({success: false});
+        }
+      }
+    );
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).send('Internal Server Error');

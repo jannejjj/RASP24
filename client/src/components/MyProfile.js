@@ -187,7 +187,8 @@ function ProfileItem(props) {
         const response = await fetch('/users/updateProfile', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "Authorization": "Bearer " + props.currentUser.token
           },
           body: JSON.stringify({
             _id: `${props.currentUser.id}`,
@@ -202,7 +203,20 @@ function ProfileItem(props) {
           })
         });
 
-        if (response.ok) {
+        const json = await response.json();
+
+        if (json.success) {
+
+          props.setCurrentUser({
+            admin: json.admin,
+            loggedIn: true,
+            token: json.token,
+            firstname: json.firstname,
+            lastname: json.lastname,
+            id: json.id
+          });
+
+          localStorage.setItem("AssocEase_Token", json.token);
 
           // Update the history
           setFirstnameHistory(editedFirstname);
@@ -605,6 +619,7 @@ function MyProfile(props) {
                 toggleUpdateUser={toggleUpdateUser}
                 currentUser={props.currentUser}
                 profilePicture={image}
+                setCurrentUser={props.setCurrentUser}
               />
             )
           }
