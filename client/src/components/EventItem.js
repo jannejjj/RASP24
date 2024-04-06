@@ -365,12 +365,6 @@ const handleJoinDeadlineError = (error) => {
         }
         setLiking(false);
         setLikes(likes - 1);
-
-        // If the user doesn't have a ticket for this event, then update the page.
-        if (!hasTicket)
-        {
-          props.toggleUpdateEvents();
-        }
       }
     );
   };
