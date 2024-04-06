@@ -22,7 +22,7 @@ require('../auth/passport')(passport);
 router.use(passport.initialize());
 
 //finds all the members in the DB if authenticated
-router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
+router.get("/members", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
       const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1});
       res.send(members);
@@ -352,6 +352,34 @@ router.post('/hasTicket',passport.authenticate('jwt', {session: false}), async (
     }
 });
 
+// Confirm if a user is attending an event or not
+router.get('/has/ticket/:eventID/:userID',passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+    const eventID = req.params.eventID;
+    const userID = req.params.userID;
+    const event = await Event.findById(eventID);
+    const user = await Member.findById(userID);
+    if(!event || !user) {
+      return res.status(404).json({ error: 'User or Event not found' });
+    }
+    const ticket = await Ticket.findOne({
+      member: user._id,
+      event: event._id
+    });
+    if(ticket){
+      return res.json({
+        hasTicket: true,
+        ticket: ticket
+    });
+   }
+   return res.json({hasTicket: false});
+  } catch(err) {
+    console.error('Error while checking ticket', err);
+    return res.status(500).send('Internal Server Error');
+  }
+});
+
+// TODO: IS THIS USED?
 router.post('/checkticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
     try{
         const { userId, eventId } = req.body;

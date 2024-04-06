@@ -55,39 +55,34 @@ function EventItem(props) {
   const [loadingLike, setLoadingLike] = useState(true);
   const [loadingTicket, setLoadingTicket] = useState(true);
   
-
-  useEffect(() => {
-    const data = 
-    {
-      userId: props.currentUser.id,
-      eventId: props.event._id
-    };
-
-    fetch('/api/hasTicket', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + props.currentUser.token
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.hasTicket) {
-        setTicket(data.ticket);
-      }
-      setHasTicket(data.hasTicket);
-      setLoadingTicket(false);
-    })
-    .catch(error => {
-        console.error('Error fetching ticket status:', error);
-    });
-  }, []);
-
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
 
-  
+  useEffect(() => {
+    const checkTicket = async () => {
+      try {
+        const response = await fetch(`/api/has/ticket/${props.event._id}/${props.currentUser.id}` , {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + props.currentUser.token,
+          }
+        });
+        const responseData = await response.json();
+        if(responseData) {
+          if(responseData.hasTicket) {
+            setTicket(responseData.ticket);
+          }
+          setHasTicket(responseData.hasTicket);
+          setLoadingTicket(false);
+        }
+      } catch (error) {
+        console.error('Error fetching ticket data:', error);
+      }
+    }
+    checkTicket();
+  }, []);
+
   const openListOnClick = () => {
     const fetchEventData = async () => {
       try {
@@ -448,7 +443,6 @@ const handleJoinDeadlineError = (error) => {
         }
       );
     }
-
     // Find out if the user is like this event or not
     confirmLike();
   }, []);
