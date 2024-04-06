@@ -14,38 +14,25 @@ import Typography from "@mui/material/Typography";
 function Details(props) {
   const [admin, setAdmin] = useState(props.admin);
   const [details, setDetails] = useState(
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mollis imperdiet est, ut maximus est lobortis non. Aliquam bibendum venenatis mi, a auctor lacus interdum feugiat. Aenean nec leo a diam iaculis iaculis. Vestibulum cursus tincidunt neque, quis euismod dolor tincidunt ac."
+    "According to Finnish university legislation, all degree students have to be members of a student union. Students will become members of the student union automatically after they have paid the student union membership fee. Post-graduate students may also join the student union but they have different benefits. There are approximately 5000 members in LTKY, both under-graduate and post-graduate students.\n\nThe symbol of LTKY is the first letter of Hebrew alphabet, Aalef, in red circled by a black gearwheel. As a mathematical symbol Aalef stands for ‘one’ which can be seen as a symbol of unity in LTKY."
   );
-  const [detailsHistory, setDetailsHistory] = useState(details);
-  const [changedDetails, setChangedDetails] = useState(details);
-  const [title, setTitle] = useState("Association Ry");
-  const [titleHistory, setTitleHistory] = useState(title);
-  const [changedTitle, setChangedTitle] = useState(title);
-  const [manageDetails, setManageDetails] = useState(false);
+  const [title, setTitle] = useState("LTKY");
+  const [memberCount, setMemberCount] = useState("...");
 
-  const saveEditOnClick = () => {
-    setDetailsHistory(changedDetails);
-    setTitleHistory(changedTitle);
-    setDetails(changedDetails);
-    setTitle(changedTitle);
-    setManageDetails(false);
-  };
-
-  const cancelEditOnClick = () => {
-    setDetails(detailsHistory);
-    setTitle(titleHistory);
-    setChangedDetails(detailsHistory);
-    setChangedTitle(titleHistory);
-    setManageDetails(false);
-  };
-
-  const handleDetailsChange = (event) => {
-    setChangedDetails(event.target.value);
-  };
-
-  const handleTitleChange = (event) => {
-    setChangedTitle(event.target.value);
-  }
+  useEffect(() => {
+    const fetchMemberCount = async () => {
+      await fetch(`api/membercount`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.log(data.error);
+        } else {
+          setMemberCount(data.memberCount);
+        }
+      });
+    }
+    fetchMemberCount()
+  }, [])
 
   return(
     <div className='DetailsBackground'>
@@ -54,35 +41,14 @@ function Details(props) {
           {title}
         </h1>
         <p>
-          <FaUserGroup className="FaUserGroup" /> 123 members
+          <FaUserGroup className="FaUserGroup" />
+          {memberCount} members
         </p>
       </div>
       <div className="HorizontalSeparator" />
       <div className="Text">
-        <p>{details}</p>
+        <p style={{whiteSpace: "pre-wrap"}}>{details}</p>
       </div>
-      {admin && (
-        <div className="EditDetailsButtonArea">
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setManageDetails(true);
-            }}
-          >
-            Edit
-          </Button>
-        </div>
-      )}
-
-      <EditDetailsModal
-        edit={manageDetails}
-        title={changedTitle}
-        details={changedDetails}
-        handleDetailsChange={handleDetailsChange}
-        handleTitleChange={handleTitleChange}
-        saveEditOnClick={saveEditOnClick}
-        cancelEditOnClick={cancelEditOnClick}
-      />
     </div>
   );
 }
