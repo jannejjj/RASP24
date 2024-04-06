@@ -659,21 +659,7 @@ cron.schedule("0 0 * * * *", async () =>
 {
     const sendReminders = async (emails, event) =>
     {
-        // The email allows to send emails to multiple addresses at the same time.
-        // They only need to be separated by a comma and a space. Turn the list of
-        // emails in to a string of emails.
-        let emails_string = '';
-
-        for(let i = 0; i < emails.length; i++)
-        {
-            emails_string += emails[i].email;
-
-            // If the email is not the last one in the list, add the separator.
-            if (i < emails.length - 1)
-            {
-                emails_string += ', ';
-            }
-        }
+        const emails_string = convertEmailsToString(emails);
 
         const message = "Reminder about event: " + event.title + "\nEvent starts at: " + event.startDate;
 
@@ -754,5 +740,182 @@ cron.schedule("0 0 * * * *", async () =>
 
     fetchEventData();
 });
+
+// Once a day check if there are members whose membership will be outdated in two weeks
+// send them a two week notice. Also check if there are members whose membership will
+// be outdated in a week send them a weeks notice.
+cron.schedule('0 0 0 * * *', async () =>
+{
+    const twoWeeksFromNow = new Date();
+    twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+
+    const weekFromNow = new Date();
+    weekFromNow.setDate(weekFromNow.getDate() + 7);
+
+    // Find all the members whose membership expires in two weeks
+    const members = await Member.find({});
+
+    if (members)
+    {
+        let expiresInTwoWeeks = [];
+        let expiresInOneWeek = [];
+        let expirresToday = [];
+
+        members.forEach((member) =>
+        {
+            if (member.membershipExpirationDate.getDate() == twoWeeksFromNow.getDate())
+            {
+                expiresInTwoWeeks.push(member.email);
+            }
+            else if (member.membershipExpirationDate.getDate() == weekFromNow.getDate())
+            {
+                expiresInOneWeek.push(member.email);
+            }
+            else if (member.membershipExpirationDate.getDate() == new Date().getDate())
+            {
+                expirresToday.push(member.email);
+            }
+        })
+
+        await SendTwoWeeksNotice(expiresInTwoWeeks);
+        await SendOneWeeksNotice(expiresInOneWeek);
+        await SendExpirationNotice(expirresToday)
+    }
+});
+
+const SendTwoWeeksNotice = async (emails) =>
+{
+    const emails_string = convertEmailsToString(emails);
+
+    const message = "Your membersship to AssocEase will expire in two weeks!"
+
+    // Finally send the reminder about the event
+    const transporter = nodemailer.createTransport(
+        {
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth:
+            {
+                user: "assocease@gmail.com",
+                // This password is an App Password that was created for this example email address.
+                // It can't be used to normally login to the gmail service.
+                pass: "izdn grhs ymwm lxmx"
+            }
+        }
+    );
+
+    const mailOptions = {
+        from: "assocease@gmail.com",
+        to: emails_string,
+        subject: 'AssocEase membership expiration notice',
+        text: message
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+    });
+}   
+
+const SendOneWeeksNotice = async (emails) =>
+{
+    const emails_string = convertEmailsToString(emails);
+
+    const message = "Your membersship to AssocEase will expire in a week!"
+
+    // Finally send the reminder about the event
+    const transporter = nodemailer.createTransport(
+        {
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth:
+            {
+                user: "assocease@gmail.com",
+                // This password is an App Password that was created for this example email address.
+                // It can't be used to normally login to the gmail service.
+                pass: "izdn grhs ymwm lxmx"
+            }
+        }
+    );
+
+    const mailOptions = {
+        from: "assocease@gmail.com",
+        to: emails_string,
+        subject: 'AssocEase membership expiration notice',
+        text: message
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
+const SendExpirationNotice = async (emails) =>
+{
+    const emails_string = convertEmailsToString(emails);
+
+    const message = "Your membersship to AssocEase expires today!"
+
+    // Finally send the reminder about the event
+    const transporter = nodemailer.createTransport(
+        {
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth:
+            {
+                user: "assocease@gmail.com",
+                // This password is an App Password that was created for this example email address.
+                // It can't be used to normally login to the gmail service.
+                pass: "izdn grhs ymwm lxmx"
+            }
+        }
+    );
+
+    const mailOptions = {
+        from: "assocease@gmail.com",
+        to: emails_string,
+        subject: 'AssocEase membership expiration notice',
+        text: message
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
+const convertEmailsToString = (emails) =>
+{
+    // The email allows to send emails to multiple addresses at the same time.
+    // They only need to be separated by a comma and a space. Turn the list of
+    // emails in to a string of emails.
+    let emails_string = '';
+
+    for(let i = 0; i < emails.length; i++)
+    {
+        emails_string += emails[i].email;
+
+        // If the email is not the last one in the list, add the separator.
+        if (i < emails.length - 1)
+        {
+            emails_string += ', ';
+        }
+    }
+
+    return emails_string;
+}
 
 module.exports = router;
