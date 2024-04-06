@@ -328,14 +328,9 @@ router.get('/has/ticket/:eventID/:userID',passport.authenticate('jwt', {session:
   try {
     const eventID = req.params.eventID;
     const userID = req.params.userID;
-    const event = await Event.findById(eventID);
-    const user = await Member.findById(userID);
-    if(!event || !user) {
-      return res.status(404).json({ error: 'User or Event not found' });
-    }
     const ticket = await Ticket.findOne({
-      member: user._id,
-      event: event._id
+      member: userID,
+      event: eventID
     });
     if(ticket){
       return res.json({
