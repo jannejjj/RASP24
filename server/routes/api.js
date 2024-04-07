@@ -777,93 +777,29 @@ cron.schedule('0 0 0 * * *', async () =>
             }
         })
 
-        if (expiresToday.length > 0) await SendExpirationNotice(expiresToday);
-        if (expiresInOneWeek.length > 0) await SendExpirationNotice(expiresInOneWeek);
-        if (expiresInTwoWeeks.length > 0) await SendExpirationNotice(expiresInTwoWeeks);
+        if (expiresToday.length > 0) 
+        {
+            const message = "Your membersship to AssocEase expires today!"
+            await SendExpirationNotice(expiresToday, message);
+        }
+
+        if (expiresInOneWeek.length > 0) 
+        {
+            const message = "Your membersship to AssocEase will expire in a week!"
+            await SendExpirationNotice(expiresInOneWeek, message);
+        }
+
+        if (expiresInTwoWeeks.length > 0) 
+        {
+            const message = "Your membersship to AssocEase will expire in two weeks!"
+            await SendExpirationNotice(expiresInTwoWeeks, message);
+        }
     }
 });
 
-const SendTwoWeeksNotice = async (emails) =>
+const SendExpirationNotice = async (emails, message) =>
 {
     const emails_string = convertEmailsToString(emails);
-
-    const message = "Your membersship to AssocEase will expire in two weeks!"
-
-    // Finally send the reminder about the event
-    const transporter = nodemailer.createTransport(
-        {
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth:
-            {
-                user: "assocease@gmail.com",
-                // This password is an App Password that was created for this example email address.
-                // It can't be used to normally login to the gmail service.
-                pass: "izdn grhs ymwm lxmx"
-            }
-        }
-    );
-
-    const mailOptions = {
-        from: "assocease@gmail.com",
-        to: emails_string,
-        subject: 'AssocEase membership expiration notice',
-        text: message
-    };
-
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-    });
-}   
-
-const SendOneWeeksNotice = async (emails) =>
-{
-    const emails_string = convertEmailsToString(emails);
-
-    const message = "Your membersship to AssocEase will expire in a week!"
-
-    // Finally send the reminder about the event
-    const transporter = nodemailer.createTransport(
-        {
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth:
-            {
-                user: "assocease@gmail.com",
-                // This password is an App Password that was created for this example email address.
-                // It can't be used to normally login to the gmail service.
-                pass: "izdn grhs ymwm lxmx"
-            }
-        }
-    );
-
-    const mailOptions = {
-        from: "assocease@gmail.com",
-        to: emails_string,
-        subject: 'AssocEase membership expiration notice',
-        text: message
-    };
-
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-    });
-}
-
-const SendExpirationNotice = async (emails) =>
-{
-    const emails_string = convertEmailsToString(emails);
-
-    const message = "Your membersship to AssocEase expires today!"
 
     // Finally send the reminder about the event
     const transporter = nodemailer.createTransport(
