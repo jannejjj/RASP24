@@ -69,7 +69,6 @@ function SchedulerComponent(props) {
   const handleOnDeletedEvent = ()=>{
     setSelectedEvent(null);
     setUpdateEvents(!updateEvents);
-    console.log("here");
   }
 
   const { views } = useMemo(
@@ -104,6 +103,7 @@ function SchedulerComponent(props) {
               showToastSuccessMessage={toasts.showToastSuccessMessage}
               toggleUpdateEvents={()=>{}}
               onDeletedEvent={handleOnDeletedEvent}
+              onEditedEvent={()=>{setUpdateEvents(!updateEvents)}}
             /> :
             <p>No event selected</p> 
           }

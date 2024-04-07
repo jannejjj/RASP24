@@ -90,6 +90,27 @@ function EventItem(props) {
     setTickets(props.event.tickets);
     setPrice(props.event.price);
 
+    setStartDate(props.event.startDate);
+    setEndDate(props.event.endDate);
+    setJoinDeadline(props.event.joinDeadline);
+
+    const confirmLike = () => 
+    {
+      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
+        method: 'GET'
+      })
+      .then(response => response.json())
+      .then(data => 
+        {
+          setLiking(data.attending);
+          setLoadingLikes(false);
+        }
+      );
+    }
+
+    // Find out if the user is like this event or not
+    confirmLike();
+
   }, [props.event]);
 
   useEffect(() => {
@@ -214,7 +235,9 @@ const savingRules = () => {
         // Close the Modal
         setEdit(false);
         props.toggleUpdateEvents();
-        
+        if(props.onEditedEvent !== undefined){
+          props.onEditedEvent();
+        }
       }
     });
   };
@@ -442,26 +465,6 @@ const handleJoinDeadlineError = (error) => {
       setDeleteModal(false);
     });
   };
-
-  useEffect(() =>
-  {
-    const confirmLike = () => 
-    {
-      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
-        method: 'GET'
-      })
-      .then(response => response.json())
-      .then(data => 
-        {
-          setLiking(data.attending);
-          setLoadingLikes(false);
-        }
-      );
-    }
-
-    // Find out if the user is like this event or not
-    confirmLike();
-  }, []);
     
     if(loadingLikes || loadingParticipation) {
       return null;
