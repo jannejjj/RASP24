@@ -3,13 +3,27 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Members from './components/Members';
 import Home from './components/Home';
 import MyProfile from './components/MyProfile';
+import News from './components/News';
 import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef} from 'react';
+
+function loadScript(src, position, id) {
+  if (!position) {
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.setAttribute('async', '');
+  script.setAttribute('id', id);
+  script.src = src;
+  position.appendChild(script);
+}
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const googleLoaded = useRef(false);
   const [currentUser, setCurrentUser] = useState({
     admin: false,
     loggedIn: false,
@@ -39,6 +53,21 @@ function App() {
     }
   );
 
+  /* Load Google Maps API */
+  if (typeof window !== 'undefined' && !googleLoaded.current) {
+    setLoading(true);
+    if (!document.querySelector('#google-maps')) {
+      loadScript(
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&region=EN&language=en&libraries=places,marker&loading=async`,
+        document.querySelector('head'),
+        'google-maps',
+      );
+    }
+    googleLoaded.current = true;
+    setLoading(false);
+  }
+
+  /* Authenticate user */
   useEffect(() =>
   {
     const tokenFromStorage = localStorage.getItem("AssocEase_Token");
@@ -82,6 +111,7 @@ function App() {
           <TopBar currentUser={currentUser} setCurrentUser={setCurrentUser} />
           <Routes>
           <Route path="/Members" element={<Members currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
+          <Route path="/News" element={<News currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           <Route path="/" element={<Home currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           {/* If the user is not logged in and they go to the MyProfile url, they are rerouted to the home page */}
           <Route path="/MyProfile" element={currentUser.loggedIn ? ( <MyProfile currentUser={currentUser} setCurrentUser={setCurrentUser} /> ) : ( <Home currentUser={currentUser} setCurrentUser={setCurrentUser} /> )} />

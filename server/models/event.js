@@ -9,7 +9,7 @@ let eventSchema = new Schema ({
     startDate:{type: Date},
     endDate:{type: Date},
     description: {type: String},
-    location:{type: String},
+    location:{type: Object},
     attendees: {type: Number},
     tickets: {type: Number},
     ticketsSold: {type: Number},
