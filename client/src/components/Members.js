@@ -1,12 +1,24 @@
+/*
+File: Members.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: App.js
+Description: Members page body
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import {useState, useEffect} from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+// Modals, components, and commons
 import Member from './Member';
+import GetMemberEmailsModal from '../modals/GetMemberEmailsModal';
+// MUI components
 import Typography from "@mui/material/Typography";
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import Button from "@mui/material/Button";
-import GetMemberEmailsModal from '../modals/GetMemberEmailsModal';
-import { ToastContainer, toast } from 'react-toastify';
+// Styles CSS
 import "../styles/Members.css";
 import '../App.css';
 
@@ -21,6 +33,7 @@ function Members(props) {
 
   const toggleUpdate = () => { setUpdate(!update); }
 
+  // TODO delete and use only (import toast from "../common/Toast") ???
   const showToastSuccessMessage = (message) =>  {
     toast.success(message, {
         position: "top-center",
@@ -64,6 +77,7 @@ function Members(props) {
     setSeparator(event.target.value);
   };
 
+  // Get members
   useEffect(() => {
     let mounted = true;
     setLoading(true);

@@ -1,17 +1,32 @@
+/*
+File: Home.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: App.js
+Description: Homepage body
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import { React, useState, useEffect } from "react";
+import { ToastContainer } from 'react-toastify';
+// Styles CSS
 import "../styles/HomePage.css";
 import "../App.css";
+import 'react-toastify/dist/ReactToastify.css';
+// MUI components
 import Button from "@mui/material/Button";
-import { FaUserGroup } from "react-icons/fa6";
+import Typography from "@mui/material/Typography";
+// Modals, components, and commons
 import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
-import { ToastContainer } from 'react-toastify';
 import toast from "../common/Toast";
-import 'react-toastify/dist/ReactToastify.css';
-import Typography from "@mui/material/Typography";
+// Icons
+import { FaUserGroup } from "react-icons/fa6";
 
+// The association's information box on top of the homepage
 function Details(props) {
+  // Variables
   const [admin, setAdmin] = useState(props.admin);
   const [details, setDetails] = useState(
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mollis imperdiet est, ut maximus est lobortis non. Aliquam bibendum venenatis mi, a auctor lacus interdum feugiat. Aenean nec leo a diam iaculis iaculis. Vestibulum cursus tincidunt neque, quis euismod dolor tincidunt ac."
@@ -23,20 +38,22 @@ function Details(props) {
   const [changedTitle, setChangedTitle] = useState(title);
   const [manageDetails, setManageDetails] = useState(false);
 
+  // Function to save edits - set the variables to the new values
   const saveEditOnClick = () => {
     setDetailsHistory(changedDetails);
     setTitleHistory(changedTitle);
     setDetails(changedDetails);
     setTitle(changedTitle);
-    setManageDetails(false);
+    setManageDetails(false); // Disable EditDetailsModal
   };
 
+  // Function to cancel edits - set the variables back to the old ones
   const cancelEditOnClick = () => {
     setDetails(detailsHistory);
     setTitle(titleHistory);
     setChangedDetails(detailsHistory);
     setChangedTitle(titleHistory);
-    setManageDetails(false);
+    setManageDetails(false); // Disable EditDetailsModal
   };
 
   const handleDetailsChange = (event) => {
@@ -87,8 +104,9 @@ function Details(props) {
   );
 }
   
-
+// Events part
 function Home(props) {
+  // Variables
   const [admin, setAdmin] = useState(props.currentUser.admin);
   const [user, setUser ] = useState(null);
   const [newEventModal, setNewEventModal] = useState(false);
@@ -108,6 +126,7 @@ function Home(props) {
     setUpdateEvents(!updateEvents);
   }
 
+  // TODO delete and use only (import toast from "../common/Toast") ???
   const showToastMessage = (message) =>
     {
       toast.error(message, {
@@ -122,6 +141,7 @@ function Home(props) {
           });
     }
   
+  // TODO delete and use only (import toast from "../common/Toast") ???
   const showToastSuccessMessage = (message) =>  
   {
     toast.success(message, {
@@ -136,6 +156,7 @@ function Home(props) {
         });
   }
 
+  // Get user data
   useEffect(() => {
     const fetchUserData = async () => {
         // Check if props.currentUser.id is not null

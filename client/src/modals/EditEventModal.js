@@ -1,17 +1,30 @@
+/*
+File: EditEventModal.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: EventItem.js
+Description: Allows editing of the event.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
+import { React, useState } from "react"; // TODO: useless useState???
+// Styles
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
-import { React, useState } from "react";
+// MUI components
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import OutlinedInput from '@mui/material/OutlinedInput'; // TODO: useless?
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import dayjs from 'dayjs';
 import { TextField } from '@mui/material';
+// Modals, components, and commons
+import dayjs from 'dayjs';
+
 
 function EditEventModal(props)
 {

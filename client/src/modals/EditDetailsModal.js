@@ -1,6 +1,18 @@
+/*
+File: EditDetailsModal.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: TODO: Home.js???, MyProfile.js
+Description: This modal allows the user to edit the user's details.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
+// Icons
+import React from 'react';
+// Styles
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
-import React from 'react';
+// MUI components
 import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
 import Modal from '@mui/material/Modal';

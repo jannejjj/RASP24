@@ -1,10 +1,22 @@
+/*
+File: EventDetails.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: EventItem.js
+Description: Is used to shows event information
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import React from "react";
+// MUI components
 import { Grid } from "@mui/material";
+// Icons
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EventIcon from "@mui/icons-material/Event";
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+// Styles
 import "../App.css";
 import "../styles/EventDetails.css";
 

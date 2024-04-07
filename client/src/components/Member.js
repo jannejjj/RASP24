@@ -1,17 +1,30 @@
+/*
+File: Member.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: Members.js
+Description: Member card on the member page
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import React from 'react';
+import { useState } from 'react';
+// MUI components
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { CardMedia } from '@mui/material';
-import { useState } from 'react';
+import Tooltip from '@mui/material/Tooltip';
+// Modals, components, and commons
 import ManageMemberModal from '../modals/ManageMemberModal';
-import EmailIcon from '@mui/icons-material/Email';
+// Icons
 import IconButton from '@mui/material/IconButton';
+import EmailIcon from '@mui/icons-material/Email';
 import { RxCheckCircled } from "react-icons/rx";
 import { RxCrossCircled } from "react-icons/rx";
-import Tooltip from '@mui/material/Tooltip';
+
 
 function Member(props) {
   const [openManageMemberModal, setOpenManageMemberModal] = useState(false);

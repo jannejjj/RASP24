@@ -1,5 +1,16 @@
+/*
+File: App.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Description: Handles authentication and routing.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
+import { useState, useEffect } from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+// MUI components
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+// Modals, components, and commons
 import Members from './components/Members';
 import Home from './components/Home';
 import MyProfile from './components/MyProfile';
@@ -7,7 +18,7 @@ import News from './components/News';
 import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
-import { useState, useEffect } from 'react';
+
 
 function App() {
   const [loading, setLoading] = useState(false);

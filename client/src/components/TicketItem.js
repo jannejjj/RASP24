@@ -1,9 +1,23 @@
+/*
+File: TicketItem.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: EventItem.js
+Description: This is used to show and use tickets
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import React from 'react';
+// Styles
 import '../styles/TicketItem.css';
+// MUI components
 import { Button, Grid} from '@mui/material';
+// Icons
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// Modals, components, and commons
 import UseTicketModal from '../modals/UseTicketModal';
 
+// Ticket
 function TicketItem(props) {
 
   const [openUseModal, setOpenUseModal] = React.useState(false);
@@ -19,6 +33,7 @@ function TicketItem(props) {
 
   const localizedTicketDate = new Date(props.ticket.date).toLocaleString("fi-FI", localeStringOptions);
 
+  // Use ticket
   const useTicket = async () => {
     await fetch('/api/ticket/use/' + props.ticket._id, {
       method: "POST",

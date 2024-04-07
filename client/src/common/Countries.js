@@ -1,3 +1,11 @@
+/*
+File: Countries.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Description: Country codes, labels, and the beginning of the phone number
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 const countries = [
   { code: 'AD', label: 'Andorra', phone: '376' },
   {

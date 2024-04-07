@@ -1,16 +1,29 @@
+/*
+File: Topbar.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: Every page
+Description: The top bar allows the user to move between pages. The Toolbar is located at the top of every page.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import React, { useState, useEffect } from "react";
+import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+// Modals, components, and commons
+import Swal from 'sweetalert2';
+// MUI components
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import "../styles/TopBar.css";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import { Menu, MenuItem } from "@mui/material";
-import { Link as RouterLink } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import { useNavigate } from "react-router-dom";
+// Styles
+import "../styles/TopBar.css";
+// Icons
+import MenuIcon from "@mui/icons-material/Menu";
 
 export default function TopBar(props) {
   const [selectedPage, setSelectedPage] = useState("");
