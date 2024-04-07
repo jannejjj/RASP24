@@ -7,7 +7,7 @@ import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
 import { ToastContainer } from 'react-toastify';
-import toast from "../common/Toast";
+import toasts from "../common/Toast";
 import 'react-toastify/dist/ReactToastify.css';
 import Typography from "@mui/material/Typography";
 
@@ -108,34 +108,6 @@ function Home(props) {
     setUpdateEvents(!updateEvents);
   }
 
-  const showToastMessage = (message) =>
-    {
-      toast.error(message, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: false,
-          progress: undefined,
-          theme: "dark"
-          });
-    }
-  
-  const showToastSuccessMessage = (message) =>  
-  {
-    toast.success(message, {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: "dark"
-        });
-  }
-
   useEffect(() => {
     const fetchUserData = async () => {
         // Check if props.currentUser.id is not null
@@ -194,6 +166,13 @@ function Home(props) {
     setJoinDeadlineError(false); // Sets error to false when changes are made
     setNewEvent({...newEvent, ["joinDeadline"]: value});
   };
+
+  const handleLocationChange = (value) => {
+    if (value === null) {
+      return;
+    }
+    setNewEvent({...newEvent, ["location"]: {name: value.structured_formatting.main_text, placeId: value.place_id}});
+  }
 
   const cancelCreationOnClick = () => {
     setNewEvent({});
@@ -283,6 +262,7 @@ function Home(props) {
           setNewEventModal(false);
           // Update events list by toggling the boolean
           toggleUpdateEvents();
+          toasts.showToastSuccessMessage("Event created successfully!");
           if(checkedTicket) {
             resetTickets();
           }
@@ -290,16 +270,16 @@ function Home(props) {
             handleDeadlineSwitch();
           }
           } else {
-            showToastMessage("Starting time needs to be before ending time.");
+            toasts.showToastMessage("Starting time needs to be before ending time.");
           }
         } else {
-          showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
+          toasts.showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
         }
       } else {
-        showToastMessage("Ending time is not valid.");
+        toasts.showToastMessage("Ending time is not valid.");
       }
     } else {
-      showToastMessage("Starting time is not valid.");
+      toasts.showToastMessage("Starting time is not valid.");
     }
   };
 
@@ -330,8 +310,6 @@ function Home(props) {
             admin={admin}
             event={event}
             key={index}
-            showToastMessage={showToastMessage}
-            showToastSuccessMessage={showToastSuccessMessage}
             toggleUpdateEvents={toggleUpdateEvents}
           />
         ))
@@ -355,6 +333,7 @@ function Home(props) {
         handleStartTimeChange={handleStartTimeChange}
         handleEndTimeChange={handleEndTimeChange}
         handleJoinDeadlineChange={handleJoinDeadlineChange}
+        handleLocationChange={handleLocationChange}
         cancelCreationOnClick={cancelCreationOnClick}
         saveNewEventOnClick={saveNewEventOnClick}
         handleStartTimeError={handleStartTimeError}

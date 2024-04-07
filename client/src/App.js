@@ -7,10 +7,23 @@ import News from './components/News';
 import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef} from 'react';
+
+function loadScript(src, position, id) {
+  if (!position) {
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.setAttribute('async', '');
+  script.setAttribute('id', id);
+  script.src = src;
+  position.appendChild(script);
+}
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const googleLoaded = useRef(false);
   const [currentUser, setCurrentUser] = useState({
     admin: false,
     loggedIn: false,
@@ -40,6 +53,21 @@ function App() {
     }
   );
 
+  /* Load Google Maps API */
+  if (typeof window !== 'undefined' && !googleLoaded.current) {
+    setLoading(true);
+    if (!document.querySelector('#google-maps')) {
+      loadScript(
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&region=EN&language=en&libraries=places,marker&loading=async`,
+        document.querySelector('head'),
+        'google-maps',
+      );
+    }
+    googleLoaded.current = true;
+    setLoading(false);
+  }
+
+  /* Authenticate user */
   useEffect(() =>
   {
     const tokenFromStorage = localStorage.getItem("AssocEase_Token");
