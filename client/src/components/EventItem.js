@@ -476,7 +476,7 @@ const handleJoinDeadlineError = (error) => {
         <div className="HomeEventBottom">
           <div className="HorizontalSeparator" />
           <div className="HomeEventDescriptionArea">
-            <p>{description}</p>
+            <p style={{whiteSpace: "pre-wrap"}}>{description}</p>
           </div>
           <Accordion
             sx={{
