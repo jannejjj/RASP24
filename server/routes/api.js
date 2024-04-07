@@ -759,7 +759,7 @@ cron.schedule('0 0 0 * * *', async () =>
     {
         let expiresInTwoWeeks = [];
         let expiresInOneWeek = [];
-        let expirresToday = [];
+        let expiresToday = [];
 
         members.forEach((member) =>
         {
@@ -773,13 +773,13 @@ cron.schedule('0 0 0 * * *', async () =>
             }
             else if (member.membershipExpirationDate.getDate() == new Date().getDate())
             {
-                expirresToday.push(member.email);
+                expiresToday.push(member.email);
             }
         })
 
-        await SendTwoWeeksNotice(expiresInTwoWeeks);
-        await SendOneWeeksNotice(expiresInOneWeek);
-        await SendExpirationNotice(expirresToday)
+        if (expiresToday.length > 0) await SendExpirationNotice(expiresToday);
+        if (expiresInOneWeek.length > 0) await SendExpirationNotice(expiresInOneWeek);
+        if (expiresInTwoWeeks.length > 0) await SendExpirationNotice(expiresInTwoWeeks);
     }
 });
 
