@@ -14,13 +14,16 @@
 .SchedulerEventContainer>div{
   margin-top: 0px;
   background-color: white;
+  /* width: 95%; */
+  margin-left: 16px;
 }
 .SchedulerEventContainer{
   background-color: #ff6fc512;
-  padding: 16px;
-  height: 70vh;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  height: 65vh;
   margin-left: 16px ;
-  margin-right: 32px ;
+  margin-right: 32px;
   border-radius: 10px;
   border : 1px solid #2C041C;
   overflow-y: scroll;
