@@ -13,8 +13,18 @@
 
 .SchedulerEventContainer>div{
   margin-top: 0px;
+  background-color: white;
 }
-
+.SchedulerEventContainer{
+  background-color: #ff6fc512;
+  padding: 16px;
+  height: 70vh;
+  margin-left: 16px ;
+  margin-right: 32px ;
+  border-radius: 10px;
+  border : 1px solid #2C041C;
+  overflow-y: scroll;
+}
 /* Custom styling of the Big calendar default theme */
 
 .rbc-calendar{

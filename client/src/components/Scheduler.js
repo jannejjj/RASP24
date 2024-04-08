@@ -91,23 +91,26 @@ function SchedulerComponent(props) {
         </Grid>
           }
         {props.currentUser.loggedIn && 
-        <Grid item xs={2} sx={{pl:4 }} className="SchedulerEventContainer">  
-          {selectedEvent !== null ? 
-            <EventItem
-              currentUser={props.currentUser}
-              user={props.currentUser}
-              admin={props.currentUser}
-              event={selectedEvent}
-              accordionExpanded={true}
-              showToastMessage={toasts.showToastMessage}
-              showToastSuccessMessage={toasts.showToastSuccessMessage}
-              toggleUpdateEvents={()=>{}}
-              onDeletedEvent={handleOnDeletedEvent}
-              onEditedEvent={()=>{setUpdateEvents(!updateEvents)}}
-            /> :
-            <p>No event selected</p> 
-          }
-        </Grid>}
+        <Grid item xs={2} sx={{pl:4 }} >  
+          <div className="SchedulerEventContainer">
+            {selectedEvent !== null ? 
+              <EventItem
+                currentUser={props.currentUser}
+                user={props.currentUser}
+                admin={props.currentUser}
+                event={selectedEvent}
+                accordionExpanded={true}
+                showToastMessage={toasts.showToastMessage}
+                showToastSuccessMessage={toasts.showToastSuccessMessage}
+                toggleUpdateEvents={()=>{}}
+                onDeletedEvent={handleOnDeletedEvent}
+                onEditedEvent={()=>{setUpdateEvents(!updateEvents)}}
+              /> :
+              <p>No event selected</p> 
+              }
+          </div>
+        </Grid>
+        }
         {props.currentUser.loggedIn && 
         <Grid item xs={3} sx={{height:"70vh", p:1, pr:4}}
           >
