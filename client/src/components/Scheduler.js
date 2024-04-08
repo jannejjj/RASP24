@@ -91,7 +91,7 @@ function SchedulerComponent(props) {
         </Grid>
           }
         {props.currentUser.loggedIn && 
-        <Grid item xs={2} sx={{pl:4 }} >  
+        <Grid item xs={2} sx={{pl:1 }} >  
           <div className="SchedulerEventContainer">
             {selectedEvent !== null ? 
               <EventItem
