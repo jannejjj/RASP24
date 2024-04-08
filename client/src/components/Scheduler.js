@@ -26,7 +26,7 @@ function SchedulerComponent(props) {
         title:e.title,
         id: e._id,
         start: new Date(e.startDate),
-        end: e.endDate != undefined ? new Date(e.endDate): new Date(e.startDate),
+        end: e.endDate !== undefined ? new Date(e.endDate): new Date(e.startDate),
         ref:i
       });
     });
@@ -97,7 +97,7 @@ function SchedulerComponent(props) {
               <EventItem
                 currentUser={props.currentUser}
                 user={props.currentUser}
-                admin={props.currentUser}
+                admin={props.currentUser.admin}
                 event={selectedEvent}
                 accordionExpanded={true}
                 showToastMessage={toasts.showToastMessage}

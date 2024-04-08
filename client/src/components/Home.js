@@ -221,7 +221,6 @@ function Home(props) {
     if (props.currentUser.loggedIn)
     {
       fetchEvents();
-      console.log("here");
       return () => {
           mounted = false;
       };
