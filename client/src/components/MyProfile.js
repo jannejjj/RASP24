@@ -322,19 +322,30 @@ function ProfileItem(props) {
         method: 'POST',
         body: formData
       });
+      if(response.ok){
+        const imageData = await response.json(); 
 
-      const imageData = await response.json(); 
+        // Convert the data array to a Uint8Array
+        const uint8Array = new Uint8Array(imageData.buffer.data);
 
-      // Convert the data array to a Uint8Array
-      const uint8Array = new Uint8Array(imageData.buffer.data);
+        // Convert the Uint8Array to a Base64 string
+        const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+        const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+        setProfilePicture(imageUrl); 
+      }
+      else{
+        if(response.status == 409){
+          toasts.showToastMessage('Error while uploading the image');
+        }
+        if(response.status == 413){
+          toasts.showToastMessage('The image size is to big');
+        }
+        }
 
-      // Convert the Uint8Array to a Base64 string
-      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
-      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
-      setProfilePicture(imageUrl); 
       setUploadImage(false);
     } catch (error) {
       console.error('Error uploading image:', error);
+      toasts.showToastMessage('Error while uploading the image', error.message);
       throw error;
     }
   }
@@ -534,6 +545,7 @@ function MyProfile(props) {
       }
     } catch (error) {
       console.error('Error fetching image:', error);
+      setImage("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png");
     }
   };
 

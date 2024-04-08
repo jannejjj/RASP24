@@ -6,7 +6,8 @@ import { FaUserGroup } from "react-icons/fa6";
 import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
-import {toast, ToastContainer } from 'react-toastify';
+import {ToastContainer } from 'react-toastify';
+import toast from "../common/Toast";
 import 'react-toastify/dist/ReactToastify.css';
 import Typography from "@mui/material/Typography";
 
@@ -282,12 +283,12 @@ function Home(props) {
                   console.log(data)
                   eventId = data._id;
               })
-                const formData = new FormData();
-                formData.append('image', selectedFile);
-                await fetch(`/api/updateImage/${eventId}`, {
-                  method: 'POST',
-                  body: formData
-                });
+          const formData = new FormData();
+          formData.append('image', selectedFile);
+          await fetch(`/api/updateImage/${eventId}`, {
+            method: 'POST',
+            body: formData
+          });
           // Empty the input fields
           setNewEvent({});
           // Close the Modal

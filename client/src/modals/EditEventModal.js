@@ -108,7 +108,7 @@ function EditEventModal(props)
                   onChange={e => props.setTickets(e.target.value)}
                 />
                 <h3>
-                  Upload profile image
+                  Upload event image
                 </h3>
                 <div>
                   <Input style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="file" onChange={props.handleImageChange} />

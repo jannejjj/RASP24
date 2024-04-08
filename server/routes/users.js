@@ -44,7 +44,7 @@ router.get('/getImage/:userId', upload.single('image'), async (req, res) => {
     }
     const userData = await Member.findById(id);
     if (!userData) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(405).json({ error: 'User not found' });
     }
     const imageId = userData.profileImage;
     if(imageId!= null){
@@ -62,23 +62,31 @@ router.get('/getImage/:userId', upload.single('image'), async (req, res) => {
 router.post('/updateImage/:userId', upload.single('image'), async (req, res) => {
   try {
     const userId = req.params.userId;
+    const file = req.file;
     const user = await Member.findById(userId);
+    const maxSize = 2;
     if(!user){
       return res.status(404).json({message: "User not found"});
+    }
+    if(!file){
+      return res.status(409).json({error: "there is no image"})
+    }
+    const fileSize= file.size / (1024 * 1024); //size in megabytes
+    if(fileSize > maxSize){
+      return res.status(413).json({error: "the image size is to big"});
     }
     if(user.profileImage != null){
       await Image.findByIdAndDelete(user.profileImage);
     }
     const newImage = new Image({
-      buffer: req.file.buffer,
-      mimetype: req.file.mimetype,
-      name: req.file.originalname,
+      buffer: file.buffer,
+      mimetype: file.mimetype,
+      name: file.originalname,
       encoding: 'base64'
     });
   
     const savedImage = await newImage.save();
 
-    
     user.profileImage = savedImage._id;
     await user.save();
 

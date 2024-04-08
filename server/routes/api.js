@@ -7,7 +7,6 @@ const Member_event = require("../models/member_event");
 const Event = require("../models/event");
 const Image = require("../models/image");
 const Member_Event = require("../models/member_event");
-const Event = require("../models/event");
 const NewsPost = require("../models/newsPost");
 const Ticket = require("../models/ticket");
 const bcrypt = require("bcryptjs");
