@@ -283,12 +283,15 @@ function Home(props) {
                   console.log(data)
                   eventId = data._id;
               })
-          const formData = new FormData();
-          formData.append('image', selectedFile);
-          await fetch(`/api/updateImage/${eventId}`, {
-            method: 'POST',
-            body: formData
-          });
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            const response = await fetch(`/api/updateImage/${eventId}`, {
+              method: 'POST',
+              body: formData
+            });
+            if(response.status == 413){
+              toast.showToastMessage("the event is created but the image is to big");
+            }
           // Empty the input fields
           setNewEvent({});
           // Close the Modal

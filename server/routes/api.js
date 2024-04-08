@@ -683,9 +683,18 @@ router.get('/getImage/:eventId', upload.single('image'), async (req, res) => {
   router.post('/updateImage/:eventId', upload.single('image'), async (req, res) => {
     try {
       const eventId = req.params.eventId;
+      const file = req.file;
+      const maxSize = 2;
       const event = await Event.findById(eventId);
       if(!event){
         return res.status(404).json({message: "Event not found"});
+      }
+      if(!file){
+        return res.status(409).json({error: "there is no image"})
+      }
+      const fileSize= file.size / (1024 * 1024); //size in megabytes
+      if(fileSize > maxSize){
+        return res.status(413).json({error: "the image size is to big"});
       }
       if(event.logo != null){
         await Image.findByIdAndDelete(event.logo);

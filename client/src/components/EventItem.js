@@ -215,16 +215,23 @@ const savingRules = () => {
       method: 'POST',
       body: formData
     });
+    if(response.ok){
+      const imageData = await response.json(); 
 
-    const imageData = await response.json(); 
+      // Convert the data array to a Uint8Array
+      const uint8Array = new Uint8Array(imageData.buffer.data);
 
-    // Convert the data array to a Uint8Array
-    const uint8Array = new Uint8Array(imageData.buffer.data);
-
-    // Convert the Uint8Array to a Base64 string
-    const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
-    const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
-    setImage(imageUrl); 
+      // Convert the Uint8Array to a Base64 string
+      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+      setImage(imageUrl); 
+    }
+    else{
+      if(response.status == 413){
+        toasts.showToastMessage('The image size is to big');
+        return;
+      }
+    }
 
     editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
     editedEvent.creatorId = props.currentUser.id;
