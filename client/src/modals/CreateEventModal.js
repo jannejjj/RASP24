@@ -1,7 +1,7 @@
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
 import '../App.css';
-import { React } from "react";
+import { React, useState } from "react";
 import Button from "@mui/material/Button";
 import { Input } from '@mui/material';
 import Modal from '@mui/material/Modal';
@@ -12,9 +12,9 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import AutocompleteInput from '../components/AutocompleteInput';
 
-function CreateEventModal(props)
-{
+function CreateEventModal(props) {
     return (
       <Modal open={props.newEventModal} >
         <Box className='ModalBackground' >
@@ -24,9 +24,9 @@ function CreateEventModal(props)
           <div className='HorizontalSeparator' />
           <form onSubmit={props.saveNewEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
                 <TextField fullWidth required label={'Title'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 0.5}} />
-                <TextField fullWidth required label={'Location'} type="text" id="location" sx={{m: 0.5}} />
+                <AutocompleteInput handleLocationChange={props.handleLocationChange} onChange={() => {return null;}} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateTimePicker sx={{m: 0.5}}
+                  <DateTimePicker sx={{m: 0.5, width: '100%'}}
                     onChange={props.handleStartTimeChange}
                     onError={props.handleStartTimeError}
                     label="Select starting time" 
@@ -49,7 +49,7 @@ function CreateEventModal(props)
                     label="Deadline for joining" checkedDeadline={props.checkedDeadline}
                     onChange={props.handleDeadlineSwitch}
                   />
-                  <DateTimePicker sx={{m: 0.5}}
+                  <DateTimePicker sx={{m: 0.5, width: '100%'}}
                     onChange={props.handleJoinDeadlineChange}
                     onError={props.handleJoinDeadlineError}
                     disabled={!props.checkedDeadline}
@@ -67,7 +67,7 @@ function CreateEventModal(props)
                       },
                     }}
                   />
-                  <DateTimePicker sx={{m: 0.5}}
+                  <DateTimePicker sx={{m: 0.5, width: '100%'}}
                     onChange={props.handleEndTimeChange}
                     onError={props.handleEndTimeError}
                     label="Select ending time" 

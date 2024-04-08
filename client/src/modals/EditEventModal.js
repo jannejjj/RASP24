@@ -5,6 +5,7 @@ import { Input } from '@mui/material';
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+import AutocompleteInput from '../components/AutocompleteInput';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -24,7 +25,7 @@ function EditEventModal(props)
           </h2>
           <form onSubmit={props.saveEditedEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
                 <h1>{props.title}</h1>
-                <TextField label='Location' fullWidth required type="text" placeholder={'Location'} id="location" sx={{m: 1}} defaultValue={props.location} />
+                <AutocompleteInput value={props.location.name} handleLocationChange={props.handleLocationChange} onChange={() => {return null;}} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker 
                     onChange={props.handleStartTimeChange}
@@ -34,7 +35,7 @@ function EditEventModal(props)
                     format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     defaultValue={dayjs(props.startDate)}
-                    sx={{width: '100%'}}
+                    sx={{width: '100%', m: 0.5}}
                     slotProps={{
                       textField: {
                         required: true,
@@ -58,7 +59,7 @@ function EditEventModal(props)
                     ampm={false}
                     defaultValue={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):null}
                     value={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):null}
-                    sx={{ width: '100%', marginBottom: '10px' }} 
+                    sx={{ width: '100%', m: 0.5 }} 
                     slotProps={{
                       textField: {
                         id: 'joinDeadline',
@@ -75,7 +76,7 @@ function EditEventModal(props)
                     ampm={false}
                     disablePast={true}
                     defaultValue={props.endDate !== undefined ? dayjs(props.endDate):null}
-                    sx={{ width: '100%' }} 
+                    sx={{ width: '100%', m: 0.5}} 
                     slotProps={{
                       textField: {
                         id: 'endDate',
@@ -84,8 +85,8 @@ function EditEventModal(props)
                     }}
                   />
                 </LocalizationProvider>
-                <TextField fullWidth multiline required label='Description' placeholder={'Description'} type="text" id="description" sx={{m: 1}} defaultValue={props.description}/>
-                <TextField fullWidth required label='Price' placeholder={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 1}} defaultValue={props.price}/>
+                <TextField fullWidth multiline required label='Description' placeholder={'Description'} type="text" id="description" sx={{m: 0.5}} defaultValue={props.description}/>
+                <TextField fullWidth required label='Price' placeholder={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 0.5}} defaultValue={props.price}/>
                 <FormControlLabel 
                   control={
                     <Switch checked={props.checkedTicket}/>

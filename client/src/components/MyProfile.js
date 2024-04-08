@@ -516,6 +516,7 @@ function MyProfile(props) {
 
   const fetchUsersEvents = async () =>
   {
+    setLoadingEvents(true);
     const response = await fetch('/api/get/events/for/' + props.currentUser.id, {
       method: "GET"
     })
@@ -524,6 +525,7 @@ function MyProfile(props) {
     {
       const data = await response.json();
       setEvents(data.events);
+      setLoadingEvents(false);
     }
   }
   const fetchProfileImage = async ()=>{
@@ -612,7 +614,7 @@ function MyProfile(props) {
       </div>
 
       <div className='Background'>
-        {/* This is shwon when the user has selected "My Information" from the top menu. */}
+        {/* This is shown when the user has selected "My Information" from the top menu. */}
         <div className='MyInformationArea' ref={informationRef} >
           {user && image &&
             (
@@ -636,7 +638,7 @@ function MyProfile(props) {
             )
           }
         </div>
-        {/* This is shwon when the user has selected "My Events" from the top menu. */}
+        {/* This is shown when the user has selected "My Events" from the top menu. */}
         <div className='MyEventsArea' ref={eventsRef}>
           {loadingEvents ?
             (
