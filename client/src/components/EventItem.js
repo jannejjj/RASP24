@@ -326,7 +326,7 @@ const handleJoinDeadlineError = (error) => {
       joinDeadline: joinDeadline,
       location: location,
       description: description,
-      price: props.price,
+      price: price,
       tickets : tickets
     });
     setEdit(true);
