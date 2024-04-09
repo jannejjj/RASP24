@@ -24,7 +24,7 @@ var idFromToken = null;
 require('../auth/passport')(passport);
 router.use(passport.initialize());
 
-//finds all the members in the DB if authenticated
+// Finds all the members in the DB if authenticated
 router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
       const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1}).populate('profileImage');
@@ -34,6 +34,17 @@ router.get("/members/", passport.authenticate('jwt', {session: false}), async (r
       res.status(500).json({error: 'Internal Server Error'});
     }
 });
+
+/* Gets total number of members */
+router.get("/membercount/", async (req, res) => {
+    try {
+        const memberCount = (await Member.find({})).length;
+        res.json({memberCount: memberCount});
+    } catch (err) {
+        console.error("Error getting member count:" , err);
+        res.status(500).json({error: "Couldn't get member count."})
+    }
+})
 
 /* Finds all events */
 router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
@@ -526,6 +537,10 @@ router.post("/editEvent",passport.authenticate('jwt', {session: false}), async (
         event.tickets = editedEvent.tickets;       
 
         await event.save();
+
+        // Send notifications for all the members that has bought a ticket to this event
+        SendEventEditionNotification(event);
+
         res.status(200).json({"event": event})
     } catch (err) {
         console.error(err);
@@ -723,7 +738,7 @@ cron.schedule("0 0 * * * *", async () =>
 {
     const sendReminders = async (emails, event) =>
     {
-        // The email allows to send emails to multiple addresses at the same time.
+        // The nodemailer allows to send emails to multiple addresses at the same time.
         // They only need to be separated by a comma and a space. Turn the list of
         // emails in to a string of emails.
         let emails_string = '';
@@ -818,6 +833,82 @@ cron.schedule("0 0 * * * *", async () =>
 
     fetchEventData();
 });
+
+
+// I created this non-async function that calls the actual async function that sends the emails.
+// This way the route that does the event update doesn't have to wait for this to finish before
+// notifying the frontend.
+const SendEventEditionNotification = (event) =>
+{
+    CreateAndSendNotifications(event)
+}
+
+const CreateAndSendNotifications = async (event) =>
+{
+    const tickets = await Ticket.find({event: event._id});
+
+    let memberIDs = [];
+
+    tickets.forEach((ticket) =>
+    {
+        memberIDs.push(ticket.member);
+    });
+
+    const emails = await Member.find({_id: { $in: memberIDs}}).select("email");
+
+    // The nodemailer allows to send emails to multiple addresses at the same time.
+    // They only need to be separated by a comma and a space. Turn the list of
+    // emails in to a string of emails.
+    let emails_string = '';
+
+    for(let i = 0; i < emails.length; i++)
+    {
+        emails_string += emails[i].email;
+
+        // If the email is not the last one in the list, add the separator.
+        if (i < emails.length - 1)
+        {
+            emails_string += ', ';
+        }
+    }
+
+    let message = "Event " + event.title + " updated\n";
+    message += "Start time: " + event.startDate + "\n";
+    message += "End time: " + event.endDate + "\n";
+    message += "Location: " + event.location + "\n";
+    message += "Description: " + event.description + "\n";
+
+    // Finally send the reminder about the event
+    const transporter = nodemailer.createTransport(
+        {
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth:
+            {
+                user: "assocease@gmail.com",
+                // This password is an App Password that was created for this example email address.
+                // It can't be used to normally login to the gmail service.
+                pass: "izdn grhs ymwm lxmx"
+            }
+        }
+    );
+
+    const mailOptions = {
+        from: "assocease@gmail.com",
+        to: emails_string,
+        subject: 'AssocEase event ' + event.title + ' has been updated',
+        text: message
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
 
 
 module.exports = router;

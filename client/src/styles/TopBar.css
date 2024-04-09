@@ -1,4 +1,4 @@
-.home-button, .members-button, .fi-button {
+.home-button, .members-button, .fi-button, .scheduler-button {
     border-radius: 0 !important;
     box-shadow: 1px 0 0 0 white;
 }

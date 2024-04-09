@@ -54,34 +54,9 @@ function EventItem(props) {
   const [editedLocation, setEditedLocation] = useState(props.event.location);
   const [editedDescription, setEditedDescription] = useState(props.event.description);
 
-
-  useEffect(() => { // Get event participants
-    const fetchEventData = async () => {
-      try {
-        const response = await fetch(`api/event/participants/${props.event._id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + props.currentUser.token,
-          }
-        });
-        const responseData = await response.json();
-        if (responseData && responseData.data && Array.isArray(responseData.data)) {
-          setEventParticipantsData(responseData.data);
-        } else {
-          setEventParticipantsData(null);
-        }
-      } catch (error) {
-        console.error('Error fetching event data:', error);
-      }
-    };
-
-    fetchEventData();
-  }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
-
   const [loadingParticipation, setLoadingParticipation] = useState(true);
   const [loadingLikes, setLoadingLikes] = useState(true);
-
+  
   useEffect(() => { // Get event participants
     const fetchEventData = async () => {
       try {
@@ -106,6 +81,39 @@ function EventItem(props) {
 
     fetchEventData();
   }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
+
+
+  useEffect(() => {
+    setLikes(props.event.attendees);
+    setTitle(props.event.title);
+    setLocation(props.event.location);
+    setDescription(props.event.description);
+    setTicketsSold(props.event.ticketsSold);
+    setTickets(props.event.tickets);
+    setPrice(props.event.price);
+
+    setStartDate(props.event.startDate);
+    setEndDate(props.event.endDate);
+    setJoinDeadline(props.event.joinDeadline);
+
+    const confirmLike = () => 
+    {
+      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
+        method: 'GET'
+      })
+      .then(response => response.json())
+      .then(data => 
+        {
+          setLiking(data.attending);
+          setLoadingLikes(false);
+        }
+      );
+    }
+
+    // Find out if the user is like this event or not
+    confirmLike();
+
+  }, [props.event]);
 
   useEffect(() => {
     const data = 
@@ -132,7 +140,7 @@ function EventItem(props) {
     .catch(error => {
         console.error('Error fetching ticket status:', error);
     });
-  }, []);
+  }, [props.event]);
 
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
@@ -233,6 +241,9 @@ const savingRules = () => {
         // Close the Modal
         setEdit(false);
         props.toggleUpdateEvents();
+        if(props.onEditedEvent !== undefined){
+          props.onEditedEvent();
+        }
         toasts.showToastSuccessMessage("Event edited successfully!");
       }
     });
@@ -321,7 +332,7 @@ const handleJoinDeadlineError = (error) => {
       joinDeadline: joinDeadline,
       location: location,
       description: description,
-      price: props.price,
+      price: price,
       tickets : tickets
     });
     setEdit(true);
@@ -456,6 +467,9 @@ const handleJoinDeadlineError = (error) => {
       } else {
         toasts.showToastSuccessMessage("Event deleted succesfully!");
         props.toggleUpdateEvents();
+        if(props.onDeletedEvent !== undefined){
+          props.onDeletedEvent();
+        }
       }
       setDeleteModal(false);
     });
@@ -542,6 +556,7 @@ const handleJoinDeadlineError = (error) => {
               borderRadius: "4px",
             }}
             disableGutters={true}
+            defaultExpanded={props.accordionExpanded}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <h3> Details </h3>
