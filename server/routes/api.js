@@ -40,7 +40,14 @@ router.get("/events",passport.authenticate('jwt', {session: false}), async (req,
   {
     const currentTime = new Date();
 
-    const events  = await Event.find({ $or: [ { endDate: { $gte: currentTime }}, { endDate: { $exists: false}} ] }).sort({ startDate: 1 });
+    const events  = await Event.find({ 
+        $or: 
+        [ 
+            { endDate: { $exists: true}, endDate: { $gte: currentTime} },
+            { endDate: { $exists: false}, startDate: { $gte: currentTime } } 
+        ] 
+    }).sort({ startDate: 1 });
+
     return res.send(events);
   } 
   catch (err) 
@@ -56,7 +63,14 @@ router.get("/old/events/", passport.authenticate('jwt', {session: false}), async
     {
         const currentTime = new Date();
 
-        const events  = await Event.find({ endDate: { $lt: currentTime } }).sort({ startDate: 1 });
+        const events  = await Event.find({ 
+            $or: 
+            [ 
+                { endDate: { $exists: true}, endDate: { $lt: currentTime} },
+                { endDate: { $exists: false}, startDate: { $lt: currentTime } } 
+            ] 
+        }).sort({ startDate: -1 });
+    
         return res.send(events);
     } 
     catch (err) 
