@@ -3,6 +3,7 @@ File: TicketItem.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: EventItem.js
+Props and Parameters: currentUser("memberSchema"), ticket("ticketSchema"), setTicket, title
 Description: This is used to show and use tickets
 GitHub: https://github.com/jannejjj/RASP24
 */

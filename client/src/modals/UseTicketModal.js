@@ -3,6 +3,7 @@ File: UseTicketModal.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: TicketItem.js
+Props and Parameters: openUseModal, setOpenUseModal, useTicket
 Description: Checks that the user definitely wants to use the ticket.
 GitHub: https://github.com/jannejjj/RASP24
 */

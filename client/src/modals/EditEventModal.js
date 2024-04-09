@@ -3,6 +3,8 @@ File: EditEventModal.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: EventItem.js
+Props and Parameters: edit, saveEditedEventOnClick, whenChanging, title, location, handleStartTimeChange, handleStartTimeError, startDate, checkedDeadline, handleJoinDeadlineChange, handleJoinDeadlineError, ...
+joinDeadline, handleEndTimeChange, handleEndTimeError, description, price, checkedTicket, resetTickets, tickets, cancelEditOnClick, saveEditOnClick
 Description: Allows editing of the event.
 GitHub: https://github.com/jannejjj/RASP24
 */

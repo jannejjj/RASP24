@@ -3,6 +3,7 @@ File: Login.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: App.js
+Props and Parameters: setCurrentUser
 Description: Login page
 GitHub: https://github.com/jannejjj/RASP24
 */

@@ -3,6 +3,7 @@ File: ListModal.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: EventItem.js
+Props and Parameters: eventParticipantsData, openParticipantsList, closeListOnClick
 Description: The modal lists the participants of the event.
 GitHub: https://github.com/jannejjj/RASP24
 */

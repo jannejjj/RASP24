@@ -3,6 +3,7 @@ File: CancelAttendanceModal.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: TODO: ?
+Props and Parameters: openCancelAttendance
 Description: A modal to check for cancellation
 GitHub: https://github.com/jannejjj/RASP24
 */

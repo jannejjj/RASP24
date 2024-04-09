@@ -3,6 +3,7 @@ File: Member.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: Members.js
+Props and Parameters: member("memberSchema"), currentUser("memberSchema")
 Description: Member card on the member page
 GitHub: https://github.com/jannejjj/RASP24
 */

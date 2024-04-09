@@ -3,6 +3,7 @@ File: ConfirmDeletePostModal.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: NewsItem.js
+Props and Parameters: openConfirmModal, setOpenConfirmModal, deletePost
 Description: A modal to ensure that the user wants to delete a post.
 GitHub: https://github.com/jannejjj/RASP24
 */

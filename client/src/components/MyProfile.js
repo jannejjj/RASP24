@@ -3,6 +3,7 @@ File: MyProfile.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: App.js
+Props and Parameters: currentUser("memberSchema"), setCurrentUser
 Description: My profile page body
 GitHub: https://github.com/jannejjj/RASP24
 */

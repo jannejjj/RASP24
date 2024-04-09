@@ -3,6 +3,7 @@ File: EventItem.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: Home.js, MyProfile.js
+Props and Parameters: event("eventSchema"), user("memberSchema"), currentUser, admin, key, showToastMessage, showToastSuccessMessage, toggleUpdateEvents
 Description: Event box used on the homepage and in my profile page
 GitHub: https://github.com/jannejjj/RASP24
 */

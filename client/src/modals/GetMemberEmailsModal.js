@@ -3,6 +3,7 @@ File: GetMemberEmailsModal.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: Member.js, ListModal.js
+Props and Parameters: getEmailsModal, getEmailsOnClick, handleSeparatorChange, getEmailsCancelOnClick
 Description: Allows admin to collect all emails.
 GitHub: https://github.com/jannejjj/RASP24
 */

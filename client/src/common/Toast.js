@@ -2,7 +2,9 @@
 File: Toast.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
-Description: Defines toast messages
+Used: EventItem.js, Home.js, Login.js, Member.js, Members.js, MyProfile.js, News.js, NewsItem.js, Register.js
+Props and Parameters: message
+Description: Defines toast messages.
 GitHub: https://github.com/jannejjj/RASP24
 */
 

@@ -3,6 +3,8 @@ File: EditDetailsModal.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: TODO: Home.js???, MyProfile.js
+Props and Parameters: edit, editedPhone, handlePhoneChange, editedEmail, handleEmailChange, editedAddress, handleAddressChange, editedPostalcode, handlePostalcodeChange, ...
+editedCity, handleCityChange, editedCountry, handleCountryChange, cancelEditOnClick, saveEditOnClick
 Description: This modal allows the user to edit the user's details.
 GitHub: https://github.com/jannejjj/RASP24
 */

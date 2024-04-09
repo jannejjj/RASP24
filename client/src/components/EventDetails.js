@@ -3,6 +3,7 @@ File: EventDetails.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: EventItem.js
+Props and Parameters: startDate, endDate, joinDeadline, price, ticketsSold, tickets
 Description: Is used to shows event information
 GitHub: https://github.com/jannejjj/RASP24
 */

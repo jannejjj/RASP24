@@ -3,6 +3,8 @@ File: CreateEventModal.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: Home.js
+Props and Parameters: newEventModal, checkedTicket, checkedDeadline, tickets, TODO: useless (setCheckedDeadline) ??? , setTickets, TODO: useless (setCheckedTicket) ???, whenChanging, handleStartTimeChange, ...
+handleEndTimeChange, handleJoinDeadlineChange, cancelCreationOnClick, saveNewEventOnClick, handleStartTimeError, handleEndTimeError, handleJoinDeadlineError, resetTickets, handleDeadlineSwitch
 Description: This modal is used to create events.
 GitHub: https://github.com/jannejjj/RASP24
 */

@@ -3,6 +3,7 @@ File: Topbar.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: Every page
+Props and Parameters: currentUser("memberSchema"), setCurrentUser
 Description: The top bar allows the user to move between pages. The Toolbar is located at the top of every page.
 GitHub: https://github.com/jannejjj/RASP24
 */

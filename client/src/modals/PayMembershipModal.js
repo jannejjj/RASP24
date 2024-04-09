@@ -3,6 +3,7 @@ File: PayMembershipModal.js
 Author: Group 4
 Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
 Used: MyProfile.js
+Props and Parameters: payMembership, price, paymentDisabled, cancelPaymentOnClick, paymentOnClick
 Description: Allows the user to pay membership.
 GitHub: https://github.com/jannejjj/RASP24
 */
