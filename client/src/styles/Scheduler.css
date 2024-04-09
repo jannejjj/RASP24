@@ -1,0 +1,79 @@
+.SchedulerContainer{
+  height: 100%;
+}
+
+.SchedulerContentContainer{
+  display: flex;
+  flex-direction: row;
+}
+
+.SchedulerEvent{
+  height: 100%;
+}
+
+.SchedulerEventContainer>div{
+  margin-top: 0px;
+  background-color: white;
+  /* width: 95%; */
+  margin-left: 16px;
+}
+.SchedulerEventContainer{
+  background-color: #ff6fc512;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  height: 65vh;
+  margin-left: 2% ;
+  margin-right: 3%;
+  border-radius: 10px;
+  border : 1px solid #2C041C;
+  overflow-y: scroll;
+}
+/* Custom styling of the Big calendar default theme */
+
+.rbc-calendar{
+  font-family: 'Poppins';
+  
+  .rbc-event.rbc-selected{
+    background-color: #2C041C;
+    color: white;
+    border: 0px;
+  }
+  .rbc-button-link.rbc-show-more{
+    color: #2C041C;
+  }
+  .rbc-event{
+    background-color: white;
+    color: #2C041C;
+    border-radius: 5px;
+    border: 1px solid #2C041C;
+    background-color: #ff6fc512;
+  }
+  .rbc-btn-group>button{
+    text-decoration: none;
+    border:0;
+    color:white;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    min-width: 64px;
+    padding: 6px 16px;
+    border-radius: 4px;
+    background-color: rgb(30, 2, 19);
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+  }
+  .rbc-btn-group>button.rbc-active{
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    padding: 5px 14px;
+    background-color: white;
+    border: 1px solid;
+    border-color: #2C041C;
+    border-radius: 5px;
+    height: 100%;
+    color: #2C041C;
+  }
+  .rbc-today{
+    background-color: #ff6fc512;
+  }
+  .rbc-time-view, .rbc-month-view, .rbc-time-view{
+    border-radius: 10px;
+  }
+}
