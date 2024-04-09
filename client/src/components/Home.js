@@ -262,6 +262,11 @@ function Home(props) {
                   console.log(data)
                   eventId = data._id;
               })
+              
+            if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
+              toasts.showToastMessage('Please select a PNG or JPEG image file.');
+              return;
+            }
             const formData = new FormData();
             formData.append('image', selectedFile);
             const response = await fetch(`/api/updateImage/${eventId}`, {
@@ -269,15 +274,16 @@ function Home(props) {
               body: formData
             });
             if(response.status == 413){
-              toast.showToastMessage("the event is created but the image is to big");
+              toasts.showToastMessage("the event is created but the image is to big");
+            }else{
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastSuccessMessage("Event created successfully!");
             }
-          // Empty the input fields
-          setNewEvent({});
-          // Close the Modal
-          setNewEventModal(false);
-          // Update events list by toggling the boolean
-          toggleUpdateEvents();
-          toasts.showToastSuccessMessage("Event created successfully!");
           if(checkedTicket) {
             resetTickets();
           }

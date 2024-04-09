@@ -315,9 +315,15 @@ function ProfileItem(props) {
 
   const saveImageOnClick = async () => {
     try {
+      
+      if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
+        toasts.showToastMessage('Please select a PNG or JPEG image file.');
+        return;
+      }
+
       const formData = new FormData();
       formData.append('image', selectedFile);
-
+      
       const response = await fetch(`/users/updateImage/${props.currentUser.id}`, {
         method: 'POST',
         body: formData
@@ -331,7 +337,8 @@ function ProfileItem(props) {
         // Convert the Uint8Array to a Base64 string
         const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
         const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
-        setProfilePicture(imageUrl); 
+        setProfilePicture(imageUrl);
+        setUploadImage(false); 
       }
       else{
         if(response.status == 409){
@@ -340,9 +347,7 @@ function ProfileItem(props) {
         if(response.status == 413){
           toasts.showToastMessage('The image size is to big');
         }
-        }
-
-      setUploadImage(false);
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
       toasts.showToastMessage('Error while uploading the image', error.message);

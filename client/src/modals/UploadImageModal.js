@@ -14,6 +14,7 @@ function UploadImageModal(props)
           <h2>
             Upload profile image
           </h2>
+          <a>The maximun size is 2MB</a>
           <div>
             <Input style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="file" onChange={props.handleImageChange} />
             <div className='ModalButtonArea'>

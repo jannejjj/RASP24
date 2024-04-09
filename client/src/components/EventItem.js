@@ -178,6 +178,10 @@ const savingRules = () => {
     if(!checkedDeadline) {
       editedEvent.joinDeadline = undefined;
     }
+    if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
+      toasts.showToastMessage('Please select a PNG or JPEG image file.');
+      return;
+    }
     //save the image
     const formData = new FormData();
     formData.append('image', selectedFile);

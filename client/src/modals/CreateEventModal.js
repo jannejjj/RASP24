@@ -106,9 +106,10 @@ function CreateEventModal(props) {
                   onChange={e => props.setTickets(e.target.value)}
                 />
                 <p className='HintParagraphSmall' >Required *</p>
-                <h3>
+                <h2>
                   Upload profile image
-                </h3>
+                </h2>
+                <a>The maximun size is 2MB</a>
                 <div>
                   <Input style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="file" onChange={props.handleImageChange} />
                 </div>
