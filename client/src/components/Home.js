@@ -180,6 +180,7 @@ function Home(props) {
 
   const cancelCreationOnClick = () => {
     setNewEvent({});
+    setSelectedFile(null);
     if(checkedTicket) {
       resetTickets();
     }
@@ -262,9 +263,24 @@ function Home(props) {
                   console.log(data)
                   eventId = data._id;
               })
-              
+            if(!selectedFile){
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastSuccessMessage("Event created successfully!");
+              return;
+            }  
             if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
-              toasts.showToastMessage('Please select a PNG or JPEG image file.');
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastMessage('The event is created without an image');
               return;
             }
             const formData = new FormData();
@@ -275,6 +291,13 @@ function Home(props) {
             });
             if(response.status == 413){
               toasts.showToastMessage("the event is created but the image is to big");
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastSuccessMessage("Event created successfully!");
             }else{
               // Empty the input fields
               setNewEvent({});

@@ -315,6 +315,10 @@ function ProfileItem(props) {
 
   const saveImageOnClick = async () => {
     try {
+      if(!selectedFile){
+        toasts.showToastMessage('Error while uploading the image');
+        return;
+      }
       
       if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
         toasts.showToastMessage('Please select a PNG or JPEG image file.');
@@ -356,6 +360,7 @@ function ProfileItem(props) {
   }
   const cancelImageOnClick = () => {
     setUploadImage(false);
+    setSelectedFile(null);
   }
 
   const uploadOnClick = () => {

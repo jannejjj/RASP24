@@ -178,6 +178,10 @@ const savingRules = () => {
     if(!checkedDeadline) {
       editedEvent.joinDeadline = undefined;
     }
+    if(!selectedFile){
+      toasts.showToastMessage('Error while uploading the image');
+      return;
+    }
     if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
       toasts.showToastMessage('Please select a PNG or JPEG image file.');
       return;
@@ -266,6 +270,7 @@ const savingRules = () => {
 
   const cancelEditOnClick = () => {
     setEditedEvent({});
+    setSelectedFile(null);
     if(!checkedTicket) {
       resetTickets();
     }
