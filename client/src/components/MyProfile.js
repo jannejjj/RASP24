@@ -342,6 +342,7 @@ function ProfileItem(props) {
         const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
         const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
         setProfilePicture(imageUrl);
+        toasts.showToastSuccessMessage('Image uploaded successfully!');
         setUploadImage(false); 
       }
       else{
@@ -349,7 +350,7 @@ function ProfileItem(props) {
           toasts.showToastMessage('Error while uploading the image');
         }
         if(response.status == 413){
-          toasts.showToastMessage('The image size is to big');
+          toasts.showToastMessage('The image size is too big');
         }
       }
     } catch (error) {

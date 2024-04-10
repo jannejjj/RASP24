@@ -214,7 +214,7 @@ const savingRules = () => {
     }
     else{
       if(response.status == 413){
-        toasts.showToastMessage('The image size is to big');
+        toasts.showToastMessage('The image size is too big');
         return;
       }
     }
@@ -494,6 +494,9 @@ const handleJoinDeadlineError = (error) => {
       const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
       setImage(imageUrl);
       }
+      else{
+      setImage("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
+      }
     } catch (error) {
       console.error('Error fetching image:', error);
     }
@@ -501,7 +504,7 @@ const handleJoinDeadlineError = (error) => {
 
   useEffect(() =>
   {
-    // Fetches the profile image of the current user 
+    // Fetches the profile image of the current event 
     fetchEventImage();
 
     const confirmLike = () => 
@@ -520,7 +523,7 @@ const handleJoinDeadlineError = (error) => {
 
     // Find out if the user is liking this event or not
     confirmLike();
-  }, []);
+  }, [props.event]);
     
     if(loadingLikes || loadingParticipation) {
       return null;

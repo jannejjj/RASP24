@@ -705,11 +705,11 @@ router.get('/getImage/:eventId', upload.single('image'), async (req, res) => {
         return res.status(404).json({message: "Event not found"});
       }
       if(!file){
-        return res.status(409).json({error: "there is no image"})
+        return res.status(409).json({error: "There is no image"})
       }
       const fileSize= file.size / (1024 * 1024); //size in megabytes
       if(fileSize > maxSize){
-        return res.status(413).json({error: "the image size is to big"});
+        return res.status(413).json({error: "The image size is too big"});
       }
       if(event.logo != null){
         await Image.findByIdAndDelete(event.logo);

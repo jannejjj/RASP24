@@ -246,7 +246,7 @@ function Home(props) {
               setNewEventModal(false);
               // Update events list by toggling the boolean
               toggleUpdateEvents();
-              toasts.showToastMessage('The event is created without an image');
+              toasts.showToastMessage('The event was generated without an image due to an incorrect format');
               return;
             }
             const formData = new FormData();
@@ -256,7 +256,7 @@ function Home(props) {
               body: formData
             });
             if(response.status == 413){
-              toasts.showToastMessage("the event is created but the image is to big");
+              toasts.showToastMessage("The event was created but the image is too big");
               // Empty the input fields
               setNewEvent({});
               // Close the Modal
