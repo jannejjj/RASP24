@@ -7,7 +7,9 @@ import News from './components/News';
 import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
-import { useState, useEffect, useRef} from 'react';
+import SchedulerComponent from './components/Scheduler';
+import { useState, useEffect, useRef } from 'react';
+import "react-big-calendar/lib/css/react-big-calendar.css"
 
 function loadScript(src, position, id) {
   if (!position) {
@@ -111,6 +113,7 @@ function App() {
           <TopBar currentUser={currentUser} setCurrentUser={setCurrentUser} />
           <Routes>
           <Route path="/Members" element={<Members currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
+          <Route path="/Scheduler" element={<SchedulerComponent currentUser={currentUser}/>} />
           <Route path="/News" element={<News currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           <Route path="/" element={<Home currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           {/* If the user is not logged in and they go to the MyProfile url, they are rerouted to the home page */}
