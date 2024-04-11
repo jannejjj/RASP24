@@ -34,6 +34,17 @@ router.get("/members/", passport.authenticate('jwt', {session: false}), async (r
     }
 });
 
+/* Gets total number of members */
+router.get("/membercount/", async (req, res) => {
+    try {
+        const memberCount = (await Member.find({})).length;
+        res.json({memberCount: memberCount});
+    } catch (err) {
+        console.error("Error getting member count:" , err);
+        res.status(500).json({error: "Couldn't get member count."})
+    }
+});
+
 /* Finds all events */
 router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
   try 

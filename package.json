@@ -11,10 +11,5 @@
     "dev:server": "cd server && npm run dev"
   },
   "author": "Group 4",
-  "license": "ISC",
-  "dependencies": {
-    "@aldabil/react-scheduler": "^2.8.3",
-    "date-fns": "^3.6.0",
-    "emotions": "^0.0.1"
-  }
+  "license": "ISC"
 }
