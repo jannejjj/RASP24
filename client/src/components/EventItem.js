@@ -201,7 +201,7 @@ const savingRules = () => {
       method: 'POST',
       body: formData
     });
-    if(response.ok){
+    if(response.ok || response.status == 409){
       const imageData = await response.json(); 
 
       // Convert the data array to a Uint8Array
