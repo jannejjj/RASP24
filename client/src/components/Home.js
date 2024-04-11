@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import toasts from "../common/Toast";
 import 'react-toastify/dist/ReactToastify.css';
 import Typography from "@mui/material/Typography";
+import { IoIosArrowDown } from "react-icons/io";
 
 function Details(props) {
   const [admin, setAdmin] = useState(props.admin);
@@ -66,9 +67,12 @@ function Home(props) {
   const [checkedDeadline, setCheckedDeadline] = useState(false);
   const [tickets, setTickets] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadingPastEvents, setLoadingPastEvents] = useState(false);
   const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [pastEvents, setPastEvents] = useState([]);
+  const [showPastEvents, setShowPastEvents] = useState(false);
 
 
   const toggleUpdateEvents = () => {
@@ -176,6 +180,7 @@ function Home(props) {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
+
     async function fetchEvents() {
         let url = '/api/events';
         let response = await fetch(url, {headers: {
@@ -188,10 +193,12 @@ function Home(props) {
             setLoading(false);
         }
       }
+
     // Only for users that have logged in
     if (props.currentUser.loggedIn)
     {
       fetchEvents();
+
       return () => {
           mounted = false;
       };
@@ -293,6 +300,34 @@ function Home(props) {
     }
   };
 
+  const ShowPastEventsClick = async () =>
+  {
+    if (showPastEvents)
+    {
+      setShowPastEvents(false);
+    }
+    else
+    {
+      setLoadingPastEvents(true)
+      const response = await fetch('/api/old/events', 
+      {
+        headers: 
+        {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        }
+      });
+
+      const dataJson = await response.json();
+      if (dataJson) {
+          setPastEvents(dataJson);
+          setLoadingPastEvents(false);
+      }
+      
+      setShowPastEvents(true);
+    }
+  }
+
   return (
     <div className="HomePageBackground">
       <div className="DetailsArea">
@@ -328,7 +363,41 @@ function Home(props) {
           Please log in to see events.</Typography>
         }
 
-        <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
+        {!events?.length > 0 &&
+          <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
+        }
+
+        {(props.currentUser.admin && !loading) &&
+          <div className="HomePastEvents">
+            <div className="ShowPastEventsButton" onClick={ShowPastEventsClick}>
+              <h3>{showPastEvents ? "Hide" : "Show"} Past Events</h3>
+              <div className="HorizontalSeparator" />
+              <IoIosArrowDown className="ShowPastEventsArrow" style={showPastEvents && {transform: "rotate(180deg)"}} />
+            </div>
+
+            {showPastEvents &&
+              (!loadingPastEvents ? 
+                ( 
+                  pastEvents.map((event, index) => (
+                    <EventItem
+                      currentUser={props.currentUser}
+                      user={user}
+                      admin={admin}
+                      event={event}
+                      key={index}
+                      oldEvent={true}
+                      toggleUpdateEvents={toggleUpdateEvents}
+                    />
+                  ))
+                )
+                :
+                (
+                  <Typography sx={{ mt: 20 }} variant='h4' align="center">Loading...</Typography>
+                )
+              )
+            }
+          </div>
+        }
       </div>
 
       <CreateEventModal

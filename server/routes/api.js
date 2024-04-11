@@ -48,13 +48,48 @@ router.get("/membercount/", async (req, res) => {
 
 /* Finds all events */
 router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
-  try {
-      const events  = await Event.find({});
-      res.send(events);
-  } catch (err) {
-      console.error(err);
-      res.send("No events.");
+  try 
+  {
+    const currentTime = new Date();
+
+    const events  = await Event.find({ 
+        $or: 
+        [ 
+            { endDate: { $exists: true}, endDate: { $gte: currentTime} },
+            { endDate: { $exists: false}, startDate: { $gte: currentTime } } 
+        ] 
+    }).sort({ startDate: 1 });
+
+    return res.send(events);
+  } 
+  catch (err) 
+  {
+    console.error("Error while fetching events:\n" + err);
+    return res.send("No events.");
   }
+});
+
+router.get("/old/events/", passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    try 
+    {
+        const currentTime = new Date();
+
+        const events  = await Event.find({ 
+            $or: 
+            [ 
+                { endDate: { $exists: true}, endDate: { $lt: currentTime} },
+                { endDate: { $exists: false}, startDate: { $lt: currentTime } } 
+            ] 
+        }).sort({ startDate: -1 });
+    
+        return res.send(events);
+    } 
+    catch (err) 
+    {
+        console.error("Error while fetching old events:\n" + err);
+        return res.send("No events.");
+    }
 });
 
 /* Finds all news */
