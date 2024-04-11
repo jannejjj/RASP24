@@ -186,13 +186,11 @@ const savingRules = () => {
     if(!checkedDeadline) {
       editedEvent.joinDeadline = undefined;
     }
-    if(!selectedFile){
-      toasts.showToastMessage('Error while uploading the image');
-      return;
-    }
-    if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
-      toasts.showToastMessage('Please select a PNG or JPEG image file.');
-      return;
+    if(selectedFile){
+      if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
+        toasts.showToastMessage('Please select a PNG or JPEG image file.');
+        return;
+      }
     }
     //save the image
     const formData = new FormData();
@@ -201,7 +199,7 @@ const savingRules = () => {
       method: 'POST',
       body: formData
     });
-    if(response.ok || response.status == 409){
+    if(response.ok){
       const imageData = await response.json(); 
 
       // Convert the data array to a Uint8Array
