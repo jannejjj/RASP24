@@ -36,13 +36,48 @@ router.get("/members/", passport.authenticate('jwt', {session: false}), async (r
 
 /* Finds all events */
 router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
-  try {
-      const events  = await Event.find({});
-      res.send(events);
-  } catch (err) {
-      console.error(err);
-      res.send("No events.");
+  try 
+  {
+    const currentTime = new Date();
+
+    const events  = await Event.find({ 
+        $or: 
+        [ 
+            { endDate: { $exists: true}, endDate: { $gte: currentTime} },
+            { endDate: { $exists: false}, startDate: { $gte: currentTime } } 
+        ] 
+    }).sort({ startDate: 1 });
+
+    return res.send(events);
+  } 
+  catch (err) 
+  {
+    console.error("Error while fetching events:\n" + err);
+    return res.send("No events.");
   }
+});
+
+router.get("/old/events/", passport.authenticate('jwt', {session: false}), async (req, res) =>
+{
+    try 
+    {
+        const currentTime = new Date();
+
+        const events  = await Event.find({ 
+            $or: 
+            [ 
+                { endDate: { $exists: true}, endDate: { $lt: currentTime} },
+                { endDate: { $exists: false}, startDate: { $lt: currentTime } } 
+            ] 
+        }).sort({ startDate: -1 });
+    
+        return res.send(events);
+    } 
+    catch (err) 
+    {
+        console.error("Error while fetching old events:\n" + err);
+        return res.send("No events.");
+    }
 });
 
 /* Finds all news */
@@ -523,6 +558,9 @@ router.post("/editEvent",passport.authenticate('jwt', {session: false}), async (
         event.tickets = editedEvent.tickets;       
 
         await event.save();
+
+        SendEventEditionNotification(event);
+        
         res.status(200).json({"event": event})
     } catch (err) {
         console.error(err);
@@ -741,6 +779,67 @@ cron.schedule("0 0 * * * *", async () =>
     fetchEventData();
 });
 
+// I created this non-async function that calls the actual async function that sends the emails.
+// This way the route that does the event update doesn't have to wait for this to finish before
+// notifying the frontend.
+const SendEventEditionNotification = (event) =>
+{
+    CreateAndSendNotifications(event)
+}
+
+const CreateAndSendNotifications = async (event) =>
+{
+    const tickets = await Ticket.find({event: event._id});
+
+    let memberIDs = [];
+
+    tickets.forEach((ticket) =>
+    {
+        memberIDs.push(ticket.member);
+    });
+
+    const emails = await Member.find({_id: { $in: memberIDs}}).select("email");
+
+    const emails_string = convertEmailsToString(emails);
+
+    let message = "Event " + event.title + " updated\n";
+    message += "Start time: " + event.startDate + "\n";
+    message += "End time: " + event.endDate + "\n";
+    message += "Location: " + event.location + "\n";
+    message += "Description: " + event.description + "\n";
+
+    // Finally send the reminder about the event
+    const transporter = nodemailer.createTransport(
+        {
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth:
+            {
+                user: "assocease@gmail.com",
+                // This password is an App Password that was created for this example email address.
+                // It can't be used to normally login to the gmail service.
+                pass: "izdn grhs ymwm lxmx"
+            }
+        }
+    );
+
+    const mailOptions = {
+        from: "assocease@gmail.com",
+        to: emails_string,
+        subject: 'AssocEase event ' + event.title + ' has been updated',
+        text: message
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
 // Once a day check if there are members whose membership will be outdated in two weeks
 // send them a two week notice. Also check if there are members whose membership will
 // be outdated in a week send them a weeks notice.
@@ -779,19 +878,19 @@ cron.schedule('0 0 0 * * *', async () =>
 
         if (expiresToday.length > 0) 
         {
-            const message = "Your membersship to AssocEase expires today!"
+            const message = "Your membership to AssocEase expires today!"
             await SendExpirationNotice(expiresToday, message);
         }
 
         if (expiresInOneWeek.length > 0) 
         {
-            const message = "Your membersship to AssocEase will expire in a week!"
+            const message = "Your membership to AssocEase will expire in a week!"
             await SendExpirationNotice(expiresInOneWeek, message);
         }
 
         if (expiresInTwoWeeks.length > 0) 
         {
-            const message = "Your membersship to AssocEase will expire in two weeks!"
+            const message = "Your membership to AssocEase will expire in two weeks!"
             await SendExpirationNotice(expiresInTwoWeeks, message);
         }
     }
