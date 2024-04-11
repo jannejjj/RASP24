@@ -42,6 +42,8 @@ function EventItem(props) {
   const [hasTicket, setHasTicket] = useState(false);
   const [ticket, setTicket] = useState(null);
   const [eventParticipantsData, setEventParticipantsData] = useState(null);
+  const [allowDelete, setAllowDelete] = useState(null);
+  const [allowEdit, setAllowEdit] = useState(null);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -511,49 +513,50 @@ const handleJoinDeadlineError = (error) => {
               {props.currentUser.admin && 
                 (
                   <div>
-                    <Button className='EditEventButton' variant='contained' disabled={dayjs(endDate) < new Date()} onClick={editOnClick} >Edit</Button>
-                    <Button className='DeleteEventButton' variant='contained' disabled={ticketsSold > 0} onClick={deleteOnClick} >Delete</Button>
-                      <Tooltip title={"List of event participants"}>
-                        <IconButton className="ListParticipantsButton" onClick={openListOnClick}>
-                          <PeopleIcon/>
-                        </IconButton>
-                      </Tooltip>
+                    {dayjs(endDate) >= new Date() && <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>}
+                    {(ticketsSold == 0 || props.oldEvent == true) && <Button className='DeleteEventButton' variant='contained' onClick={deleteOnClick} >Delete</Button>}
+                    <Tooltip title={"List of event participants"}>
+                      <IconButton className="ListParticipantsButton" onClick={openListOnClick}>
+                        <PeopleIcon/>
+                      </IconButton>
+                    </Tooltip>
                   </div>
                 )
               }
             </div>
-            <div className="RightSideButtons">
-              {like ? 
-                (
-                  <IconButton sx={{ 
-                    border: "1px solid",
-                    borderColor: "primary.main",
-                    borderRadius: "5px",
-                    height: "100%",
-                    mr:1,
-                    color: 'primary.main'
-                     }} onClick={() => {setLiking(false); handleCancelEventLike(); }}>
-                    <FavoriteIcon fontSize="small"/>
-                  </IconButton>
-                )
-                :
-                ( 
-                  <IconButton variant="contained" sx={{ 
-                    borderRadius: "5px",
-                    height: "100%",
-                    border: "1px solid #2C041C",
-                    mr:1, 
-                    bgcolor:'primary.main', 
-                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
-                    color:'white',
-                    '&:hover': {
-                      backgroundColor: 'primary.main', // Set the background color on hover
-                    },
-                    }} onClick={() => {setLiking(true); handleEventLike();}} color='white'>
-                    <FavoriteIcon fontSize="small" />
-                  </IconButton>
-                )
-              }
+            {props.oldEvent != true &&
+              <div className="RightSideButtons">
+                {like ? 
+                  (
+                    <IconButton sx={{ 
+                      border: "1px solid",
+                      borderColor: "primary.main",
+                      borderRadius: "5px",
+                      height: "100%",
+                      mr:1,
+                      color: 'primary.main'
+                      }} onClick={() => {setLiking(false); handleCancelEventLike(); }}>
+                      <FavoriteIcon fontSize="small"/>
+                    </IconButton>
+                  )
+                  :
+                  ( 
+                    <IconButton variant="contained" sx={{ 
+                      borderRadius: "5px",
+                      height: "100%",
+                      border: "1px solid #2C041C",
+                      mr:1, 
+                      bgcolor:'primary.main', 
+                      boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+                      color:'white',
+                      '&:hover': {
+                        backgroundColor: 'primary.main', // Set the background color on hover
+                      },
+                      }} onClick={() => {setLiking(true); handleEventLike();}} color='white'>
+                      <FavoriteIcon fontSize="small" />
+                    </IconButton>
+                  )
+                }
                 {hasTicket ? 
                   (
                     <Button variant='outlined' color='primary' sx={{width: '150px'}} >Paid</Button>
@@ -563,15 +566,18 @@ const handleJoinDeadlineError = (error) => {
                     <div>
                     {typeof tickets !== 'undefined' && tickets - ticketsSold <= 0 ?
                       ( 
-                        <div style={{display: "flex", width: '150px', justifyContent: "center", alignItems: "center", height:"100%"}}>No tickets available</div>  
-                      ): (
+                        <Button variant='outlined' disabled color='primary' sx={{width: '150px'}} >Sold Out!</Button>
+                      )
+                      : 
+                      (
                         <Button variant='contained' color='primary' sx={{width: '150px'}} onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
                       )
                     }
                     </div>
                   )
                 }
-            </div>
+              </div>
+            }
           </div>
         </div>
   
