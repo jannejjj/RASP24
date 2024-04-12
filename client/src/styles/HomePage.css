@@ -147,7 +147,9 @@
 
 .HomeEventDescriptionArea
 {
-  text-align: justify;
+  text-align: start;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .HomeEventButtonsArea
