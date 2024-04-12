@@ -111,7 +111,7 @@ function EditEventModal(props)
                 <h2>
                   Upload event image
                 </h2>
-                <a>The maximun size is 2MB</a>
+                <a>The maximum size is 2MB</a>
                 <div>
                   <Input style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="file" onChange={props.handleImageChange} />
                 </div>
