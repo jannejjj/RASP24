@@ -845,7 +845,7 @@ const CreateAndSendNotifications = async (event) =>
     let message = "Event " + event.title + " updated\n";
     message += "Start time: " + event.startDate + "\n";
     message += "End time: " + event.endDate + "\n";
-    message += "Location: " + event.location + "\n";
+    message += "Location: " + event.location.name + "\n";
     message += "Description: " + event.description + "\n";
 
     // Finally send the reminder about the event
