@@ -220,7 +220,7 @@ const savingRules = () => {
     });
   };
 
-//Resets the amount of tickets and clears the text box.
+//Resets the amount of tickets.
   const resetTickets = () => {
     setCheckedTicket(!checkedTicket);
     editedEvent.tickets = 0;
