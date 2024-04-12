@@ -563,7 +563,7 @@ const handleJoinDeadlineError = (error) => {
                   :
                   (
                     <div>
-                    {typeof tickets !== undefined && tickets !== 0 && tickets - ticketsSold <= 0 ?
+                    {typeof tickets !== "undefined" && tickets !== 0 && tickets - ticketsSold <= 0 ?
                       ( 
                         <Button variant='outlined' disabled color='primary' sx={{width: '150px'}} >Sold Out!</Button>
                       )
