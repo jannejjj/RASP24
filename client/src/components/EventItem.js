@@ -222,7 +222,6 @@ const savingRules = () => {
 
 //Resets the amount of tickets and clears the text box.
   const resetTickets = () => {
-    setTickets("");
     setCheckedTicket(!checkedTicket);
     editedEvent.tickets = 0;
     setEditedEvent(editedEvent);
@@ -241,7 +240,7 @@ const savingRules = () => {
     setEditedEvent(editedEvent);
   }
 
-  //Updates the values for the text fields in event creation
+  //Updates the values for the text fields in event edition
   const whenChanging = (event) => {
     setEditedEvent({...editedEvent, [event.target.id]: event.target.value})
   }
@@ -564,7 +563,7 @@ const handleJoinDeadlineError = (error) => {
                   :
                   (
                     <div>
-                    {typeof tickets !== 'undefined' && tickets - ticketsSold <= 0 ?
+                    {typeof tickets !== undefined && tickets !== 0 && tickets - ticketsSold <= 0 ?
                       ( 
                         <Button variant='outlined' disabled color='primary' sx={{width: '150px'}} >Sold Out!</Button>
                       )
