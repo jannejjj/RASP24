@@ -54,6 +54,9 @@ function EventItem(props) {
   const [editedLocation, setEditedLocation] = useState(props.event.location);
   const [editedDescription, setEditedDescription] = useState(props.event.description);
 
+  const [ticketSwitchWasToggled, setTicketSwitchWasToggled] = useState(false);
+  const [deadlineSwitchWasToggled, setDeadlineSwitchWasToggled] = useState(false);
+
   const [loadingParticipation, setLoadingParticipation] = useState(true);
   const [loadingLikes, setLoadingLikes] = useState(true);
   
@@ -166,7 +169,8 @@ const savingRules = () => {
   if(endTimeError)  return savingErrorMessages[1];
   if(!checkedDeadline) {
     editedEvent.joinDeadline = undefined;
-  }
+  } else if (!editedEvent.joinDeadline) return savingErrorMessages[2];
+  if(!checkedTicket) editedEvent.tickets = undefined;
   const startDateAux = new Date(editedEvent.startDate);
   const joinDeadlineAux = new Date(editedEvent.joinDeadline);
   const endDateAux = new Date(editedEvent.endDate);
@@ -179,12 +183,9 @@ const savingRules = () => {
   const saveEditedEventOnClick = (e) => {
     e.preventDefault();
     let errorMessage = savingRules();
-    if (errorMessage != ""){
+    if (errorMessage !== ""){
       toasts.showToastMessage(errorMessage);
       return;
-    }
-    if(!checkedDeadline) {
-      editedEvent.joinDeadline = undefined;
     }
     editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
     editedEvent.creatorId = props.currentUser.id;
@@ -220,24 +221,14 @@ const savingRules = () => {
     });
   };
 
-//Resets the amount of tickets.
-  const resetTickets = () => {
+  const handleTicketSwitch = () => {
     setCheckedTicket(!checkedTicket);
-    editedEvent.tickets = 0;
-    setEditedEvent(editedEvent);
+    setTicketSwitchWasToggled(!ticketSwitchWasToggled);
   }
 
   const handleDeadlineSwitch = () => {
     setCheckedDeadline(!checkedDeadline);
-    if(checkedDeadline) {
-      editedEvent.joinDeadline = "";
-      setJoinDeadline(undefined);
-    } else {
-      editedEvent.joinDeadline = editedEvent.startDate;
-      setJoinDeadline(editedEvent.startDate); 
-    }
-
-    setEditedEvent(editedEvent);
+    setDeadlineSwitchWasToggled(!deadlineSwitchWasToggled);
   }
 
   //Updates the values for the text fields in event edition
@@ -247,11 +238,13 @@ const savingRules = () => {
 
   const cancelEditOnClick = () => {
     setEditedEvent({});
-    if(!checkedTicket) {
-      resetTickets();
+    if (ticketSwitchWasToggled) {
+      setCheckedTicket(!checkedTicket)
+      setTicketSwitchWasToggled(false);
     }
-    if(checkedDeadline) {
-      handleDeadlineSwitch();
+    if(deadlineSwitchWasToggled) {
+      setCheckedDeadline(!checkedDeadline);
+      setDeadlineSwitchWasToggled(false);
     }
     setEdit(false);
   };
@@ -604,7 +597,7 @@ const handleJoinDeadlineError = (error) => {
           handleStartTimeError={handleStartTimeError}
           handleEndTimeError={handleEndTimeError}
           handleJoinDeadlineError={handleJoinDeadlineError}
-          resetTickets={resetTickets}
+          handleTicketSwitch={handleTicketSwitch}
           handleDeadlineSwitch={handleDeadlineSwitch}
           
           //old values
