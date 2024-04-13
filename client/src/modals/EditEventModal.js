@@ -91,7 +91,9 @@ function EditEventModal(props)
                     <Switch checked={props.checkedTicket}/>
                   }
                   label="Limited tickets"
-                  onChange={props.resetTickets}
+                  onChange={() => {
+                    props.handleTicketSwitch();
+                  }}
                 />
                 <TextField 
                   fullWidth 
