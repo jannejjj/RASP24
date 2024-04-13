@@ -84,7 +84,7 @@ function CreateEventModal(props) {
                     }}
                   />
                 </LocalizationProvider>
-                <TextField fullWidth multiline required label={'Description'} type="text" id="description" sx={{m: 0.5}} maxRows={10} />
+                <TextField fullWidth multiline required label={'Description'} type="text" id="description" sx={{m: 0.5}} minRows={4} maxRows={10} />
                 <TextField fullWidth required label={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 0.5}} />
                 <FormControlLabel 
                   control={<Switch />}
