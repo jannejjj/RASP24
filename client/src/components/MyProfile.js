@@ -4,6 +4,7 @@ import '../App.css';
 import Button from "@mui/material/Button";
 import EditDetailsModal from '../modals/EditDetailsModal';
 import PayMembershipModal from '../modals/PayMembershipModal';
+import UploadImageModal from '../modals/UploadImageModal';
 import EventItem from './EventItem';
 import { ToastContainer } from 'react-toastify';
 import toasts from '../common/Toast';
@@ -44,6 +45,10 @@ function ProfileItem(props) {
   const [cityHistory, setCityHistory] = useState(props.City);
   const [countryHistory, setCountryHistory] = useState(props.Country);
   const [emailHistory, setEmailHistory] = useState(props.Email);
+
+  const [profilePicture, setProfilePicture] = useState(props.profilePicture);
+  const [uploadImage, setUploadImage] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const localeStringOptions = {
     year: "numeric",
@@ -304,6 +309,65 @@ function ProfileItem(props) {
     setEditedEmail(event.target.value);
   };
 
+  const handleImageChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const saveImageOnClick = async () => {
+    try {
+      if(!selectedFile){
+        toasts.showToastMessage('Error while uploading the image');
+        return;
+      }
+      
+      if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
+        toasts.showToastMessage('Please select a PNG or JPEG image file.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+      
+      const response = await fetch(`/users/updateImage/${props.currentUser.id}`, {
+        method: 'POST',
+        body: formData
+      });
+      if(response.ok){
+        const imageData = await response.json(); 
+
+        // Convert the data array to a Uint8Array
+        const uint8Array = new Uint8Array(imageData.buffer.data);
+
+        // Convert the Uint8Array to a Base64 string
+        const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+        const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+        setProfilePicture(imageUrl);
+        toasts.showToastSuccessMessage('Image uploaded successfully!');
+        setUploadImage(false); 
+      }
+      else{
+        if(response.status == 409){
+          toasts.showToastMessage('Error while uploading the image');
+        }
+        if(response.status == 413){
+          toasts.showToastMessage('The image size is too big');
+        }
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toasts.showToastMessage('Error while uploading the image', error.message);
+      throw error;
+    }
+  }
+  const cancelImageOnClick = () => {
+    setUploadImage(false);
+    setSelectedFile(null);
+  }
+
+  const uploadOnClick = () => {
+    setUploadImage(true);
+  };
+
   useEffect(() =>
   {
     const expirationDate = new Date(props.membershipExpirationDate);
@@ -313,7 +377,7 @@ function ProfileItem(props) {
 
   return (
     <div className='MyInfo'>
-      <img className="MyProfilePicture" src='https://www.paxus.com.au/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBOW1nQXc9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--c0b8b8e1c6c0819b6eef4fb97c1b80ff9b77717d/7%20linkedin%20photo%20tipes%20to%20maximise%20your%20impact.png' />
+      <img className="MyProfilePicture" src={profilePicture} />
       <div className='MyInfoTextArea'>
         <h2>{firstname} {lastname}</h2>
 
@@ -325,6 +389,7 @@ function ProfileItem(props) {
       </div>
 
       <Button variant='outlined' onClick={editOnClick} >Edit Information</Button>
+      <Button variant='outlined' onClick={uploadOnClick} >Upload Profile Image</Button>
 
       <div className='HorizontalSeparator' style={{maxWidth: "400px"}} />
 
@@ -375,6 +440,12 @@ function ProfileItem(props) {
           price={membershipPrice}
         />
       </div>
+      <UploadImageModal
+        upload = {uploadImage}
+        handleImageChange = {handleImageChange}
+        saveImageOnClick = {saveImageOnClick}
+        cancelImageOnClick = {cancelImageOnClick}
+      />
 
       <EditDetailsModal 
         edit={edit} 
@@ -402,6 +473,7 @@ function ProfileItem(props) {
 
 function MyProfile(props) {
   const [user, setUser ] = useState();
+  const [image, setImage] = useState();
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [selectedView, setSelectedView] = useState("Information");
@@ -467,6 +539,28 @@ function MyProfile(props) {
       setLoadingEvents(false);
     }
   }
+  const fetchProfileImage = async ()=>{
+    try {
+      const response = await fetch(`/users/getImage/${props.currentUser.id}`); 
+      if(response.ok){
+        const imageData = await response.json(); 
+
+      // Convert the data array to a Uint8Array
+      const uint8Array = new Uint8Array(imageData.buffer.data);
+
+      // Convert the Uint8Array to a Base64 string
+      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+      setImage(imageUrl);
+      }else{
+        //The profile icon by default
+        setImage("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png");
+      }
+    } catch (error) {
+      console.error('Error fetching image:', error);
+      setImage("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png");
+    }
+  };
 
   useEffect(() => {
     // Fetches the users personal information
@@ -474,6 +568,9 @@ function MyProfile(props) {
 
     // Fetches the events the user is currently participating in
     fetchUsersEvents();
+
+    // Fetches the profile image of the current user 
+    fetchProfileImage();
     
     // When the user refreshes the page, check which of the views was selected and scroll into that
     const selectedView_stored = sessionStorage.getItem('AssocEase_MyProfileSelectedView');
@@ -530,7 +627,7 @@ function MyProfile(props) {
       <div className='Background'>
         {/* This is shown when the user has selected "My Information" from the top menu. */}
         <div className='MyInformationArea' ref={informationRef} >
-          {user &&
+          {user && image &&
             (
               <ProfileItem
                 Firstname={user.firstname}
@@ -546,6 +643,7 @@ function MyProfile(props) {
                 membershipExpirationDate={user.membershipExpirationDate}
                 toggleUpdateUser={toggleUpdateUser}
                 currentUser={props.currentUser}
+                profilePicture={image}
                 setCurrentUser={props.setCurrentUser}
               />
             )

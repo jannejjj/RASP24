@@ -136,7 +136,7 @@ function Members(props) {
         Loading...
       </Typography>}
       {!loading && members && [...displayMembers].map((member) => (
-          <Member key={member._id} member={member} currentUser={props.currentUser} toggleUpdate={toggleUpdate} showToastSuccessMessage={showToastSuccessMessage}/>
+          <Member key={member._id} member={member} profilePicture={member.profileImage} currentUser={props.currentUser} toggleUpdate={toggleUpdate} showToastSuccessMessage={showToastSuccessMessage}/>
       ))}
       {!members?.length>0 &&
         <Typography sx={{ mt: 20 }} variant='h4' align="center">No members.</Typography>

@@ -3,8 +3,11 @@ var router = express.Router();
 // const controller = require("./controller");
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
+const Member_event = require("../models/member_event");
 const Member_Event = require("../models/member_event");
 const Event = require("../models/event");
+const Image = require("../models/image");
+const Member_Event = require("../models/member_event");
 const NewsPost = require("../models/newsPost");
 const Ticket = require("../models/ticket");
 const bcrypt = require("bcryptjs");
@@ -25,7 +28,7 @@ router.use(passport.initialize());
 // Finds all the members in the DB if authenticated
 router.get("/members", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
-      const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1});
+      const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1}).populate('profileImage');
       res.send(members);
     } catch (err) {
       console.error('Error fetching member data:', err);
@@ -191,6 +194,7 @@ router.post('/register',
                         membershipPaid: false,
                         membershipPaidDate: null,
                         membershipExpirationDate: null,
+                        profileImage: null,
                         admin: 0
                     });
                     member.save()
@@ -332,7 +336,8 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
       tickets: req.body.tickets,
       ticketsSold: 0,
       joinDeadline: req.body.joinDeadline,
-      price: req.body.price
+      price: req.body.price,
+      logo: null
   });
   event.save()
     .then(result => {
@@ -668,6 +673,67 @@ router.get('/event/participants/:id',passport.authenticate('jwt', {session: fals
     }
 });
 
+router.get('/getImage/:eventId', upload.single('image'), async (req, res) => {
+    try{
+      const id   = req.params.eventId;
+      if (!id) {
+        return res.status(400).json({ error: 'id parameter is required' });
+      }
+      const eventData = await Event.findById(id);
+      if (!eventData) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+      const imageId = eventData.logo;
+      if(imageId!= null){
+        const imageData = await Image.findById(imageId);
+        res.json(imageData);
+      }else{
+        return res.status(404).json({error: "the event doesn't have a logo picture"});
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+  router.post('/updateImage/:eventId', upload.single('image'), async (req, res) => {
+    try {
+      const eventId = req.params.eventId;
+      const file = req.file;
+      const maxSize = 2;
+      const event = await Event.findById(eventId);
+      if(!event){
+        return res.status(404).json({message: "Event not found"});
+      }
+      if(!file){
+        return res.status(409).json({error: "There is no image"})
+      }
+      const fileSize= file.size / (1024 * 1024); //size in megabytes
+      if(fileSize > maxSize){
+        return res.status(413).json({error: "The image size is too big"});
+      }
+      if(event.logo != null){
+        await Image.findByIdAndDelete(event.logo);
+      }
+      const newImage = new Image({
+        buffer: req.file.buffer,
+        mimetype: req.file.mimetype,
+        name: req.file.originalname,
+        encoding: 'base64'
+      });
+    
+      const savedImage = await newImage.save();
+  
+      
+      event.logo = savedImage._id;
+      await event.save();
+  
+      res.status(201).json(savedImage);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to upload image', error: error.message });
+    }
+  });
+
 // Send reminders about the event that will start in 24 hours. This function will run every hour
 cron.schedule("0 0 * * * *", async () =>
 {
@@ -755,6 +821,7 @@ cron.schedule("0 0 * * * *", async () =>
     fetchEventData();
 });
 
+
 // I created this non-async function that calls the actual async function that sends the emails.
 // This way the route that does the event update doesn't have to wait for this to finish before
 // notifying the frontend.
@@ -815,6 +882,7 @@ const CreateAndSendNotifications = async (event) =>
         }
     });
 }
+
 
 // Once a day check if there are members whose membership will be outdated in two weeks
 // send them a two week notice. Also check if there are members whose membership will
@@ -928,5 +996,6 @@ const convertEmailsToString = (emails) =>
 
     return emails_string;
 }
+
 
 module.exports = router;

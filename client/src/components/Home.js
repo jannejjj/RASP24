@@ -70,6 +70,7 @@ function Home(props) {
   const [loadingPastEvents, setLoadingPastEvents] = useState(false);
   const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [pastEvents, setPastEvents] = useState([]);
   const [showPastEvents, setShowPastEvents] = useState(false);
 
@@ -136,6 +137,9 @@ function Home(props) {
     setJoinDeadlineError(false); // Sets error to false when changes are made
     setNewEvent({...newEvent, ["joinDeadline"]: value});
   };
+  const handleImageChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
 
   const handleLocationChange = (value) => {
     if (value === null) {
@@ -146,6 +150,7 @@ function Home(props) {
 
   const cancelCreationOnClick = () => {
     setNewEvent({});
+    setSelectedFile(null);
     if(checkedTicket) {
       resetTickets();
     }
@@ -211,9 +216,10 @@ function Home(props) {
             newEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
             newEvent.creatorId = props.currentUser.id;
             newEvent.attendees = 1;
-            
+
+            var eventId = "";
             setNewEvent(newEvent);
-            await fetch("/api/event", {
+           await fetch("/api/event", {
               method: "POST",
               headers: {
                   "Content-type": "application/json",
@@ -225,14 +231,52 @@ function Home(props) {
               .then(response => response.json())
               .then(data => {
                   console.log(data)
+                  eventId = data._id;
               })
-          // Empty the input fields
-          setNewEvent({});
-          // Close the Modal
-          setNewEventModal(false);
-          // Update events list by toggling the boolean
-          toggleUpdateEvents();
-          toasts.showToastSuccessMessage("Event created successfully!");
+            if(!selectedFile){
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastSuccessMessage("Event created successfully!");
+              return;
+            }  
+            if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastMessage('The event was generated without an image due to an incorrect format');
+              return;
+            }
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            const response = await fetch(`/api/updateImage/${eventId}`, {
+              method: 'POST',
+              body: formData
+            });
+            if(response.status == 413){
+              toasts.showToastMessage("The event was created but the image is too big");
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastSuccessMessage("Event created successfully!");
+            }else{
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastSuccessMessage("Event created successfully!");
+            }
           if(checkedTicket) {
             resetTickets();
           }
@@ -373,6 +417,7 @@ function Home(props) {
         handleJoinDeadlineError={handleJoinDeadlineError}
         resetTickets={resetTickets}
         handleDeadlineSwitch={handleDeadlineSwitch}
+        handleImageChange={handleImageChange}
       />
       <ToastContainer />
     </div>

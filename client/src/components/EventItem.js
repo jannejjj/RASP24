@@ -41,6 +41,8 @@ function EventItem(props) {
   const [checkedDeadline, setCheckedDeadline] = useState(props.event.joinDeadline !== null && props.event.joinDeadline !== undefined);
   const [hasTicket, setHasTicket] = useState(false);
   const [ticket, setTicket] = useState(null);
+  const [image, setImage] = useState("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
+  const [selectedFile, setSelectedFile] = useState(null);
   const [eventParticipantsData, setEventParticipantsData] = useState(null);
   const [allowDelete, setAllowDelete] = useState(null);
   const [allowEdit, setAllowEdit] = useState(null);
@@ -176,13 +178,49 @@ const savingRules = () => {
   return "";
 };
 
-  const saveEditedEventOnClick = (e) => {
+  const saveEditedEventOnClick = async (e) => {
     e.preventDefault();
     let errorMessage = savingRules();
     if (errorMessage !== ""){
       toasts.showToastMessage(errorMessage);
       return;
     }
+
+    if(!checkedDeadline) {
+      editedEvent.joinDeadline = undefined;
+    }
+    if(selectedFile){
+      if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
+        toasts.showToastMessage('Please select a PNG or JPEG image file.');
+        return;
+      }
+    }
+    //save the image
+    const formData = new FormData();
+    formData.append('image', selectedFile);
+    const response = await fetch(`/api/updateImage/${props.event._id}`, {
+      method: 'POST',
+      body: formData
+    });
+    if(response.ok){
+      const imageData = await response.json(); 
+
+      // Convert the data array to a Uint8Array
+      const uint8Array = new Uint8Array(imageData.buffer.data);
+
+      // Convert the Uint8Array to a Base64 string
+      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+      setImage(imageUrl); 
+    }
+    else{
+      if(response.status == 413){
+        toasts.showToastMessage('The image size is too big');
+        return;
+      }
+    }
+
+
     editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
     editedEvent.creatorId = props.currentUser.id;
     editedEvent.id = props.event._id;
@@ -234,9 +272,15 @@ const savingRules = () => {
 
   const cancelEditOnClick = () => {
     setEditedEvent({});
+
+    setSelectedFile(null);
+    if(!checkedTicket) {
+      resetTickets();
+    }
     if (ticketSwitchWasToggled) {
       setCheckedTicket(!checkedTicket)
       setTicketSwitchWasToggled(false);
+
     }
     if(deadlineSwitchWasToggled) {
       setCheckedDeadline(!checkedDeadline);
@@ -310,6 +354,10 @@ const handleJoinDeadlineError = (error) => {
 
   const handleDescriptionChange = (event) => {
     setEditedDescription(event.target.value);
+  };
+
+  const handleImageChange = (event) => {
+    setSelectedFile(event.target.files[0]);
   };
 
   const handleEventLike = async () => {
@@ -423,6 +471,51 @@ const handleJoinDeadlineError = (error) => {
       setDeleteModal(false);
     });
   };
+
+  const fetchEventImage = async ()=>{
+    try {
+      const response = await fetch(`/api/getImage/${props.event._id}`); 
+      if(response.ok){
+        const imageData = await response.json(); 
+
+      // Convert the data array to a Uint8Array
+      const uint8Array = new Uint8Array(imageData.buffer.data);
+
+      // Convert the Uint8Array to a Base64 string
+      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+      setImage(imageUrl);
+      }
+      else{
+      setImage("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
+      }
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+  };
+
+  useEffect(() =>
+  {
+    // Fetches the profile image of the current event 
+    fetchEventImage();
+
+    const confirmLike = () => 
+    {
+      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
+        method: 'GET'
+      })
+      .then(response => response.json())
+      .then(data => 
+        {
+          setLiking(data.attending);
+          setLoadingLikes(false);
+        }
+      );
+    }
+
+    // Find out if the user is liking this event or not
+    confirmLike();
+  }, [props.event]);
     
     if(loadingLike || loadingTicket) {
       return null;
@@ -433,7 +526,7 @@ const handleJoinDeadlineError = (error) => {
         <div className="HomeEventTop">
           <div className="HomeEventPhotoBackground">
             <img
-              src="https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg"
+              src={image}
               alt="Event"
             />
           </div>
@@ -586,6 +679,7 @@ const handleJoinDeadlineError = (error) => {
           handleJoinDeadlineChange={handleJoinDeadlineChange}
           handleStartTimeError={handleStartTimeError}
           handleEndTimeError={handleEndTimeError}
+          handleImageChange={handleImageChange}
           handleJoinDeadlineError={handleJoinDeadlineError}
           handleTicketSwitch={handleTicketSwitch}
           handleDeadlineSwitch={handleDeadlineSwitch}
