@@ -10,12 +10,7 @@ const upload = multer({ storage: storage });
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
-
-//get to have the members data
+/* Gets information for a member */
 router.get('/getData/:userId', async (req, res) => {
   try {
     const id = req.params.userId;
@@ -36,6 +31,7 @@ router.get('/getData/:userId', async (req, res) => {
   }
 });
 
+/* Gets the profile image of a member */
 router.get('/getImage/:userId', upload.single('image'), async (req, res) => {
   try{
     const id   = req.params.userId;
@@ -59,25 +55,30 @@ router.get('/getImage/:userId', upload.single('image'), async (req, res) => {
   }
 });
 
+/* Updates the profile image of a member */
 router.post('/updateImage/:userId', upload.single('image'), async (req, res) => {
   try {
     const userId = req.params.userId;
     const file = req.file;
     const user = await Member.findById(userId);
-    const maxSize = 2;
+    const maxSize = 2; // Maximum image size is 2MB 
     if(!user){
       return res.status(404).json({message: "User not found"});
     }
     if(!file){
       return res.status(409).json({error: "There is no image"})
     }
-    const fileSize= file.size / (1024 * 1024); //size in megabytes
+    const fileSize= file.size / (1024 * 1024); // Size in megabytes
     if(fileSize > maxSize){
       return res.status(413).json({error: "The image size is too big"});
     }
+
+    // If the user already has a profile image, delete it
     if(user.profileImage != null){
       await Image.findByIdAndDelete(user.profileImage);
     }
+
+    // Create new image object
     const newImage = new Image({
       buffer: file.buffer,
       mimetype: file.mimetype,
@@ -97,7 +98,7 @@ router.post('/updateImage/:userId', upload.single('image'), async (req, res) => 
 });
 
 
-// Handle POST request to update user profile
+/* Handle POST request to update user profile */
 router.post('/updateProfile', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const userId = req.body._id;
@@ -133,7 +134,7 @@ router.post('/updateProfile', passport.authenticate('jwt', {session: false}), as
       jwtPayload,
       process.env.SECRET,
       {
-      expiresIn: '24h' //expires on 24 hours and log in is needed again.
+      expiresIn: '24h' // Expires in 24 hours and log in is needed again.
       },
       (err, token) => {
         if (token)
