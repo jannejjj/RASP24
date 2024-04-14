@@ -4,6 +4,7 @@ var router = express.Router();
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
 const Member_event = require("../models/member_event");
+const Member_Event = require("../models/member_event");
 const Event = require("../models/event");
 const Image = require("../models/image");
 const Member_Event = require("../models/member_event");
@@ -25,7 +26,7 @@ require('../auth/passport')(passport);
 router.use(passport.initialize());
 
 // Finds all the members in the DB if authenticated
-router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
+router.get("/members", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
       const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1}).populate('profileImage');
       res.send(members);
@@ -36,7 +37,7 @@ router.get("/members/", passport.authenticate('jwt', {session: false}), async (r
 });
 
 /* Gets total number of members */
-router.get("/membercount/", async (req, res) => {
+router.get("/membercount", async (req, res) => {
     try {
         const memberCount = (await Member.find({})).length;
         res.json({memberCount: memberCount});
@@ -44,7 +45,7 @@ router.get("/membercount/", async (req, res) => {
         console.error("Error getting member count:" , err);
         res.status(500).json({error: "Couldn't get member count."})
     }
-})
+});
 
 /* Finds all events */
 router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
@@ -293,7 +294,7 @@ router.get('/get/events/for/:id', async (req, res) =>
     let eventIDs = [];
 
     // Find the IDs of the events that the user has liked
-    await Member_event.find({member: id})
+    await Member_Event.find({member: id})
     .then((docs) =>
     {
         docs.forEach(item => {
@@ -420,60 +421,26 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
     }
 });
 
-router.post('/hasTicket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
-    try{
-        const { userId, eventId } = req.body;
-
-        const event = await Event.findById(eventId);
-        const user = await Member.findById(userId);
-
-        if(!event || !user){
-            return res.status(404).json({ error: 'User or Event not found' });
-        }
-        const ticket = await Ticket.findOne({
-            member: user._id,
-            event: event._id
-        });
-
-        if(ticket){
-            return res.json({
-              hasTicket: true,
-              ticket: ticket
-            });
-        }
-
-        return res.json({hasTicket: false});
-    }catch(err){
-        console.error('Error while checking tickets:', err);
-        return res.status(500).send('Internal Server Error');
-    }
-});
-
-router.post('/checkticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
-    try{
-        const { userId, eventId } = req.body;
-
-        const event = await Event.findById(eventId);
-        const user = await Member.findById(userId);
-
-        if(!event || !user){
-            return res.status(404).json({ error: 'User or Event not found' });
-    
-        }
-
-        const ticket = await Ticket.findOne({
-            member: user._id,
-            event: event._id
-        });
-        if(ticket){
-            return res.json({hasTicket: true});
-        }
-
-        return res.json({hasTicket: false});
-    }catch(err){
-        console.error('Error while checking tickets:', err);
-        return res.status(500).send('Internal Server Error');
-    }
+// Check if the user has a ticket or not
+router.get('/has/ticket/:eventID/:userID',passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+    const eventID = req.params.eventID;
+    const userID = req.params.userID;
+    const ticket = await Ticket.findOne({
+      member: userID,
+      event: eventID
+    });
+    if(ticket){
+      return res.json({
+        hasTicket: true,
+        ticket: ticket
+    });
+   }
+   return res.json({hasTicket: false});
+  } catch(err) {
+    console.error('Error while checking ticket', err);
+    return res.status(500).send('Internal Server Error');
+  }
 });
 
 router.post('/ticket/use/:id',passport.authenticate('jwt', {session: false}), async (req, res)=>{
@@ -573,9 +540,8 @@ router.post("/editEvent",passport.authenticate('jwt', {session: false}), async (
 
         await event.save();
 
-        // Send notifications for all the members that has bought a ticket to this event
         SendEventEditionNotification(event);
-
+        
         res.status(200).json({"event": event})
     } catch (err) {
         console.error(err);
@@ -633,7 +599,7 @@ router.get('/is/attending/:eventID/:userID', async (req, res) =>
     const eventID = req.params.eventID;
     const userID = req.params.userID;
 
-    await Member_event.find({event: eventID, member: userID})
+    await Member_Event.find({event: eventID, member: userID})
     .then((docs) =>
     {
         if (docs.length > 0)
@@ -773,21 +739,7 @@ cron.schedule("0 0 * * * *", async () =>
 {
     const sendReminders = async (emails, event) =>
     {
-        // The nodemailer allows to send emails to multiple addresses at the same time.
-        // They only need to be separated by a comma and a space. Turn the list of
-        // emails in to a string of emails.
-        let emails_string = '';
-
-        for(let i = 0; i < emails.length; i++)
-        {
-            emails_string += emails[i].email;
-
-            // If the email is not the last one in the list, add the separator.
-            if (i < emails.length - 1)
-            {
-                emails_string += ', ';
-            }
-        }
+        const emails_string = convertEmailsToString(emails);
 
         const message = "Reminder about event: " + event.title + "\nEvent starts at: " + event.startDate;
 
@@ -891,26 +843,12 @@ const CreateAndSendNotifications = async (event) =>
 
     const emails = await Member.find({_id: { $in: memberIDs}}).select("email");
 
-    // The nodemailer allows to send emails to multiple addresses at the same time.
-    // They only need to be separated by a comma and a space. Turn the list of
-    // emails in to a string of emails.
-    let emails_string = '';
-
-    for(let i = 0; i < emails.length; i++)
-    {
-        emails_string += emails[i].email;
-
-        // If the email is not the last one in the list, add the separator.
-        if (i < emails.length - 1)
-        {
-            emails_string += ', ';
-        }
-    }
+    const emails_string = convertEmailsToString(emails);
 
     let message = "Event " + event.title + " updated\n";
     message += "Start time: " + event.startDate + "\n";
     message += "End time: " + event.endDate + "\n";
-    message += "Location: " + event.location + "\n";
+    message += "Location: " + event.location.name + "\n";
     message += "Description: " + event.description + "\n";
 
     // Finally send the reminder about the event
@@ -943,6 +881,120 @@ const CreateAndSendNotifications = async (event) =>
             console.log('Email sent: ' + info.response);
         }
     });
+}
+
+
+// Once a day check if there are members whose membership will be outdated in two weeks
+// send them a two week notice. Also check if there are members whose membership will
+// be outdated in a week send them a weeks notice.
+cron.schedule('0 0 0 * * *', async () =>
+{
+    const twoWeeksFromNow = new Date();
+    twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+
+    const weekFromNow = new Date();
+    weekFromNow.setDate(weekFromNow.getDate() + 7);
+
+    // Find all the members whose membership expires in two weeks
+    const members = await Member.find({});
+
+    if (members)
+    {
+        let expiresInTwoWeeks = [];
+        let expiresInOneWeek = [];
+        let expiresToday = [];
+
+        members.forEach((member) =>
+        {
+            if (member.membershipExpirationDate.getDate() == twoWeeksFromNow.getDate())
+            {
+                expiresInTwoWeeks.push(member.email);
+            }
+            else if (member.membershipExpirationDate.getDate() == weekFromNow.getDate())
+            {
+                expiresInOneWeek.push(member.email);
+            }
+            else if (member.membershipExpirationDate.getDate() == new Date().getDate())
+            {
+                expiresToday.push(member.email);
+            }
+        })
+
+        if (expiresToday.length > 0) 
+        {
+            const message = "Your membership to AssocEase expires today!"
+            await SendExpirationNotice(expiresToday, message);
+        }
+
+        if (expiresInOneWeek.length > 0) 
+        {
+            const message = "Your membership to AssocEase will expire in a week!"
+            await SendExpirationNotice(expiresInOneWeek, message);
+        }
+
+        if (expiresInTwoWeeks.length > 0) 
+        {
+            const message = "Your membership to AssocEase will expire in two weeks!"
+            await SendExpirationNotice(expiresInTwoWeeks, message);
+        }
+    }
+});
+
+const SendExpirationNotice = async (emails, message) =>
+{
+    const emails_string = convertEmailsToString(emails);
+
+    // Finally send the reminder about the event
+    const transporter = nodemailer.createTransport(
+        {
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth:
+            {
+                user: "assocease@gmail.com",
+                // This password is an App Password that was created for this example email address.
+                // It can't be used to normally login to the gmail service.
+                pass: "izdn grhs ymwm lxmx"
+            }
+        }
+    );
+
+    const mailOptions = {
+        from: "assocease@gmail.com",
+        to: emails_string,
+        subject: 'AssocEase membership expiration notice',
+        text: message
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
+const convertEmailsToString = (emails) =>
+{
+    // The email allows to send emails to multiple addresses at the same time.
+    // They only need to be separated by a comma and a space. Turn the list of
+    // emails in to a string of emails.
+    let emails_string = '';
+
+    for(let i = 0; i < emails.length; i++)
+    {
+        emails_string += emails[i].email;
+
+        // If the email is not the last one in the list, add the separator.
+        if (i < emails.length - 1)
+        {
+            emails_string += ', ';
+        }
+    }
+
+    return emails_string;
 }
 
 

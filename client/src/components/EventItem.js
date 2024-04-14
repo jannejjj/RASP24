@@ -56,34 +56,14 @@ function EventItem(props) {
   const [editedLocation, setEditedLocation] = useState(props.event.location);
   const [editedDescription, setEditedDescription] = useState(props.event.description);
 
+  const [ticketSwitchWasToggled, setTicketSwitchWasToggled] = useState(false);
+  const [deadlineSwitchWasToggled, setDeadlineSwitchWasToggled] = useState(false);
+
   const [loadingParticipation, setLoadingParticipation] = useState(true);
   const [loadingLikes, setLoadingLikes] = useState(true);
-  
-  useEffect(() => { // Get event participants
-    const fetchEventData = async () => {
-      try {
-        const response = await fetch(`api/event/participants/${props.event._id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + props.currentUser.token,
-          }
-        });
-        const responseData = await response.json();
-        if (responseData && responseData.data && Array.isArray(responseData.data)) {
-          setEventParticipantsData(responseData.data);
-        } else {
-          setEventParticipantsData(null);
-        }
-        setLoadingParticipation(false);
-      } catch (error) {
-        console.error('Error fetching event data:', error);
-      }
-    };
 
-    fetchEventData();
-  }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
-
+  const [loadingLike, setLoadingLike] = useState(true);
+  const [loadingTicket, setLoadingTicket] = useState(true);
 
   useEffect(() => {
     setLikes(props.event.attendees);
@@ -107,7 +87,7 @@ function EventItem(props) {
       .then(data => 
         {
           setLiking(data.attending);
-          setLoadingLikes(false);
+          setLoadingLike(false);
         }
       );
     }
@@ -118,37 +98,56 @@ function EventItem(props) {
   }, [props.event]);
 
   useEffect(() => {
-    const data = 
-    {
-      userId: props.currentUser.id,
-      eventId: props.event._id
-    };
-
-    fetch('/api/hasTicket', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + props.currentUser.token
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.hasTicket) {
-        setTicket(data.ticket);
+    const checkTicket = async () => {
+      try {
+        const response = await fetch(`/api/has/ticket/${props.event._id}/${props.currentUser.id}` , {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + props.currentUser.token,
+          }
+        });
+        const responseData = await response.json();
+        if(responseData) {
+          if(responseData.hasTicket) {
+            setTicket(responseData.ticket);
+          }
+          setHasTicket(responseData.hasTicket);
+          setLoadingTicket(false);
+        }
+      } catch (error) {
+        console.error('Error fetching ticket data:', error);
       }
-      setHasTicket(data.hasTicket);
-    })
-    .catch(error => {
-        console.error('Error fetching ticket status:', error);
-    });
-  }, [props.event]);
+    }
+    checkTicket();
+  }, []);
 
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
 
   
   const openListOnClick = () => {
+    const fetchEventData = async () => {
+      try {
+        const response = await fetch(`api/event/participants/${props.event._id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + props.currentUser.token,
+          }
+        });
+        const responseData = await response.json();
+        if (responseData && responseData.data && Array.isArray(responseData.data)) {
+          setEventParticipantsData(responseData.data);
+        } else {
+          setEventParticipantsData(null);
+        }
+        setLoadingParticipation(false);
+      } catch (error) {
+        console.error('Error fetching event data:', error);
+      }
+    };
+    fetchEventData();
     setOpenParticipantsList(true);
   };
   const closeListOnClick = () => {
@@ -168,7 +167,8 @@ const savingRules = () => {
   if(endTimeError)  return savingErrorMessages[1];
   if(!checkedDeadline) {
     editedEvent.joinDeadline = undefined;
-  }
+  } else if (!editedEvent.joinDeadline) return savingErrorMessages[2];
+  if(!checkedTicket) editedEvent.tickets = undefined;
   const startDateAux = new Date(editedEvent.startDate);
   const joinDeadlineAux = new Date(editedEvent.joinDeadline);
   const endDateAux = new Date(editedEvent.endDate);
@@ -181,10 +181,11 @@ const savingRules = () => {
   const saveEditedEventOnClick = async (e) => {
     e.preventDefault();
     let errorMessage = savingRules();
-    if (errorMessage != ""){
+    if (errorMessage !== ""){
       toasts.showToastMessage(errorMessage);
       return;
     }
+
     if(!checkedDeadline) {
       editedEvent.joinDeadline = undefined;
     }
@@ -218,6 +219,7 @@ const savingRules = () => {
         return;
       }
     }
+
 
     editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
     editedEvent.creatorId = props.currentUser.id;
@@ -253,40 +255,36 @@ const savingRules = () => {
     });
   };
 
-//Resets the amount of tickets and clears the text box.
-  const resetTickets = () => {
-    setTickets("");
+  const handleTicketSwitch = () => {
     setCheckedTicket(!checkedTicket);
-    editedEvent.tickets = 0;
-    setEditedEvent(editedEvent);
+    setTicketSwitchWasToggled(!ticketSwitchWasToggled);
   }
 
   const handleDeadlineSwitch = () => {
     setCheckedDeadline(!checkedDeadline);
-    if(checkedDeadline) {
-      editedEvent.joinDeadline = "";
-      setJoinDeadline(undefined);
-    } else {
-      editedEvent.joinDeadline = editedEvent.startDate;
-      setJoinDeadline(editedEvent.startDate); 
-    }
-
-    setEditedEvent(editedEvent);
+    setDeadlineSwitchWasToggled(!deadlineSwitchWasToggled);
   }
 
-  //Updates the values for the text fields in event creation
+  //Updates the values for the text fields in event edition
   const whenChanging = (event) => {
     setEditedEvent({...editedEvent, [event.target.id]: event.target.value})
   }
 
   const cancelEditOnClick = () => {
     setEditedEvent({});
+
     setSelectedFile(null);
     if(!checkedTicket) {
       resetTickets();
     }
-    if(checkedDeadline) {
-      handleDeadlineSwitch();
+    if (ticketSwitchWasToggled) {
+      setCheckedTicket(!checkedTicket)
+      setTicketSwitchWasToggled(false);
+
+    }
+    if(deadlineSwitchWasToggled) {
+      setCheckedDeadline(!checkedDeadline);
+      setDeadlineSwitchWasToggled(false);
     }
     setEdit(false);
   };
@@ -403,12 +401,6 @@ const handleJoinDeadlineError = (error) => {
         }
         setLiking(false);
         setLikes(likes - 1);
-
-        // If the user doesn't have a ticket for this event, then update the page.
-        if (!hasTicket)
-        {
-          props.toggleUpdateEvents();
-        }
       }
     );
   };
@@ -525,7 +517,7 @@ const handleJoinDeadlineError = (error) => {
     confirmLike();
   }, [props.event]);
     
-    if(loadingLikes || loadingParticipation) {
+    if(loadingLike || loadingTicket) {
       return null;
     }
     
@@ -647,7 +639,7 @@ const handleJoinDeadlineError = (error) => {
                   :
                   (
                     <div>
-                    {typeof tickets !== 'undefined' && tickets - ticketsSold <= 0 ?
+                    {typeof tickets !== "undefined" && tickets !== 0 && tickets - ticketsSold <= 0 ?
                       ( 
                         <Button variant='outlined' disabled color='primary' sx={{width: '150px'}} >Sold Out!</Button>
                       )
@@ -689,7 +681,7 @@ const handleJoinDeadlineError = (error) => {
           handleEndTimeError={handleEndTimeError}
           handleImageChange={handleImageChange}
           handleJoinDeadlineError={handleJoinDeadlineError}
-          resetTickets={resetTickets}
+          handleTicketSwitch={handleTicketSwitch}
           handleDeadlineSwitch={handleDeadlineSwitch}
           
           //old values

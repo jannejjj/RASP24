@@ -85,14 +85,16 @@ function EditEventModal(props)
                     }}
                   />
                 </LocalizationProvider>
-                <TextField fullWidth multiline required label='Description' placeholder={'Description'} type="text" id="description" sx={{m: 0.5}} defaultValue={props.description}/>
+                <TextField fullWidth multiline required label='Description' placeholder={'Description'} type="text" id="description" sx={{m: 0.5}} defaultValue={props.description} minRows={4} maxRows={10}/>
                 <TextField fullWidth required label='Price' placeholder={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 0.5}} defaultValue={props.price}/>
                 <FormControlLabel 
                   control={
                     <Switch checked={props.checkedTicket}/>
                   }
                   label="Limited tickets"
-                  onChange={props.resetTickets}
+                  onChange={() => {
+                    props.handleTicketSwitch();
+                  }}
                 />
                 <TextField 
                   fullWidth 
