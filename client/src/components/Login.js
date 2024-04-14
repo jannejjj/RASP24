@@ -75,7 +75,6 @@ function Login(props) {
                 <TextField fullWidth required label="Password" placeholder={'Password'} type="password" id="password" sx={{m: 1}}/>
                 <Button variant='contained' color="primary" type="submit" id="submit" sx={{m: 1}}>Login</Button>
             </form>
-            <p className="HintParagraphBig" style={{margin: "20px 0 0 0"}}>Forgot your password? <a href="">Link</a></p>
             <ToastContainer />
         </div>
     )

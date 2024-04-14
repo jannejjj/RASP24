@@ -3,7 +3,6 @@ var router = express.Router();
 // const controller = require("./controller");
 const {body, validationResult } = require("express-validator");
 const Member = require("../models/member");
-const Member_event = require("../models/member_event");
 const Member_Event = require("../models/member_event");
 const Event = require("../models/event");
 const NewsPost = require("../models/newsPost");
@@ -23,8 +22,8 @@ var idFromToken = null;
 require('../auth/passport')(passport);
 router.use(passport.initialize());
 
-//finds all the members in the DB if authenticated
-router.get("/members/", passport.authenticate('jwt', {session: false}), async (req, res) => {
+// Finds all the members in the DB if authenticated
+router.get("/members", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
       const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1});
       res.send(members);
@@ -35,7 +34,7 @@ router.get("/members/", passport.authenticate('jwt', {session: false}), async (r
 });
 
 /* Gets total number of members */
-router.get("/membercount/", async (req, res) => {
+router.get("/membercount", async (req, res) => {
     try {
         const memberCount = (await Member.find({})).length;
         res.json({memberCount: memberCount});
@@ -291,7 +290,7 @@ router.get('/get/events/for/:id', async (req, res) =>
     let eventIDs = [];
 
     // Find the IDs of the events that the user has liked
-    await Member_event.find({member: id})
+    await Member_Event.find({member: id})
     .then((docs) =>
     {
         docs.forEach(item => {
@@ -417,60 +416,26 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
     }
 });
 
-router.post('/hasTicket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
-    try{
-        const { userId, eventId } = req.body;
-
-        const event = await Event.findById(eventId);
-        const user = await Member.findById(userId);
-
-        if(!event || !user){
-            return res.status(404).json({ error: 'User or Event not found' });
-        }
-        const ticket = await Ticket.findOne({
-            member: user._id,
-            event: event._id
-        });
-
-        if(ticket){
-            return res.json({
-              hasTicket: true,
-              ticket: ticket
-            });
-        }
-
-        return res.json({hasTicket: false});
-    }catch(err){
-        console.error('Error while checking tickets:', err);
-        return res.status(500).send('Internal Server Error');
-    }
-});
-
-router.post('/checkticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
-    try{
-        const { userId, eventId } = req.body;
-
-        const event = await Event.findById(eventId);
-        const user = await Member.findById(userId);
-
-        if(!event || !user){
-            return res.status(404).json({ error: 'User or Event not found' });
-    
-        }
-
-        const ticket = await Ticket.findOne({
-            member: user._id,
-            event: event._id
-        });
-        if(ticket){
-            return res.json({hasTicket: true});
-        }
-
-        return res.json({hasTicket: false});
-    }catch(err){
-        console.error('Error while checking tickets:', err);
-        return res.status(500).send('Internal Server Error');
-    }
+// Check if the user has a ticket or not
+router.get('/has/ticket/:eventID/:userID',passport.authenticate('jwt', {session: false}), async (req, res) => {
+  try {
+    const eventID = req.params.eventID;
+    const userID = req.params.userID;
+    const ticket = await Ticket.findOne({
+      member: userID,
+      event: eventID
+    });
+    if(ticket){
+      return res.json({
+        hasTicket: true,
+        ticket: ticket
+    });
+   }
+   return res.json({hasTicket: false});
+  } catch(err) {
+    console.error('Error while checking ticket', err);
+    return res.status(500).send('Internal Server Error');
+  }
 });
 
 router.post('/ticket/use/:id',passport.authenticate('jwt', {session: false}), async (req, res)=>{
@@ -629,7 +594,7 @@ router.get('/is/attending/:eventID/:userID', async (req, res) =>
     const eventID = req.params.eventID;
     const userID = req.params.userID;
 
-    await Member_event.find({event: eventID, member: userID})
+    await Member_Event.find({event: eventID, member: userID})
     .then((docs) =>
     {
         if (docs.length > 0)
@@ -816,7 +781,7 @@ const CreateAndSendNotifications = async (event) =>
     let message = "Event " + event.title + " updated\n";
     message += "Start time: " + event.startDate + "\n";
     message += "End time: " + event.endDate + "\n";
-    message += "Location: " + event.location + "\n";
+    message += "Location: " + event.location.name + "\n";
     message += "Description: " + event.description + "\n";
 
     // Finally send the reminder about the event
