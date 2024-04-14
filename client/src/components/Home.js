@@ -206,9 +206,6 @@ function Home(props) {
     e.preventDefault()
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
-        if(!checkedDeadline) {
-          newEvent.joinDeadline = newEvent.startDate;
-        }
         if(!joinDeadlineError && newEvent.joinDeadline && newEvent.joinDeadline <= newEvent.startDate) {
           if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
             newEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
