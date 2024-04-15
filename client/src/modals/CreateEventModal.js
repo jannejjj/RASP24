@@ -117,7 +117,7 @@ function CreateEventModal(props) {
                   id="tickets" 
                   value={props.tickets}
                   onChange={e => props.setTickets(e.target.value)}
-                />
+y                />
                 <p className='HintParagraphSmall' >Required *</p>
                 <h2>
                   Upload profile image

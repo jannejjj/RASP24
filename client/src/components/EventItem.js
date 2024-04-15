@@ -185,34 +185,6 @@ function EventItem(props) {
 
   }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
 
-  // Get user's ticket status
-  useEffect(() => {
-    const data = 
-    {
-      userId: props.currentUser.id,
-      eventId: props.event._id
-    };
-
-    fetch('/api/hasTicket', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + props.currentUser.token
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.hasTicket) {
-        setTicket(data.ticket);
-      }
-      setHasTicket(data.hasTicket);
-    })
-    .catch(error => {
-        console.error('Error fetching ticket status:', error);
-    });
-  }, []);
-
   const openListOnClick = () => {
     setOpenParticipantsList(true);
   };
