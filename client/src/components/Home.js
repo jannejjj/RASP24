@@ -19,7 +19,6 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 // Modals, components, and commons
 import CreateEventModal from "../modals/CreateEventModal";
-import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
 import toasts from "../common/Toast";
 // Icons
@@ -323,7 +322,7 @@ function Home(props) {
               method: 'POST',
               body: formData
             });
-            if(response.status == 413){
+            if(response.status === 413){
               toasts.showToastMessage("The event was created but the image is too big");
               // Empty the input fields
               setNewEvent({});
@@ -422,7 +421,7 @@ function Home(props) {
           <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
         }
 
-        {(props.currentUser.admin && !loading) &&
+        {(props.currentUser.admin && !loading && pastEvents.length > 0) &&
           <div className="HomePastEvents">
             <div className="ShowPastEventsButton" onClick={ShowPastEventsClick}>
               <h3>{showPastEvents ? "Hide" : "Show"} Past Events</h3>

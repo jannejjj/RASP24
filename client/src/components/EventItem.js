@@ -9,7 +9,6 @@ GitHub: https://github.com/jannejjj/RASP24
 */
 
 import { React, useEffect, useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
 import dayjs from 'dayjs';
 // Styles
 import "../styles/HomePage.css";
@@ -59,8 +58,6 @@ function EventItem(props) {
   const [image, setImage] = useState("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
   const [selectedFile, setSelectedFile] = useState(null);
   const [eventParticipantsData, setEventParticipantsData] = useState(null);
-  const [allowDelete, setAllowDelete] = useState(null);
-  const [allowEdit, setAllowEdit] = useState(null);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -251,7 +248,7 @@ const savingRules = () => {
         setImage(imageUrl); 
       }
       else{
-        if(response.status == 413){
+        if(response.status === 413){
           toasts.showToastMessage('The image size is too big');
           return;
         }
@@ -590,7 +587,7 @@ const savingRules = () => {
                 (
                   <div>
                     {dayjs(endDate) >= new Date() && <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>}
-                    {(ticketsSold == 0 || props.oldEvent == true) && <Button className='DeleteEventButton' variant='contained' onClick={deleteOnClick} >Delete</Button>}
+                    {(ticketsSold === 0 || props.oldEvent === true) && <Button className='DeleteEventButton' variant='contained' onClick={deleteOnClick} >Delete</Button>}
                     <Tooltip title={"List of event participants"}>
                       <IconButton className="ListParticipantsButton" onClick={openListOnClick}>
                         <PeopleIcon/>
@@ -600,7 +597,7 @@ const savingRules = () => {
                 )
               }
             </div>
-            {props.oldEvent != true &&
+            {props.oldEvent !== true &&
               <div className="RightSideButtons">
                 {like ? 
                   (

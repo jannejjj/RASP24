@@ -1,6 +1,6 @@
-import { React, useState, useEffect, useMemo, useCallback } from "react";
+import { React, useState, useEffect, useMemo } from "react";
 import "../App.css";
-import { Button, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import EventItem from "./EventItem.js";
 import "../styles/Scheduler.css";
 import "../App.css";
@@ -13,7 +13,6 @@ import { Calendar, Views, momentLocalizer} from 'react-big-calendar';
 const localizer = momentLocalizer(moment);
 
 function SchedulerComponent(props) {
-  const [loading, setLoading] = useState(true);
   const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
   const [calendarEvents, setCalendarEvents] = useState([{}]);
@@ -36,7 +35,6 @@ function SchedulerComponent(props) {
   // Fetches events from API
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
     async function fetchEvents() {
         let url = '/api/events';
         let response = await fetch(url, {headers: {
@@ -46,7 +44,6 @@ function SchedulerComponent(props) {
         let dataJson = await response.json();
         if (mounted) {
             setEvents(dataJson);
-            setLoading(false);
         }
       }
     
@@ -58,7 +55,6 @@ function SchedulerComponent(props) {
           mounted = false;
       };
     }
-    setLoading(false);
   }, [updateEvents]);
 
   useEffect(traduceEvents, [events]);
