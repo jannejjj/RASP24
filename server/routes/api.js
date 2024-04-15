@@ -23,7 +23,7 @@ var idFromToken = null;
 require('../auth/passport')(passport);
 router.use(passport.initialize());
 
-// Finds all the members in the DB if authenticated
+/* Finds all the members in the DB if authenticated */
 router.get("/members", passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
       const members  = await Member.find({}).select("-password").sort({firstname: 1, lastname: 1}).populate('profileImage');
@@ -45,19 +45,20 @@ router.get("/membercount", async (req, res) => {
     }
 });
 
-/* Finds all events */
+/* Finds events that are in the future */
 router.get("/events",passport.authenticate('jwt', {session: false}), async (req, res) => {
   try 
   {
     const currentTime = new Date();
 
+    // Find events by either their start or end time, depending on if an end time is set
     const events  = await Event.find({ 
         $or: 
         [ 
             { endDate: { $exists: true}, endDate: { $gte: currentTime} },
-            { endDate: { $exists: false}, startDate: { $gte: currentTime } } 
+            { endDate: { $exists: false}, startDate: { $gte: currentTime } }
         ] 
-    }).sort({ startDate: 1 });
+    }).sort({ startDate: 1 }); // Events are sorted by start date in ascending order
 
     return res.send(events);
   } 
@@ -68,19 +69,21 @@ router.get("/events",passport.authenticate('jwt', {session: false}), async (req,
   }
 });
 
+/* Gets events that have already ended */
 router.get("/old/events/", passport.authenticate('jwt', {session: false}), async (req, res) =>
 {
     try 
     {
         const currentTime = new Date();
 
+        // Find events by either their start or end time, depending on if an end time is set
         const events  = await Event.find({ 
             $or: 
             [ 
                 { endDate: { $exists: true}, endDate: { $lt: currentTime} },
                 { endDate: { $exists: false}, startDate: { $lt: currentTime } } 
             ] 
-        }).sort({ startDate: -1 });
+        }).sort({ startDate: -1 }); // Events are sorted by start date in descending order
     
         return res.send(events);
     } 
@@ -107,17 +110,17 @@ router.post('/login',
   body("email").trim().escape(),
   body("password"),
   async (req, res) => {
-    //checks if user exists with email
+    // Checks if user exists with email
     try {
         const member = await Member.findOne({email: req.body.email});
         if(!member){
             return res.send({success: false, message: "Invalid credentials"});
         } else {
-            //compares crypted password
+            // Compares crypted password
             bcrypt.compare(req.body.password, member.password, (err, isMatch) => {
                 if(err) throw err;
                 if(isMatch) {
-                //creates JWT
+                // Creates JWT
                 const jwtPayload = {
                     id: member._id,
                     firstname: member.firstname,
@@ -129,7 +132,7 @@ router.post('/login',
                     jwtPayload,
                     process.env.SECRET,
                     {
-                    expiresIn: '24h' //expires on 24 hours and log in is needed again.
+                    expiresIn: '24h' //expires in 24 hours and login is needed again.
                     },
                     (err, token) => {
                       res.json({success: true, token, admin: member.admin, id: member._id, firstname: member.firstname, lastname: member.lastname});
@@ -154,11 +157,11 @@ router.get("/getID", async(req,res)=>{
     res.json(idFromToken);
 });
 
-// Register new member
+/* Registering a new member */
 router.post('/register', 
-  //checks that email is correct format
+  // Checks that email is correct format
   body("email").trim().isEmail().escape(),
-  //checks that password meets the requirements (express-authenticator)
+  // Checks that password meets the requirements (express-authenticator)
   body("password").isStrongPassword().withMessage('Password is not strong enough'),
  async (req, res) => {
     const errors = validationResult(req);
@@ -167,14 +170,14 @@ router.post('/register',
       return res.status(400).json({success: false, errors: errors.array()});
       
     }
-    //checks if email is already in use
+    // Checks if email is already in use
     try {
         const duplicate = await Member.findOne({email: req.body.email});
         if(duplicate){
             return res.status(403).json({success: false, message: "Email already in use"});
         } else {
-        //if member doesn't exist creates new member
-        //creates password hash and salts it
+        // If member doesn't exist creates new member
+        // creates password hash and salts it
         bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(req.body.password, salt, (err, hash) => {
                 if(err) throw err;
@@ -212,6 +215,7 @@ router.post('/register',
       
 });
 
+/* Marks a membership as paid - no actual payment process is implemented */
 router.post('/pay/membership', async (req, res) => {
   try {
     const userId = req.body._id;
@@ -231,7 +235,7 @@ router.post('/pay/membership', async (req, res) => {
   }
 });
 
-// Update the role and admin permissions for the member
+/* Updates the role and admin permissions for a member */
 router.put('/update/member/', passport.authenticate('jwt', {session: false}), async (req, res) =>
 {
     const newRole = req.body.role;
@@ -250,7 +254,7 @@ router.put('/update/member/', passport.authenticate('jwt', {session: false}), as
     }
 });
 
-// Delete the member
+/* Deletes a member */
 router.delete('/delete/member/:memberID', passport.authenticate('jwt', {session: false}), async (req, res) =>
 {
     const memberID = req.params.memberID;
@@ -267,7 +271,7 @@ router.delete('/delete/member/:memberID', passport.authenticate('jwt', {session:
     }
 });
 
-// Delete the news post
+/* Deletes a news post */
 router.delete('/delete/post/:postID', passport.authenticate('jwt', {session: false}), async (req, res) =>
 {
     const postID = req.params.postID;
@@ -284,6 +288,7 @@ router.delete('/delete/post/:postID', passport.authenticate('jwt', {session: fal
     }
 });
 
+/* Gets events that a user has liked */
 router.get('/get/events/for/:id', async (req, res) =>
 {
     const id = req.params.id;
@@ -321,6 +326,7 @@ router.get('/get/events/for/:id', async (req, res) =>
     return res.json({events});
 });
 
+/* Creates a new event in the database */
 router.post('/event', passport.authenticate('jwt', {session: false}), async (req, res) => {
   const event = new Event({
       title: req.body.title,
@@ -358,7 +364,7 @@ router.post('/event', passport.authenticate('jwt', {session: false}), async (req
   });
 });
 
-/* Creates news post */
+/* Creates a news post */
 router.post('/news', passport.authenticate('jwt', {session: false}), async (req, res) => {
   const newsPost = new NewsPost({
       title: req.body.title,
@@ -375,6 +381,7 @@ router.post('/news', passport.authenticate('jwt', {session: false}), async (req,
   });
 });
 
+/* Creates a ticket for a member/event pair */
 router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req, res)=>{
     try
     {
@@ -387,18 +394,18 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
             return res.status(404).json({ error: 'User or Event not found' });
     
         }
-        const ticket = await Ticket.findOne({ // find if the user already has a ticket
+        const ticket = await Ticket.findOne({ // Checks if the user already has a ticket
             member: user._id,
             event: event._id
         });
-        if(ticket){ // the user has already paid
-            return res.status(409).json({ error: 'User already have a ticket' });   
+        if(ticket){ // The user alraedy has a ticket
+            return res.status(409).json({ error: 'User already has a ticket' });   
         }
-        if(event.tickets === event.ticketsSold){ // if the maximum number of tickets is the same as sold tickets - no tickets left
-            return res.status(409).json({ error: 'There is no tickets left' }); 
+        if(event.tickets === event.ticketsSold){ // if the maximum number of tickets is the same as sold tickets - no tickets are left
+            return res.status(409).json({ error: 'There are no tickets left' }); 
         }
 
-        // if nothing else has happened, a new ticket is created
+        // If checks are passed, a new ticket is created
         const new_ticket = new Ticket({
             date: new Date(),
             member: user._id,
@@ -415,11 +422,11 @@ router.post('/ticket',passport.authenticate('jwt', {session: false}), async (req
     }
     catch(err)
     {
-        console.error('Error selling tickets:', err);
+        console.error('Error creating tickets:', err);
     }
 });
 
-// Check if the user has a ticket or not
+/* Check if the user has a ticket or not */
 router.get('/has/ticket/:eventID/:userID',passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
     const eventID = req.params.eventID;
@@ -441,6 +448,7 @@ router.get('/has/ticket/:eventID/:userID',passport.authenticate('jwt', {session:
   }
 });
 
+/* Marks a ticket as used */
 router.post('/ticket/use/:id',passport.authenticate('jwt', {session: false}), async (req, res)=>{
   try {
     const ticketId = req.params.id;
@@ -463,6 +471,7 @@ router.post('/ticket/use/:id',passport.authenticate('jwt', {session: false}), as
   }
 });
 
+/* Deletes an event */
 router.delete('/event/:id', passport.authenticate('jwt', {session: false}), async (req, res) => {
   try {
       await Event.findByIdAndDelete(req.params.id);
@@ -473,7 +482,7 @@ router.delete('/event/:id', passport.authenticate('jwt', {session: false}), asyn
   }
 });
 
-// Add the user as an attendee to a specific event
+/* Add the user as an attendee to a specific event by creating a member_event entry */
 router.post('/attend/event', passport.authenticate('jwt', {session: false}), async (req, res) =>
 {
     const eventID = req.body.eventID;
@@ -514,6 +523,7 @@ router.post('/attend/event', passport.authenticate('jwt', {session: false}), asy
     }
 });
 
+/* Updates an event */
 router.post("/editEvent",passport.authenticate('jwt', {session: false}), async (req, res) => {
     try {
         const eventID = req.body.id;
@@ -548,7 +558,7 @@ router.post("/editEvent",passport.authenticate('jwt', {session: false}), async (
 });
 
 
-// Cancel the attendance to an event
+/* Cancels the attendance to an event */
 router.delete('/cancel/attendance/:eventID/:userID', passport.authenticate('jwt', {session: false}), async (req, res) =>
 {
     const eventID = req.params.eventID;
@@ -591,7 +601,7 @@ router.delete('/cancel/attendance/:eventID/:userID', passport.authenticate('jwt'
     }
 })
 
-// Confirm if a user is attending an event or not
+/* Confirms if a user is attending an event or not */
 router.get('/is/attending/:eventID/:userID', async (req, res) =>
 {
     const eventID = req.params.eventID;
@@ -611,7 +621,7 @@ router.get('/is/attending/:eventID/:userID', async (req, res) =>
     });
 })
 
-
+/* Authentication */
 router.post('/authenticate/token', (req, res) =>
 {
     try
@@ -633,6 +643,7 @@ router.post('/authenticate/token', (req, res) =>
     }
 })
 
+/* Gets the participants of an event, meaning members who have a ticket */
 router.get('/event/participants/:id',passport.authenticate('jwt', {session: false}), async (req, res)=>{
     try{
         const eventId = req.params.id;
@@ -671,6 +682,7 @@ router.get('/event/participants/:id',passport.authenticate('jwt', {session: fals
     }
 });
 
+/* Get the image of an event */
 router.get('/getImage/:eventId', upload.single('image'), async (req, res) => {
     try{
       const id   = req.params.eventId;
@@ -686,7 +698,7 @@ router.get('/getImage/:eventId', upload.single('image'), async (req, res) => {
         const imageData = await Image.findById(imageId);
         res.json(imageData);
       }else{
-        return res.status(404).json({error: "the event doesn't have a logo picture"});
+        return res.status(404).json({error: "The event doesn't have a logo picture"});
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -698,7 +710,7 @@ router.get('/getImage/:eventId', upload.single('image'), async (req, res) => {
     try {
       const eventId = req.params.eventId;
       const file = req.file;
-      const maxSize = 2;
+      const maxSize = 2; // Maximum image size is 2MB
       const event = await Event.findById(eventId);
       if(!event){
         return res.status(404).json({message: "Event not found"});
@@ -706,9 +718,9 @@ router.get('/getImage/:eventId', upload.single('image'), async (req, res) => {
       if(!file){
         return res.status(409).json({error: "There is no image"})
       }
-      const fileSize= file.size / (1024 * 1024); //size in megabytes
+      const fileSize= file.size / (1024 * 1024); // Size in megabytes
       if(fileSize > maxSize){
-        return res.status(413).json({error: "The image size is too big"});
+        return res.status(413).json({error: "The image size is too large"});
       }
       if(event.logo != null){
         await Image.findByIdAndDelete(event.logo);
@@ -732,7 +744,7 @@ router.get('/getImage/:eventId', upload.single('image'), async (req, res) => {
     }
   });
 
-// Send reminders about the event that will start in 24 hours. This function will run every hour
+/* Send reminders about the event that will start in 24 hours. This runs every hour */
 cron.schedule("0 0 * * * *", async () =>
 {
     const sendReminders = async (emails, event) =>
@@ -820,7 +832,7 @@ cron.schedule("0 0 * * * *", async () =>
 });
 
 
-// I created this non-async function that calls the actual async function that sends the emails.
+// This non-async function calls the actual async function that sends the emails.
 // This way the route that does the event update doesn't have to wait for this to finish before
 // notifying the frontend.
 const SendEventEditionNotification = (event) =>
@@ -828,6 +840,7 @@ const SendEventEditionNotification = (event) =>
     CreateAndSendNotifications(event)
 }
 
+/* Sends notifications to people who have a ticket to an event that has been edited */
 const CreateAndSendNotifications = async (event) =>
 {
     const tickets = await Ticket.find({event: event._id});
@@ -882,7 +895,7 @@ const CreateAndSendNotifications = async (event) =>
 }
 
 
-// Once a day check if there are members whose membership will be outdated in two weeks
+// Once a day, check if there are members whose membership will be outdated in two weeks
 // send them a two week notice. Also check if there are members whose membership will
 // be outdated in a week send them a weeks notice.
 cron.schedule('0 0 0 * * *', async () =>
@@ -938,6 +951,7 @@ cron.schedule('0 0 0 * * *', async () =>
     }
 });
 
+/* Sends an email to members whose membership is about to expire */
 const SendExpirationNotice = async (emails, message) =>
 {
     const emails_string = convertEmailsToString(emails);
