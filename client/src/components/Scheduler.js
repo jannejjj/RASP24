@@ -63,6 +63,11 @@ function SchedulerComponent(props) {
 
   useEffect(traduceEvents, [events]);
 
+  const handleOnEditedEvent = () => {
+    setSelectedEvent(null);
+    setUpdateEvents(!updateEvents);
+  }
+
   const handleOnSelectEvent = (e) => {
       setSelectedEvent(events[e.ref]);
   };
@@ -102,7 +107,7 @@ function SchedulerComponent(props) {
                 accordionExpanded={true}
                 showToastMessage={toasts.showToastMessage}
                 showToastSuccessMessage={toasts.showToastSuccessMessage}
-                toggleUpdateEvents={()=>{}}
+                toggleUpdateEvents={handleOnEditedEvent}
                 onDeletedEvent={handleOnDeletedEvent}
                 onEditedEvent={()=>{setUpdateEvents(!updateEvents)}}
               /> :
