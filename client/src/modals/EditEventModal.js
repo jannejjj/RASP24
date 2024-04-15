@@ -1,6 +1,19 @@
+/*
+File: EditEventModal.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: EventItem.js
+Props and Parameters: edit, saveEditedEventOnClick, whenChanging, title, location, handleStartTimeChange, handleStartTimeError, startDate, checkedDeadline, handleJoinDeadlineChange, handleJoinDeadlineError, ...
+joinDeadline, handleEndTimeChange, handleEndTimeError, description, price, checkedTicket, resetTickets, tickets, cancelEditOnClick, saveEditOnClick
+Description: Allows editing of the event.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
+import { React} from "react";
+// Styles
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
-import { React, useState } from "react";
+// MUI components
 import { Input } from '@mui/material';
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
@@ -9,11 +22,13 @@ import AutocompleteInput from '../components/AutocompleteInput';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import OutlinedInput from '@mui/material/OutlinedInput'; // TODO: useless?
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import dayjs from 'dayjs';
 import { TextField } from '@mui/material';
+// Modals, components, and commons
+import dayjs from 'dayjs';
+
 
 function EditEventModal(props)
 {

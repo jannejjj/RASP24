@@ -1,10 +1,23 @@
-import '../styles/Modals.css';
+/*
+File: ManageMemberModal.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: Member.js
+Props and Parameters: member("memberSchema"), currentUser("memberSchema"), openManageMemberModal, setOpenManageMemberModal, updateMember, deleteMember
+Description: Allows the user to control the member's role and admin status.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import React, { useState } from 'react';
+// Styles
+import '../styles/Modals.css';
+// MUI components
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Switch from '@mui/material/Switch';
 import { TextField, Typography } from '@mui/material';
+// Modals, components, and commons
 import ConfirmDeleteMemberModal from './ConfirmDeleteMemberModal';
 
 function ManageMemberModal(props)

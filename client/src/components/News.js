@@ -1,11 +1,24 @@
+/*
+File: News.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: App.js
+Props and Parameters: currentUser("memberSchema")
+Description: News page body
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import { React, useState, useEffect } from "react";
+import { ToastContainer } from 'react-toastify';
+// MUI components
 import Typography from "@mui/material/Typography";
-import NewsItem from "./NewsItem";
+import Button from "@mui/material/Button";
+// Styles CSS
 import "../styles/News.css";
 import '../App.css';
-import Button from "@mui/material/Button";
+// Modals, components, and commons
+import NewsItem from "./NewsItem";
 import CreateNewNewsPostModal from "../modals/CreateNewNewsPostModal";
-import { ToastContainer } from 'react-toastify';
 import toast from "../common/Toast";
 
 /* Page that contains news. Admins can create news by pressing the 'add new post' button. */

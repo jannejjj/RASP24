@@ -1,19 +1,34 @@
+/*
+File: MyProfile.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: App.js
+Props and Parameters: currentUser("memberSchema"), setCurrentUser
+Description: My profile page body
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import { React, useState, useEffect, useRef } from 'react';
+import { ToastContainer } from 'react-toastify';
+// Styles CSS
 import '../styles/MyProfile.css';
 import '../App.css';
+import 'react-toastify/dist/ReactToastify.css';
+// MUI components
 import Button from "@mui/material/Button";
+import Tooltip from '@mui/material/Tooltip';
+// Modals, components, and commons
 import EditDetailsModal from '../modals/EditDetailsModal';
 import PayMembershipModal from '../modals/PayMembershipModal';
 import UploadImageModal from '../modals/UploadImageModal';
 import EventItem from './EventItem';
-import { ToastContainer } from 'react-toastify';
 import toasts from '../common/Toast';
-import 'react-toastify/dist/ReactToastify.css';
+// Icons
+import IconButton from '@mui/material/IconButton';
 import { RxCheckCircled } from "react-icons/rx";
 import { RxCrossCircled } from "react-icons/rx";
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 
+// User info
 function ProfileItem(props) {
   // These states store the original member data
   const [firstname, setFirstname] = useState(props.Firstname);
@@ -179,6 +194,7 @@ function ProfileItem(props) {
     setEdit(true);
   };
 
+  // Update user info
   const saveEditOnClick = async () => {
     const confirmed = window.confirm("Are you sure you want to save the changes?");
     if (confirmed) {
@@ -368,6 +384,7 @@ function ProfileItem(props) {
     setUploadImage(true);
   };
 
+  // Membership
   useEffect(() =>
   {
     const expirationDate = new Date(props.membershipExpirationDate);
@@ -471,6 +488,7 @@ function ProfileItem(props) {
   )
 }
 
+// My profile body
 function MyProfile(props) {
   const [user, setUser ] = useState();
   const [image, setImage] = useState();
@@ -512,7 +530,7 @@ function MyProfile(props) {
     sessionStorage.setItem('AssocEase_MyProfileSelectedView', value);
   }
 
-
+  // Get user data
   const fetchUserData = async () => {
     try {
       const response = await fetch(`/users/getData/${props.currentUser.id}`);
@@ -525,6 +543,7 @@ function MyProfile(props) {
     }
   };
 
+  // Get user's events
   const fetchUsersEvents = async () =>
   {
     setLoadingEvents(true);

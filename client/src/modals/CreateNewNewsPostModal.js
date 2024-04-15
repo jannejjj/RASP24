@@ -1,7 +1,19 @@
+/*
+File: CreateNewNewsPostModal.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: News.js
+Props and Parameters: newPostModal, saveNewPostOnClick, whenChanging, cancelCreationOnClick
+Description: This modal is used to create a news post.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
+import { React } from "react";
+// Styles
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
 import '../App.css';
-import { React } from "react";
+// MUI components
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';

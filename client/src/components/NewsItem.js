@@ -1,8 +1,22 @@
+/*
+File: NewsItem.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: News.js
+Props and Parameters: currentUser("memberSchema"), post("newsPostSchema"), showToastSuccessMessage, toggleUpdate
+Description: News box
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import React, { useState } from 'react';
+// MUI components
 import Button from '@mui/material/Button';
+// Modals, components, and commons
 import ConfirmDeletePostModal from '../modals/ConfirmDeletePostModal';
+// Styles CSS
 import "../styles/NewsItem.css";
 import "../App.css";
+// Icons
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PersonIcon from '@mui/icons-material/Person';
 

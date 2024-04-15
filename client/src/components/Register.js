@@ -1,18 +1,32 @@
+/*
+File: Register.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: App.js
+Props and Parameters: -
+Description: Register page
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
+import {useState} from 'react';
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+// MUI components
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Select from '@mui/material/Select';
-import {useState} from 'react';
-import { useNavigate } from "react-router-dom";
 import { Button, Grid } from '@mui/material';
 import Box from '@mui/material/Box';
+import MenuItem from '@mui/material/MenuItem';  
+// Styles CSS
 import '../App.css';
 import '../styles/Register.css';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import MenuItem from '@mui/material/MenuItem';  
-import validator from 'validator';
+// Modals, components, and commons
 import countries from '../common/Countries.js';
+import validator from 'validator';
 
+// Registe page
 const Register = () => {
     let navigate = useNavigate();
 

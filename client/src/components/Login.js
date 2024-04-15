@@ -1,12 +1,25 @@
+/*
+File: Login.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: App.js
+Props and Parameters: setCurrentUser
+Description: Login page
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import { useNavigate } from "react-router-dom";
 import {useState} from 'react'
-import OutlinedInput from '@mui/material/OutlinedInput';
+import { ToastContainer, toast } from 'react-toastify';
+// MUI components
+import OutlinedInput from '@mui/material/OutlinedInput'; // TODO: Useless?
 import Button from "@mui/material/Button";
+import { TextField } from "@mui/material";
+// Styles
 import '../styles/Login.css';
 import '../App.css';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { TextField } from "@mui/material";
+
 
 function Login(props) {
     let navigate = useNavigate();
@@ -18,6 +31,7 @@ function Login(props) {
       setMember({...member, [event.target.id]: event.target.value})
     }
 
+    // TODO delete and use only (import toast from "../common/Toast") ???
     const showToastMessage = (message) =>
     {
         toast.error(message, {

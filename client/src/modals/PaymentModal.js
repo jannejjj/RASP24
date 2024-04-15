@@ -1,9 +1,22 @@
+/*
+File: PaymentModal.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: EventItem.js
+Props and Parameters: openPayment, title, price, user("memberSchema"), setOpenPayment, handlePayment
+Description: Allows the user to see payment details and confirm purhace. This should route the user to the third party payment page, but this is not done in this project.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
+import React from 'react';
+// Styles
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
-import React from 'react';
+// MUI components
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+// Icons
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 
 function PaymentModal(props)
