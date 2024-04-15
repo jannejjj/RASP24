@@ -31,7 +31,6 @@ import toasts from "../common/Toast";
 import PeopleIcon from '@mui/icons-material/People';
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 // Event box
 function EventItem(props) {
@@ -74,12 +73,30 @@ function EventItem(props) {
   const [ticketSwitchWasToggled, setTicketSwitchWasToggled] = useState(false);
   const [deadlineSwitchWasToggled, setDeadlineSwitchWasToggled] = useState(false);
 
-  const [loadingParticipation, setLoadingParticipation] = useState(true);
-  const [loadingLikes, setLoadingLikes] = useState(true);
-
   const [loadingLike, setLoadingLike] = useState(true);
   const [loadingTicket, setLoadingTicket] = useState(true);
 
+  const fetchEventImage = async ()=>{
+    try {
+      const response = await fetch(`/api/getImage/${props.event._id}`); 
+      if(response.ok){
+        const imageData = await response.json(); 
+
+      // Convert the data array to a Uint8Array
+      const uint8Array = new Uint8Array(imageData.buffer.data);
+
+      // Convert the Uint8Array to a Base64 string
+      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+      setImage(imageUrl);
+      }
+      else{
+      setImage("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
+      }
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+  };
 
   useEffect(() => {
     setLikes(props.event.attendees);
@@ -93,6 +110,9 @@ function EventItem(props) {
     setStartDate(props.event.startDate);
     setEndDate(props.event.endDate);
     setJoinDeadline(props.event.joinDeadline);
+
+    // Fetches the profile image of the current event 
+    fetchEventImage();
 
     const confirmLike = () => 
     {
@@ -157,7 +177,6 @@ function EventItem(props) {
         } else {
           setEventParticipantsData(null);
         }
-        setLoadingParticipation(false);
       } catch (error) {
         console.error('Error fetching event data:', error);
       }
@@ -166,38 +185,6 @@ function EventItem(props) {
 
   }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
 
-  // Get user's ticket status
-  useEffect(() => {
-    const data = 
-    {
-      userId: props.currentUser.id,
-      eventId: props.event._id
-    };
-
-    fetch('/api/hasTicket', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + props.currentUser.token
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.hasTicket) {
-        setTicket(data.ticket);
-      }
-      setHasTicket(data.hasTicket);
-    })
-    .catch(error => {
-        console.error('Error fetching ticket status:', error);
-    });
-  }, []);
-
-  // State for event deletion modal
-  const [deleteModal, setDeleteModal] = useState(false);
-
-  
   const openListOnClick = () => {
     setOpenParticipantsList(true);
   };
@@ -521,54 +508,8 @@ const handleJoinDeadlineError = (error) => {
       }
       setDeleteModal(false);
     });
-  };
+  };   
 
-  const fetchEventImage = async ()=>{
-    try {
-      const response = await fetch(`/api/getImage/${props.event._id}`); 
-      if(response.ok){
-        const imageData = await response.json(); 
-
-      // Convert the data array to a Uint8Array
-      const uint8Array = new Uint8Array(imageData.buffer.data);
-
-      // Convert the Uint8Array to a Base64 string
-      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
-      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
-      setImage(imageUrl);
-      }
-      else{
-      setImage("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
-      }
-    } catch (error) {
-      console.error('Error fetching image:', error);
-    }
-  };
-
-  useEffect(() =>
-  {
-    // Fetches the profile image of the current event 
-    fetchEventImage();
- 
-    // Check like
-    const confirmLike = () => 
-    {
-      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
-        method: 'GET'
-      })
-      .then(response => response.json())
-      .then(data => 
-        {
-          setLiking(data.attending);
-          setLoadingLikes(false);
-        }
-      );
-    }
-
-    // Find out if the user is liking this event or not
-    confirmLike();
-  }, [props.event]);
-    
     if(loadingLike || loadingTicket) {
       return null;
     }

@@ -21,7 +21,7 @@ import Typography from "@mui/material/Typography";
 import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
-import toast from "../common/Toast";
+import toasts from "../common/Toast";
 // Icons
 import { FaUserGroup } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
@@ -38,11 +38,10 @@ function Details(props) {
 
   const [detailsHistory, setDetailsHistory] = useState(details);
   const [changedDetails, setChangedDetails] = useState(details);
-  const [title, setTitle] = useState("Association Ry");
+  const [title, setTitle] = useState("LTKY");
   const [titleHistory, setTitleHistory] = useState(title);
   const [changedTitle, setChangedTitle] = useState(title);
   const [manageDetails, setManageDetails] = useState(false);
-  const [title, setTitle] = useState("LTKY");
   const [memberCount, setMemberCount] = useState("...");
 
   // Function to save edits - set the variables to the new values
@@ -154,8 +153,6 @@ function Home(props) {
     setCheckedDeadline(!checkedDeadline);
     if(!checkedDeadline) {
       newEvent.joinDeadline = "";
-    } else {
-      newEvent.joinDeadline = newEvent.startDate;
     }
     setNewEvent(newEvent);
   }
@@ -254,9 +251,15 @@ function Home(props) {
   // POST new event
   const saveNewEventOnClick = async (e) => {
     e.preventDefault()
+    let deadlineCorrect = false;
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
-        if(!joinDeadlineError && newEvent.joinDeadline && newEvent.joinDeadline <= newEvent.startDate) {
+        if(checkedDeadline && !joinDeadlineError && newEvent.joinDeadline && newEvent.joinDeadline <= newEvent.startDate) {
+          deadlineCorrect = true;
+        } else if (!checkedDeadline) {
+          deadlineCorrect = true;
+        }
+        if(deadlineCorrect) {
           if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
             newEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
             newEvent.creatorId = props.currentUser.id;
@@ -278,6 +281,12 @@ function Home(props) {
                   console.log(data)
                   eventId = data._id;
               })
+            if(checkedTicket) {
+              resetTickets();
+            }
+            if(checkedDeadline) {
+              handleDeadlineSwitch();
+            }
             if(!selectedFile){
               // Empty the input fields
               setNewEvent({});
@@ -322,12 +331,6 @@ function Home(props) {
               toggleUpdateEvents();
               toasts.showToastSuccessMessage("Event created successfully!");
             }
-          if(checkedTicket) {
-            resetTickets();
-          }
-          if(checkedDeadline) {
-            handleDeadlineSwitch();
-          }
           } else {
             toasts.showToastMessage("Starting time needs to be before ending time.");
           }

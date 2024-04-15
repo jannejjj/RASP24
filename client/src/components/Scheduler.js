@@ -81,7 +81,7 @@ function SchedulerComponent(props) {
   return (
     <div>
       <Grid container sx={{ mb:1 }} columns={5}>
-        <Grid item xs={5} sx={{mt:4, mb: 4}}>
+        <Grid item xs={5} sx={{mt: 2, mb: 4}}>
           <h1> Calendar </h1>
         </Grid>
         {!props.currentUser.loggedIn && 

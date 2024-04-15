@@ -68,6 +68,7 @@ function EditEventModal(props)
                     onChange={props.handleJoinDeadlineChange}
                     onError={props.handleJoinDeadlineError}
                     disabled={!props.checkedDeadline}
+                    disablePast={true}
                     label="Event join deadline" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
                     format="DD/MM/YYYY HH:mm"
@@ -122,8 +123,7 @@ function EditEventModal(props)
                   inputProps={{min:0}} 
                   id="tickets" 
                   sx={{m: 1}}
-                  value={props.tickets}
-                  onChange={e => props.setTickets(e.target.value)}
+                  defaultValue={props.tickets}
                 />
                 <h2>
                   Upload event image
