@@ -62,6 +62,28 @@ function EventItem(props) {
   const [loadingLike, setLoadingLike] = useState(true);
   const [loadingTicket, setLoadingTicket] = useState(true);
 
+  const fetchEventImage = async ()=>{
+    try {
+      const response = await fetch(`/api/getImage/${props.event._id}`); 
+      if(response.ok){
+        const imageData = await response.json(); 
+
+      // Convert the data array to a Uint8Array
+      const uint8Array = new Uint8Array(imageData.buffer.data);
+
+      // Convert the Uint8Array to a Base64 string
+      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+      setImage(imageUrl);
+      }
+      else{
+      setImage("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
+      }
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+  };
+
   useEffect(() => {
     setLikes(props.event.attendees);
     setTitle(props.event.title);
@@ -74,6 +96,9 @@ function EventItem(props) {
     setStartDate(props.event.startDate);
     setEndDate(props.event.endDate);
     setJoinDeadline(props.event.joinDeadline);
+
+    // Fetches the profile image of the current event 
+    fetchEventImage();
 
     const confirmLike = () => 
     {
@@ -465,27 +490,7 @@ const handleJoinDeadlineError = (error) => {
     });
   };
 
-  const fetchEventImage = async ()=>{
-    try {
-      const response = await fetch(`/api/getImage/${props.event._id}`); 
-      if(response.ok){
-        const imageData = await response.json(); 
 
-      // Convert the data array to a Uint8Array
-      const uint8Array = new Uint8Array(imageData.buffer.data);
-
-      // Convert the Uint8Array to a Base64 string
-      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
-      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
-      setImage(imageUrl);
-      }
-      else{
-      setImage("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
-      }
-    } catch (error) {
-      console.error('Error fetching image:', error);
-    }
-  };
     
     if(loadingLike || loadingTicket) {
       return null;
