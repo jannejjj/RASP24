@@ -118,7 +118,7 @@ function Members(props) {
   /* If the user is not logged in, they will be shown this */
   if (!props.currentUser.loggedIn) {
     return (
-        <div>
+        <div className="MembersBackground">
             <h1>Members</h1>
             <Typography sx={{ mt: 20 }} variant='h4' align="center">
               Please login to view members.
