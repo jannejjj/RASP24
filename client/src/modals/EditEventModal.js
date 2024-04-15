@@ -45,6 +45,7 @@ function EditEventModal(props)
                   <DateTimePicker 
                     onChange={props.handleStartTimeChange}
                     onError={props.handleStartTimeError}
+                    disablePast={true}
                     label="Select Starting Time" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
                     format="DD/MM/YYYY HH:mm"
@@ -74,7 +75,6 @@ function EditEventModal(props)
                     format="DD/MM/YYYY HH:mm"
                     ampm={false}
                     defaultValue={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):null}
-                    value={props.joinDeadline !== undefined ? dayjs(props.joinDeadline):null}
                     sx={{ width: '100%', m: 0.5 }} 
                     slotProps={{
                       textField: {

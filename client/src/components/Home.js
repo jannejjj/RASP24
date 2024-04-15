@@ -202,20 +202,30 @@ function Home(props) {
     setNewEventModal(false);
   };
 
-  // Triggered if there is an error in the date formatting
+
+  // Triggered if there is an error in the dates
   const handleStartTimeError = (error) => {
-    console.log("Starting time error: " + error);
-    setStartTimeError(true);
+    if(error === null) {
+      setStartTimeError(false);
+    }else{
+      setStartTimeError(true);
+    }
   }
 
   const handleEndTimeError = (error) => {
-    console.log("Ending time error: " + error);
-    setEndTimeError(true);
-  }
+    if (error === null) {
+      setEndTimeError(false);
+    } else {
+      setEndTimeError(true);
+    }
+}
 
   const handleJoinDeadlineError = (error) => {
-    console.log("Join deadline error: " + error);
-    setJoinDeadlineError(true);
+    if (error === null) {
+      setJoinDeadlineError(false);
+    } else {
+      setJoinDeadlineError(true);
+    }
   }
 
   // Fetches events from API

@@ -232,29 +232,29 @@ const savingRules = () => {
         toasts.showToastMessage('Please select a PNG or JPEG image file.');
         return;
       }
-    }
-    //save the image
-    const formData = new FormData();
-    formData.append('image', selectedFile);
-    const response = await fetch(`/api/updateImage/${props.event._id}`, {
-      method: 'POST',
-      body: formData
-    });
-    if(response.ok){
-      const imageData = await response.json(); 
-
-      // Convert the data array to a Uint8Array
-      const uint8Array = new Uint8Array(imageData.buffer.data);
-
-      // Convert the Uint8Array to a Base64 string
-      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
-      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
-      setImage(imageUrl); 
-    }
-    else{
-      if(response.status == 413){
-        toasts.showToastMessage('The image size is too big');
-        return;
+      //save the image
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+      const response = await fetch(`/api/updateImage/${props.event._id}`, {
+        method: 'POST',
+        body: formData
+      });
+      if(response.ok){
+        const imageData = await response.json(); 
+  
+        // Convert the data array to a Uint8Array
+        const uint8Array = new Uint8Array(imageData.buffer.data);
+  
+        // Convert the Uint8Array to a Base64 string
+        const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+        const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+        setImage(imageUrl); 
+      }
+      else{
+        if(response.status == 413){
+          toasts.showToastMessage('The image size is too big');
+          return;
+        }
       }
     }
 
@@ -342,24 +342,31 @@ const savingRules = () => {
     setEditedEvent({...editedEvent, ["joinDeadline"]: value});
   };
 
-  // Triggered if there is an error in the date formatting
-const handleStartTimeError = (error) => {
-  if(error == "disablePast"){
-    setStartTimeError(false);
-  }else{
-    setStartTimeError(true);
+  // Triggered if there is an error in the dates
+  const handleStartTimeError = (error) => {
+    if(error === null) {
+      setStartTimeError(false);
+    }else{
+      setStartTimeError(true);
+    }
   }
+
+  const handleEndTimeError = (error) => {
+    if (error === null) {
+      setEndTimeError(false);
+    } else {
+      setEndTimeError(true);
+    }
 }
 
-const handleEndTimeError = (error) => {
-  console.log("Ending time error: " + error);
-  setEndTimeError(true);
-}
-
-const handleJoinDeadlineError = (error) => {
-  console.log("Join deadline error: " + error, joinDeadline);
-  setJoinDeadlineError(true);
-} 
+  const handleJoinDeadlineError = (error) => {
+    if (error === null) {
+      setJoinDeadlineError(false);
+    } else {
+      setJoinDeadlineError(true);
+    }
+  }
+  
   // Show edit
   const editOnClick = () => {
     // Set editedEvent to contain the original event data
@@ -470,6 +477,7 @@ const handleJoinDeadlineError = (error) => {
           toasts.showToastSuccessMessage("Payment ok!");
           setTicket(data.ticket);
           setHasTicket(true);
+          setTicketsSold(ticketsSold + 1);
         }
       });
     } catch (error) {
