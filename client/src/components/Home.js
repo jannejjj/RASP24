@@ -109,8 +109,6 @@ function Home(props) {
     setCheckedDeadline(!checkedDeadline);
     if(!checkedDeadline) {
       newEvent.joinDeadline = "";
-    } else {
-      newEvent.joinDeadline = newEvent.startDate;
     }
     setNewEvent(newEvent);
   }
@@ -209,9 +207,15 @@ function Home(props) {
   // POST new event
   const saveNewEventOnClick = async (e) => {
     e.preventDefault()
+    let deadlineCorrect = false;
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
-        if(!joinDeadlineError && newEvent.joinDeadline && newEvent.joinDeadline <= newEvent.startDate) {
+        if(checkedDeadline && !joinDeadlineError && newEvent.joinDeadline && newEvent.joinDeadline <= newEvent.startDate) {
+          deadlineCorrect = true;
+        } else if (!checkedDeadline) {
+          deadlineCorrect = true;
+        }
+        if(deadlineCorrect) {
           if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
             newEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
             newEvent.creatorId = props.currentUser.id;
@@ -233,6 +237,9 @@ function Home(props) {
                   console.log(data)
                   eventId = data._id;
               })
+            if(checkedTicket) {
+              resetTickets();
+            }
             if(!selectedFile){
               // Empty the input fields
               setNewEvent({});
@@ -277,9 +284,6 @@ function Home(props) {
               toggleUpdateEvents();
               toasts.showToastSuccessMessage("Event created successfully!");
             }
-          if(checkedTicket) {
-            resetTickets();
-          }
           if(checkedDeadline) {
             handleDeadlineSwitch();
           }

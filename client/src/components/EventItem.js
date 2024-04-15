@@ -59,9 +59,6 @@ function EventItem(props) {
   const [ticketSwitchWasToggled, setTicketSwitchWasToggled] = useState(false);
   const [deadlineSwitchWasToggled, setDeadlineSwitchWasToggled] = useState(false);
 
-  const [loadingParticipation, setLoadingParticipation] = useState(true);
-  const [loadingLikes, setLoadingLikes] = useState(true);
-
   const [loadingLike, setLoadingLike] = useState(true);
   const [loadingTicket, setLoadingTicket] = useState(true);
 
@@ -142,7 +139,6 @@ function EventItem(props) {
         } else {
           setEventParticipantsData(null);
         }
-        setLoadingParticipation(false);
       } catch (error) {
         console.error('Error fetching event data:', error);
       }
@@ -490,29 +486,6 @@ const handleJoinDeadlineError = (error) => {
       console.error('Error fetching image:', error);
     }
   };
-
-  useEffect(() =>
-  {
-    // Fetches the profile image of the current event 
-    fetchEventImage();
-
-    const confirmLike = () => 
-    {
-      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
-        method: 'GET'
-      })
-      .then(response => response.json())
-      .then(data => 
-        {
-          setLiking(data.attending);
-          setLoadingLikes(false);
-        }
-      );
-    }
-
-    // Find out if the user is liking this event or not
-    confirmLike();
-  }, [props.event]);
     
     if(loadingLike || loadingTicket) {
       return null;
