@@ -68,6 +68,7 @@ function EditEventModal(props)
                     onChange={props.handleJoinDeadlineChange}
                     onError={props.handleJoinDeadlineError}
                     disabled={!props.checkedDeadline}
+                    disablePast={true}
                     label="Event join deadline" 
                     views={['day', 'month', 'year', 'hours', 'minutes']} 
                     format="DD/MM/YYYY HH:mm"
