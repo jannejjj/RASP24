@@ -156,7 +156,7 @@ function EventItem(props) {
       }
     }
     checkTicket();
-  }, []);
+  }, [props.event]);
 
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
@@ -366,7 +366,7 @@ const savingRules = () => {
       setJoinDeadlineError(true);
     }
   }
-  
+
   // Show edit
   const editOnClick = () => {
     // Set editedEvent to contain the original event data
