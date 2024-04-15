@@ -145,7 +145,7 @@ function Home(props) {
   const resetTickets = () => {
     setTickets("");
     setCheckedTicket(!checkedTicket);
-    newEvent.tickets = 0;
+    newEvent.tickets = undefined;
     setNewEvent(newEvent);
   }
 
