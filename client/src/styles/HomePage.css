@@ -148,6 +148,8 @@
 .HomeEventDescriptionArea
 {
   text-align: justify;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .HomeEventButtonsArea
@@ -166,18 +168,19 @@
     justify-content: space-between;
     position: relative;
 
-    .EditEventButton {
+    .EditEventButton 
+    {
       height: 100%;
+      margin-right: 10px;
     }
   
     .DeleteEventButton
     {
-      margin-left: 10px;
+      margin-right: 10px;
       height: 100%;
     }
     .ListParticipantsButton
     {
-      margin-left: 10px;
       height: 100%;
       border-radius: 5px;
       border: 1px solid #2C041C;
@@ -215,4 +218,36 @@
   width: 90%;
   max-width: 400px;
   align-items: center;
+}
+
+.HomePastEvents
+{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0 0 0;
+  transition: all 0.5s;
+}
+
+.ShowPastEventsButton
+{
+  width: 100%;
+}
+
+.ShowPastEventsButton h3
+{
+  color: #2C041C;
+  font-family: 'Poppins';
+  transition: all 0.5s;
+}
+
+.ShowPastEventsButton:hover
+{
+  cursor: pointer;
+}
+
+.ShowPastEventsArrow
+{
+  transition: all 0.5s;
 }

@@ -1,6 +1,12 @@
 var express = require('express');
 var router = express.Router();
+const multer = require('multer');
 const Member = require("../models/member");
+const Image = require("../models/image");
+
+const storage = multer.memoryStorage(); 
+const upload = multer({ storage: storage });
+
 const jwt = require("jsonwebtoken");
 const passport = require('passport');
 
@@ -27,6 +33,66 @@ router.get('/getData/:userId', async (req, res) => {
   } catch (error) {
     console.error('Error fetching user data:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.get('/getImage/:userId', upload.single('image'), async (req, res) => {
+  try{
+    const id   = req.params.userId;
+    if (!id) {
+      return res.status(400).json({ error: 'id parameter is required' });
+    }
+    const userData = await Member.findById(id);
+    if (!userData) {
+      return res.status(405).json({ error: 'User not found' });
+    }
+    const imageId = userData.profileImage;
+    if(imageId!= null){
+      const imageData = await Image.findById(imageId);
+      res.json(imageData);
+    }else{
+      return res.status(404).json({error: "the user doesn't have a profile picture"});
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.post('/updateImage/:userId', upload.single('image'), async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const file = req.file;
+    const user = await Member.findById(userId);
+    const maxSize = 2;
+    if(!user){
+      return res.status(404).json({message: "User not found"});
+    }
+    if(!file){
+      return res.status(409).json({error: "There is no image"})
+    }
+    const fileSize= file.size / (1024 * 1024); //size in megabytes
+    if(fileSize > maxSize){
+      return res.status(413).json({error: "The image size is too big"});
+    }
+    if(user.profileImage != null){
+      await Image.findByIdAndDelete(user.profileImage);
+    }
+    const newImage = new Image({
+      buffer: file.buffer,
+      mimetype: file.mimetype,
+      name: file.originalname,
+      encoding: 'base64'
+    });
+  
+    const savedImage = await newImage.save();
+
+    user.profileImage = savedImage._id;
+    await user.save();
+
+    res.status(201).json(savedImage);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to upload image', error: error.message });
   }
 });
 

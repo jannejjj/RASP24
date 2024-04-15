@@ -9,15 +9,15 @@ let eventSchema = new Schema ({
     startDate:{type: Date},
     endDate:{type: Date},
     description: {type: String},
-    location:{type: String},
+    location:{type: Object},
     attendees: {type: Number},
     tickets: {type: Number},
     ticketsSold: {type: Number},
     joinDeadline: {type: Date}, 
-    logo:[{
+    logo:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'
-      }],
+      },
     price: {type: Number},
     paymentDate:{type: Date},
     link: [{

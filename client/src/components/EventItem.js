@@ -31,6 +31,7 @@ import toasts from "../common/Toast";
 import PeopleIcon from '@mui/icons-material/People';
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 // Event box
 function EventItem(props) {
@@ -56,7 +57,11 @@ function EventItem(props) {
   const [checkedDeadline, setCheckedDeadline] = useState(props.event.joinDeadline !== null && props.event.joinDeadline !== undefined);
   const [hasTicket, setHasTicket] = useState(false);
   const [ticket, setTicket] = useState(null);
+  const [image, setImage] = useState("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
+  const [selectedFile, setSelectedFile] = useState(null);
   const [eventParticipantsData, setEventParticipantsData] = useState(null);
+  const [allowDelete, setAllowDelete] = useState(null);
+  const [allowEdit, setAllowEdit] = useState(null);
 
   // These states store the data that is edited
   const [edit, setEdit] = useState(false);
@@ -66,12 +71,52 @@ function EventItem(props) {
   const [editedTime, setEditedTime] = useState(props.event.time);
   const [editedLocation, setEditedLocation] = useState(props.event.location);
   const [editedDescription, setEditedDescription] = useState(props.event.description);
+  const [ticketSwitchWasToggled, setTicketSwitchWasToggled] = useState(false);
+  const [deadlineSwitchWasToggled, setDeadlineSwitchWasToggled] = useState(false);
 
-  // Get event participants
+  const [loadingParticipation, setLoadingParticipation] = useState(true);
+  const [loadingLikes, setLoadingLikes] = useState(true);
+
+  const [loadingLike, setLoadingLike] = useState(true);
+  const [loadingTicket, setLoadingTicket] = useState(true);
+
+
   useEffect(() => {
-    const fetchEventData = async () => {
+    setLikes(props.event.attendees);
+    setTitle(props.event.title);
+    setLocation(props.event.location);
+    setDescription(props.event.description);
+    setTicketsSold(props.event.ticketsSold);
+    setTickets(props.event.tickets);
+    setPrice(props.event.price);
+
+    setStartDate(props.event.startDate);
+    setEndDate(props.event.endDate);
+    setJoinDeadline(props.event.joinDeadline);
+
+    const confirmLike = () => 
+    {
+      fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
+        method: 'GET'
+      })
+      .then(response => response.json())
+      .then(data => 
+        {
+          setLiking(data.attending);
+          setLoadingLike(false);
+        }
+      );
+    }
+
+    // Find out if the user is like this event or not
+    confirmLike();
+
+  }, [props.event]);
+
+  useEffect(() => {
+    const checkTicket = async () => {
       try {
-        const response = await fetch(`api/event/participants/${props.event._id}`, {
+        const response = await fetch(`/api/has/ticket/${props.event._id}/${props.currentUser.id}` , {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -79,23 +124,23 @@ function EventItem(props) {
           }
         });
         const responseData = await response.json();
-        if (responseData && responseData.data && Array.isArray(responseData.data)) {
-          setEventParticipantsData(responseData.data);
-        } else {
-          setEventParticipantsData(null);
+        if(responseData) {
+          if(responseData.hasTicket) {
+            setTicket(responseData.ticket);
+          }
+          setHasTicket(responseData.hasTicket);
+          setLoadingTicket(false);
         }
       } catch (error) {
-        console.error('Error fetching event data:', error);
+        console.error('Error fetching ticket data:', error);
       }
-    };
+    }
+    checkTicket();
+  }, []);
 
-    fetchEventData();
-  }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
-
-  const [loadingParticipation, setLoadingParticipation] = useState(true);
-  const [loadingLikes, setLoadingLikes] = useState(true);
-
-  // Get event participants - duplicate?
+  // State for event deletion modal
+  const [deleteModal, setDeleteModal] = useState(false);
+ 
   useEffect(() => { 
     const fetchEventData = async () => {
       try {
@@ -117,8 +162,8 @@ function EventItem(props) {
         console.error('Error fetching event data:', error);
       }
     };
-
     fetchEventData();
+
   }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
 
   // Get user's ticket status
@@ -160,36 +205,6 @@ function EventItem(props) {
     setOpenParticipantsList(false);
   };
 
-  // TODO delete and use only (import toasts from "../common/Toast") ???
-  const showToastMessage = (message) =>
-{
-    toast.error(message, {
-        position: "top-center",
-        autoClose: 6000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: "dark"
-        });
-}
-
-// TODO delete and use only (import toasts from "../common/Toast") ???
-const showToastMessageSuccesfull = (message) =>
-{
-    toast.success(message, {
-        position: "top-center",
-        autoClose: 6000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: "dark"
-        });
-};
-
 const savingErrorMessages = [
   "Starting time is not valid.",
   "Ending time is not valid.",
@@ -203,7 +218,8 @@ const savingRules = () => {
   if(endTimeError)  return savingErrorMessages[1];
   if(!checkedDeadline) {
     editedEvent.joinDeadline = undefined;
-  }
+  } else if (!editedEvent.joinDeadline) return savingErrorMessages[2];
+  if(!checkedTicket) editedEvent.tickets = undefined;
   const startDateAux = new Date(editedEvent.startDate);
   const joinDeadlineAux = new Date(editedEvent.joinDeadline);
   const endDateAux = new Date(editedEvent.endDate);
@@ -213,25 +229,54 @@ const savingRules = () => {
   return "";
 };
 
-  const saveEditedEventOnClick = (e) => {
+  const saveEditedEventOnClick = async (e) => {
     e.preventDefault();
     let errorMessage = savingRules();
-    let successToast = false; //Doesn't work currently.
-    if (errorMessage != ""){
-      console.log(errorMessage);
-      showToastMessage(errorMessage);
+    if (errorMessage !== ""){
+      toasts.showToastMessage(errorMessage);
       return;
     }
-    console.log(checkedDeadline);
+
     if(!checkedDeadline) {
       editedEvent.joinDeadline = undefined;
     }
+    if(selectedFile){
+      if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
+        toasts.showToastMessage('Please select a PNG or JPEG image file.');
+        return;
+      }
+    }
+    //save the image
+    const formData = new FormData();
+    formData.append('image', selectedFile);
+    const response = await fetch(`/api/updateImage/${props.event._id}`, {
+      method: 'POST',
+      body: formData
+    });
+    if(response.ok){
+      const imageData = await response.json(); 
+
+      // Convert the data array to a Uint8Array
+      const uint8Array = new Uint8Array(imageData.buffer.data);
+
+      // Convert the Uint8Array to a Base64 string
+      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+      setImage(imageUrl); 
+    }
+    else{
+      if(response.status == 413){
+        toasts.showToastMessage('The image size is too big');
+        return;
+      }
+    }
+
+
     editedEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
     editedEvent.creatorId = props.currentUser.id;
     editedEvent.id = props.event._id;
-    console.log(editedEvent);
     setEditedEvent(editedEvent);
-    fetch("/api/editEvent", { // TODO change url to event edit url
+    fetch("/api/editEvent", {
       method: "POST",
       headers: {
           "Content-type": "application/json",
@@ -243,60 +288,51 @@ const savingRules = () => {
     .then(response =>{
         if(response.status === 409){
           errorMessage = "tickets should be more than the tickets already sold";
-          console.log(errorMessage);
-          showToastMessage(errorMessage);
+          toasts.showToastMessage(errorMessage);
           return;
         }
         return response.json();
     } )
     .then(data => {
-      if (data) { 
-        // if(! successToast){
-        //   showToastMessageSuccesfull(`${data.event.ticketsSold} users will be notified of the changes`);
-        //   successToast = true;
-        // }
-        // For some reason the Toast is showing twice.
-        setEditedEvent({});
+      if (data) {
         // Close the Modal
         setEdit(false);
         props.toggleUpdateEvents();
+        if(props.onEditedEvent !== undefined){
+          props.onEditedEvent();
+        }
+        toasts.showToastSuccessMessage("Event edited successfully!");
       }
     });
   };
 
-//Resets the amount of tickets and clears the text box.
-  const resetTickets = () => {
-    setTickets("");
+  const handleTicketSwitch = () => {
     setCheckedTicket(!checkedTicket);
-    editedEvent.tickets = 0;
-    setEditedEvent(editedEvent);
+    setTicketSwitchWasToggled(!ticketSwitchWasToggled);
   }
 
   const handleDeadlineSwitch = () => {
     setCheckedDeadline(!checkedDeadline);
-    if(checkedDeadline) {
-      editedEvent.joinDeadline = "";
-      setJoinDeadline(undefined);
-    } else {
-      editedEvent.joinDeadline = editedEvent.startDate;
-      setJoinDeadline(editedEvent.startDate); 
-    }
-
-    setEditedEvent(editedEvent);
+    setDeadlineSwitchWasToggled(!deadlineSwitchWasToggled);
   }
 
-  //Updates the values for the text fields in event creation
+  //Updates the values for the text fields in event edition
   const whenChanging = (event) => {
     setEditedEvent({...editedEvent, [event.target.id]: event.target.value})
   }
 
   const cancelEditOnClick = () => {
     setEditedEvent({});
-    if(!checkedTicket) {
-      resetTickets();
+
+    setSelectedFile(null);
+    if (ticketSwitchWasToggled) {
+      setCheckedTicket(!checkedTicket)
+      setTicketSwitchWasToggled(false);
+
     }
-    if(checkedDeadline) {
-      handleDeadlineSwitch();
+    if(deadlineSwitchWasToggled) {
+      setCheckedDeadline(!checkedDeadline);
+      setDeadlineSwitchWasToggled(false);
     }
     setEdit(false);
   };
@@ -324,7 +360,6 @@ const handleStartTimeError = (error) => {
   if(error == "disablePast"){
     setStartTimeError(false);
   }else{
-    console.log("Starting time error: " + error);
     setStartTimeError(true);
   }
 }
@@ -348,7 +383,7 @@ const handleJoinDeadlineError = (error) => {
       joinDeadline: joinDeadline,
       location: location,
       description: description,
-      price: props.price,
+      price: price,
       tickets : tickets
     });
     setEdit(true);
@@ -358,16 +393,19 @@ const handleJoinDeadlineError = (error) => {
     setEditedTitle(event.target.value);
   };
 
-  const handleTimeChange = (event) => {
-    setEditedTime(event.target.value);
-  };
-
-  const handleLocationChange = (event) => {
-    setEditedLocation(event.target.value);
-  };
+  const handleLocationChange = (value) => {
+    if (value === null) {
+      return;
+    }
+    setEditedEvent({...editedEvent, ["location"]: {name: value.structured_formatting.main_text, placeId: value.place_id}});
+  }
 
   const handleDescriptionChange = (event) => {
     setEditedDescription(event.target.value);
+  };
+
+  const handleImageChange = (event) => {
+    setSelectedFile(event.target.files[0]);
   };
 
   // Post like
@@ -413,12 +451,6 @@ const handleJoinDeadlineError = (error) => {
         }
         setLiking(false);
         setLikes(likes - 1);
-
-        // If the user doesn't have a ticket for this event, then update the page.
-        if (!hasTicket)
-        {
-          props.toggleUpdateEvents();
-        }
       }
     );
   };
@@ -481,16 +513,44 @@ const handleJoinDeadlineError = (error) => {
       if (data.error) {
         toasts.showToastMessage(data.error);
       } else {
-        toasts.showToastSuccessMessage(data.message);
+        toasts.showToastSuccessMessage("Event deleted succesfully!");
         props.toggleUpdateEvents();
+        if(props.onDeletedEvent !== undefined){
+          props.onDeletedEvent();
+        }
       }
       setDeleteModal(false);
     });
   };
 
-  // Check like
+  const fetchEventImage = async ()=>{
+    try {
+      const response = await fetch(`/api/getImage/${props.event._id}`); 
+      if(response.ok){
+        const imageData = await response.json(); 
+
+      // Convert the data array to a Uint8Array
+      const uint8Array = new Uint8Array(imageData.buffer.data);
+
+      // Convert the Uint8Array to a Base64 string
+      const base64String = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const imageUrl = `data:${imageData.mimetype};base64,${btoa(base64String)}`; 
+      setImage(imageUrl);
+      }
+      else{
+      setImage("https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg");
+      }
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+  };
+
   useEffect(() =>
   {
+    // Fetches the profile image of the current event 
+    fetchEventImage();
+ 
+    // Check like
     const confirmLike = () => 
     {
       fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {
@@ -505,11 +565,11 @@ const handleJoinDeadlineError = (error) => {
       );
     }
 
-    // Find out if the user is like this event or not
+    // Find out if the user is liking this event or not
     confirmLike();
-  }, []);
+  }, [props.event]);
     
-    if(loadingLikes || loadingParticipation) {
+    if(loadingLike || loadingTicket) {
       return null;
     }
     
@@ -518,7 +578,7 @@ const handleJoinDeadlineError = (error) => {
         <div className="HomeEventTop">
           <div className="HomeEventPhotoBackground">
             <img
-              src="https://blogs.lut.fi/newcomers/wp-content/uploads/sites/15/2020/02/talvi-ilma-1-1.jpg"
+              src={image}
               alt="Event"
             />
           </div>
@@ -527,7 +587,7 @@ const handleJoinDeadlineError = (error) => {
             <div className="HomeEventTitleAndLocationArea">
               <h2>{title}</h2>
               <h3>Created by: {props.event.creator}</h3>
-              <h3>Location: {location}</h3>
+              <h3>Location: {location.name}</h3>
             </div>
             <p>
               <FavoriteIcon fontSize="small" sx={{mr:"5px"}}/>  {likes}
@@ -547,8 +607,8 @@ const handleJoinDeadlineError = (error) => {
               },
               borderRadius: "4px",
             }}
-            slotProps={{ transition: {unmountOnExit: true} }}
             disableGutters={true}
+            defaultExpanded={props.accordionExpanded}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <h3> Details </h3>
@@ -563,6 +623,7 @@ const handleJoinDeadlineError = (error) => {
                 price={price}
                 paymentDate={props.event.paymentDate}
                 attendees={props.event.attendees}
+                placeId={location.placeId}
               />
               {hasTicket && 
                 <TicketItem
@@ -579,49 +640,50 @@ const handleJoinDeadlineError = (error) => {
               {props.currentUser.admin && 
                 (
                   <div>
-                    <Button className='EditEventButton' variant='contained' disabled={dayjs(endDate) < new Date()} onClick={editOnClick} >Edit</Button>
-                    <Button className='DeleteEventButton' variant='contained' disabled={ticketsSold > 0} onClick={deleteOnClick} >Delete</Button>
-                      <Tooltip title={"List of event participants"}>
-                        <IconButton className="ListParticipantsButton" onClick={openListOnClick}>
-                          <PeopleIcon/>
-                        </IconButton>
-                      </Tooltip>
+                    {dayjs(endDate) >= new Date() && <Button className='EditEventButton' variant='contained' onClick={editOnClick} >Edit</Button>}
+                    {(ticketsSold == 0 || props.oldEvent == true) && <Button className='DeleteEventButton' variant='contained' onClick={deleteOnClick} >Delete</Button>}
+                    <Tooltip title={"List of event participants"}>
+                      <IconButton className="ListParticipantsButton" onClick={openListOnClick}>
+                        <PeopleIcon/>
+                      </IconButton>
+                    </Tooltip>
                   </div>
                 )
               }
             </div>
-            <div className="RightSideButtons">
-              {like ? 
-                (
-                  <IconButton sx={{ 
-                    border: "1px solid",
-                    borderColor: "primary.main",
-                    borderRadius: "5px",
-                    height: "100%",
-                    mr:1,
-                    color: 'primary.main'
-                     }} onClick={() => {setLiking(false); handleCancelEventLike(); }}>
-                    <FavoriteIcon fontSize="small"/>
-                  </IconButton>
-                )
-                :
-                ( 
-                  <IconButton variant="contained" sx={{ 
-                    borderRadius: "5px",
-                    height: "100%",
-                    border: "1px solid #2C041C",
-                    mr:1, 
-                    bgcolor:'primary.main', 
-                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
-                    color:'white',
-                    '&:hover': {
-                      backgroundColor: 'primary.main', // Set the background color on hover
-                    },
-                    }} onClick={() => {setLiking(true); handleEventLike();}} color='white'>
-                    <FavoriteIcon fontSize="small" />
-                  </IconButton>
-                )
-              }
+            {props.oldEvent != true &&
+              <div className="RightSideButtons">
+                {like ? 
+                  (
+                    <IconButton sx={{ 
+                      border: "1px solid",
+                      borderColor: "primary.main",
+                      borderRadius: "5px",
+                      height: "100%",
+                      mr:1,
+                      color: 'primary.main'
+                      }} onClick={() => {setLiking(false); handleCancelEventLike(); }}>
+                      <FavoriteIcon fontSize="small"/>
+                    </IconButton>
+                  )
+                  :
+                  ( 
+                    <IconButton variant="contained" sx={{ 
+                      borderRadius: "5px",
+                      height: "100%",
+                      border: "1px solid #2C041C",
+                      mr:1, 
+                      bgcolor:'primary.main', 
+                      boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+                      color:'white',
+                      '&:hover': {
+                        backgroundColor: 'primary.main', // Set the background color on hover
+                      },
+                      }} onClick={() => {setLiking(true); handleEventLike();}} color='white'>
+                      <FavoriteIcon fontSize="small" />
+                    </IconButton>
+                  )
+                }
                 {hasTicket ? 
                   (
                     <Button variant='outlined' color='primary' sx={{width: '150px'}} >Paid</Button>
@@ -629,29 +691,30 @@ const handleJoinDeadlineError = (error) => {
                   :
                   (
                     <div>
-                    {typeof tickets !== 'undefined' && tickets - ticketsSold <= 0 ?
+                    {typeof tickets !== "undefined" && tickets !== 0 && tickets - ticketsSold <= 0 ?
                       ( 
-                        <div style={{display: "flex", width: '150px', justifyContent: "center", alignItems: "center", height:"100%"}}>No tickets available</div>  
-                      ): (
+                        <Button variant='outlined' disabled color='primary' sx={{width: '150px'}} >Sold Out!</Button>
+                      )
+                      : 
+                      (
                         <Button variant='contained' color='primary' sx={{width: '150px'}} onClick={() => {setOpenPayment(true)}} >Buy a ticket</Button>
                       )
                     }
                     </div>
                   )
                 }
-            </div>
+              </div>
+            }
           </div>
         </div>
   
         <EditEventModal
-        // visible
-          edit={edit}
+          edit={edit} // Visibility of the modal
           editedDescription={editedDescription}
           editedLocation={editedLocation}
           editedTime={editedTime}
           editedTitle={editedTitle}
           handleTitleChange={handleTitleChange}
-          handleTimeChange={handleTimeChange}
           handleLocationChange={handleLocationChange}
           handleDescriptionChange={handleDescriptionChange}
           cancelEditOnClick={cancelEditOnClick}
@@ -668,8 +731,9 @@ const handleJoinDeadlineError = (error) => {
           handleJoinDeadlineChange={handleJoinDeadlineChange}
           handleStartTimeError={handleStartTimeError}
           handleEndTimeError={handleEndTimeError}
+          handleImageChange={handleImageChange}
           handleJoinDeadlineError={handleJoinDeadlineError}
-          resetTickets={resetTickets}
+          handleTicketSwitch={handleTicketSwitch}
           handleDeadlineSwitch={handleDeadlineSwitch}
           
           //old values
@@ -706,7 +770,6 @@ const handleJoinDeadlineError = (error) => {
           currentUser={props.currentUser}
           eventParticipantsData={eventParticipantsData}
         />
-        <ToastContainer />
       </div>
     );
 }

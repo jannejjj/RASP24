@@ -24,20 +24,26 @@ import EventItem from "./EventItem";
 import toast from "../common/Toast";
 // Icons
 import { FaUserGroup } from "react-icons/fa6";
+import { IoIosArrowDown } from "react-icons/io";
+//Styles
+import 'react-toastify/dist/ReactToastify.css';
 
 // The association's information box on top of the homepage
 function Details(props) {
   // Variables
   const [admin, setAdmin] = useState(props.admin);
   const [details, setDetails] = useState(
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mollis imperdiet est, ut maximus est lobortis non. Aliquam bibendum venenatis mi, a auctor lacus interdum feugiat. Aenean nec leo a diam iaculis iaculis. Vestibulum cursus tincidunt neque, quis euismod dolor tincidunt ac."
+    "According to Finnish university legislation, all degree students have to be members of a student union. Students will become members of the student union automatically after they have paid the student union membership fee. Post-graduate students may also join the student union but they have different benefits. There are approximately 5000 members in LTKY, both under-graduate and post-graduate students.\n\nThe symbol of LTKY is the first letter of Hebrew alphabet, Aalef, in red circled by a black gearwheel. As a mathematical symbol Aalef stands for ‘one’ which can be seen as a symbol of unity in LTKY."
   );
+
   const [detailsHistory, setDetailsHistory] = useState(details);
   const [changedDetails, setChangedDetails] = useState(details);
   const [title, setTitle] = useState("Association Ry");
   const [titleHistory, setTitleHistory] = useState(title);
   const [changedTitle, setChangedTitle] = useState(title);
   const [manageDetails, setManageDetails] = useState(false);
+  const [title, setTitle] = useState("LTKY");
+  const [memberCount, setMemberCount] = useState("...");
 
   // Function to save edits - set the variables to the new values
   const saveEditOnClick = () => {
@@ -57,13 +63,20 @@ function Details(props) {
     setManageDetails(false); // Disable EditDetailsModal
   };
 
-  const handleDetailsChange = (event) => {
-    setChangedDetails(event.target.value);
-  };
-
-  const handleTitleChange = (event) => {
-    setChangedTitle(event.target.value);
-  }
+  useEffect(() => {
+    const fetchMemberCount = async () => {
+      await fetch(`api/membercount`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.log(data.error);
+        } else {
+          setMemberCount(data.memberCount);
+        }
+      });
+    }
+    fetchMemberCount()
+  }, [])
 
   return(
     <div className='DetailsBackground'>
@@ -72,35 +85,14 @@ function Details(props) {
           {title}
         </h1>
         <p>
-          <FaUserGroup className="FaUserGroup" /> 123 members
+          <FaUserGroup className="FaUserGroup" />
+          {memberCount} members
         </p>
       </div>
       <div className="HorizontalSeparator" />
       <div className="Text">
-        <p>{details}</p>
+        <p style={{whiteSpace: "pre-wrap"}}>{details}</p>
       </div>
-      {admin && (
-        <div className="EditDetailsButtonArea">
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setManageDetails(true);
-            }}
-          >
-            Edit
-          </Button>
-        </div>
-      )}
-
-      <EditDetailsModal
-        edit={manageDetails}
-        title={changedTitle}
-        details={changedDetails}
-        handleDetailsChange={handleDetailsChange}
-        handleTitleChange={handleTitleChange}
-        saveEditOnClick={saveEditOnClick}
-        cancelEditOnClick={cancelEditOnClick}
-      />
     </div>
   );
 }
@@ -119,42 +111,16 @@ function Home(props) {
   const [checkedDeadline, setCheckedDeadline] = useState(false);
   const [tickets, setTickets] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadingPastEvents, setLoadingPastEvents] = useState(false);
   const [updateEvents, setUpdateEvents] = useState(false);
   const [events, setEvents] = useState([{}]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [pastEvents, setPastEvents] = useState([]);
+  const [showPastEvents, setShowPastEvents] = useState(false);
 
 
   const toggleUpdateEvents = () => {
     setUpdateEvents(!updateEvents);
-  }
-
-  // TODO delete and use only (import toast from "../common/Toast") ???
-  const showToastMessage = (message) =>
-    {
-      toast.error(message, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: false,
-          progress: undefined,
-          theme: "dark"
-          });
-    }
-  
-  // TODO delete and use only (import toast from "../common/Toast") ???
-  const showToastSuccessMessage = (message) =>  
-  {
-    toast.success(message, {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: "dark"
-        });
   }
 
   // Get user data
@@ -216,9 +182,20 @@ function Home(props) {
     setJoinDeadlineError(false); // Sets error to false when changes are made
     setNewEvent({...newEvent, ["joinDeadline"]: value});
   };
+  const handleImageChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleLocationChange = (value) => {
+    if (value === null) {
+      return;
+    }
+    setNewEvent({...newEvent, ["location"]: {name: value.structured_formatting.main_text, placeId: value.place_id}});
+  }
 
   const cancelCreationOnClick = () => {
     setNewEvent({});
+    setSelectedFile(null);
     if(checkedTicket) {
       resetTickets();
     }
@@ -248,6 +225,7 @@ function Home(props) {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
+
     async function fetchEvents() {
         let url = '/api/events';
         let response = await fetch(url, {headers: {
@@ -260,10 +238,12 @@ function Home(props) {
             setLoading(false);
         }
       }
+
     // Only for users that have logged in
     if (props.currentUser.loggedIn)
     {
       fetchEvents();
+
       return () => {
           mounted = false;
       };
@@ -276,17 +256,15 @@ function Home(props) {
     e.preventDefault()
     if(!startTimeError && newEvent.startDate) {
       if(!endTimeError) {
-        if(!checkedDeadline) {
-          newEvent.joinDeadline = newEvent.startDate;
-        }
         if(!joinDeadlineError && newEvent.joinDeadline && newEvent.joinDeadline <= newEvent.startDate) {
           if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
             newEvent.creator = props.currentUser.firstname + " " + props.currentUser.lastname;
             newEvent.creatorId = props.currentUser.id;
             newEvent.attendees = 1;
-            
+
+            var eventId = "";
             setNewEvent(newEvent);
-            await fetch("/api/event", {
+           await fetch("/api/event", {
               method: "POST",
               headers: {
                   "Content-type": "application/json",
@@ -298,13 +276,52 @@ function Home(props) {
               .then(response => response.json())
               .then(data => {
                   console.log(data)
+                  eventId = data._id;
               })
-          // Empty the input fields
-          setNewEvent({});
-          // Close the Modal
-          setNewEventModal(false);
-          // Update events list by toggling the boolean
-          toggleUpdateEvents();
+            if(!selectedFile){
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastSuccessMessage("Event created successfully!");
+              return;
+            }  
+            if (selectedFile.type !== 'image/png' && selectedFile.type !== 'image/jpeg') {
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastMessage('The event was generated without an image due to an incorrect format');
+              return;
+            }
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            const response = await fetch(`/api/updateImage/${eventId}`, {
+              method: 'POST',
+              body: formData
+            });
+            if(response.status == 413){
+              toasts.showToastMessage("The event was created but the image is too big");
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastSuccessMessage("Event created successfully!");
+            }else{
+              // Empty the input fields
+              setNewEvent({});
+              // Close the Modal
+              setNewEventModal(false);
+              // Update events list by toggling the boolean
+              toggleUpdateEvents();
+              toasts.showToastSuccessMessage("Event created successfully!");
+            }
           if(checkedTicket) {
             resetTickets();
           }
@@ -312,18 +329,46 @@ function Home(props) {
             handleDeadlineSwitch();
           }
           } else {
-            showToastMessage("Starting time needs to be before ending time.");
+            toasts.showToastMessage("Starting time needs to be before ending time.");
           }
         } else {
-          showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
+          toasts.showToastMessage("Event joining deadline needs to be before or the same as the starting time of the event.");
         }
       } else {
-        showToastMessage("Ending time is not valid.");
+        toasts.showToastMessage("Ending time is not valid.");
       }
     } else {
-      showToastMessage("Starting time is not valid.");
+      toasts.showToastMessage("Starting time is not valid.");
     }
   };
+
+  const ShowPastEventsClick = async () =>
+  {
+    if (showPastEvents)
+    {
+      setShowPastEvents(false);
+    }
+    else
+    {
+      setLoadingPastEvents(true)
+      const response = await fetch('/api/old/events', 
+      {
+        headers: 
+        {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        }
+      });
+
+      const dataJson = await response.json();
+      if (dataJson) {
+          setPastEvents(dataJson);
+          setLoadingPastEvents(false);
+      }
+      
+      setShowPastEvents(true);
+    }
+  }
 
   return (
     <div className="HomePageBackground">
@@ -352,8 +397,6 @@ function Home(props) {
             admin={admin}
             event={event}
             key={index}
-            showToastMessage={showToastMessage}
-            showToastSuccessMessage={showToastSuccessMessage}
             toggleUpdateEvents={toggleUpdateEvents}
           />
         ))
@@ -362,7 +405,41 @@ function Home(props) {
           Please log in to see events.</Typography>
         }
 
-        <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
+        {!events?.length > 0 &&
+          <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
+        }
+
+        {(props.currentUser.admin && !loading) &&
+          <div className="HomePastEvents">
+            <div className="ShowPastEventsButton" onClick={ShowPastEventsClick}>
+              <h3>{showPastEvents ? "Hide" : "Show"} Past Events</h3>
+              <div className="HorizontalSeparator" />
+              <IoIosArrowDown className="ShowPastEventsArrow" style={showPastEvents && {transform: "rotate(180deg)"}} />
+            </div>
+
+            {showPastEvents &&
+              (!loadingPastEvents ? 
+                ( 
+                  pastEvents.map((event, index) => (
+                    <EventItem
+                      currentUser={props.currentUser}
+                      user={user}
+                      admin={admin}
+                      event={event}
+                      key={index}
+                      oldEvent={true}
+                      toggleUpdateEvents={toggleUpdateEvents}
+                    />
+                  ))
+                )
+                :
+                (
+                  <Typography sx={{ mt: 20 }} variant='h4' align="center">Loading...</Typography>
+                )
+              )
+            }
+          </div>
+        }
       </div>
 
       <CreateEventModal
@@ -377,6 +454,7 @@ function Home(props) {
         handleStartTimeChange={handleStartTimeChange}
         handleEndTimeChange={handleEndTimeChange}
         handleJoinDeadlineChange={handleJoinDeadlineChange}
+        handleLocationChange={handleLocationChange}
         cancelCreationOnClick={cancelCreationOnClick}
         saveNewEventOnClick={saveNewEventOnClick}
         handleStartTimeError={handleStartTimeError}
@@ -384,6 +462,7 @@ function Home(props) {
         handleJoinDeadlineError={handleJoinDeadlineError}
         resetTickets={resetTickets}
         handleDeadlineSwitch={handleDeadlineSwitch}
+        handleImageChange={handleImageChange}
       />
       <ToastContainer />
     </div>

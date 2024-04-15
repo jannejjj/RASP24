@@ -126,7 +126,8 @@ export default function TopBar(props) {
           <Typography
             variant="h5"
             noWrap
-            component="span"
+            component={RouterLink}
+            to='/'
             sx={{
               mr: 2,
               display: "flex",
@@ -134,7 +135,9 @@ export default function TopBar(props) {
               letterSpacing: ".2rem",
               color: "inherit",
               alignSelf: "center",
+              textDecoration: "none",
             }}
+            onClick={() => { setSelectedPage("Home") }}
           >
             AssocEase
           </Typography>
@@ -144,14 +147,17 @@ export default function TopBar(props) {
           <Typography
             variant="h5"
             noWrap
-            component="span"
+            component={RouterLink}
+            to='/'
             sx={{
               mr: 2,
               display: "flex",
               fontWeight: 500,
               letterSpacing: ".2rem",
               color: "inherit",
+              textDecoration: "none",
             }}
+            onClick={() => { setSelectedPage("Home") }}
           >
             AssocEase
           </Typography>
@@ -196,6 +202,20 @@ export default function TopBar(props) {
             onClick={() => { setSelectedPage("Members") }}
           >
             Members
+          </Button>
+          <Button component={RouterLink} to='/Scheduler'
+            color="inherit"
+            disabled={selectedPage === "Scheduler"}
+            className="scheduler-button"            
+            disableRipple
+            sx={{
+              letterSpacing: ".1rem",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+            }}
+            onClick={() => { setSelectedPage("Scheduler") }}
+          >
+            Scheduler
           </Button>
           {props.currentUser.loggedIn && <Button component={RouterLink} to='/MyProfile'
             color="inherit"

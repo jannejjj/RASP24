@@ -20,6 +20,7 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 // Styles
 import "../App.css";
 import "../styles/EventDetails.css";
+import Map from "./Map";
 
 function EventDetails(props) {
 
@@ -64,19 +65,8 @@ function EventDetails(props) {
         <span>Total tickets: {props.tickets ? props.tickets : "Unlimited"}</span>
       </Grid>
 
-      <Grid item xs={2}>
-        <div style={{
-          display:"flex",
-          height: "100px",
-          width: "100%",
-          backgroundColor: "pink",
-          margin: "auto",
-          alignItems: "center",
-          justifyContent: "center",
-        border: "1px solid black",}}
-        >
-            Map goes here
-        </div>
+      <Grid item xs={2} className="details-map-item">
+        <Map placeId={props.placeId}/>
       </Grid>
     </Grid>
 

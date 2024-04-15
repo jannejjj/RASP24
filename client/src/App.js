@@ -6,7 +6,7 @@ Description: Handles authentication and routing.
 GitHub: https://github.com/jannejjj/RASP24
 */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 // MUI components
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -18,10 +18,25 @@ import News from './components/News';
 import TopBar from './components/TopBar';
 import Register from './components/Register';
 import Login from './components/Login';
+import SchedulerComponent from './components/Scheduler';
+// Styles
+import "react-big-calendar/lib/css/react-big-calendar.css"
 
+function loadScript(src, position, id) {
+  if (!position) {
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.setAttribute('async', '');
+  script.setAttribute('id', id);
+  script.src = src;
+  position.appendChild(script);
+}
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const googleLoaded = useRef(false);
   const [currentUser, setCurrentUser] = useState({
     admin: false,
     loggedIn: false,
@@ -51,6 +66,21 @@ function App() {
     }
   );
 
+  /* Load Google Maps API */
+  if (typeof window !== 'undefined' && !googleLoaded.current) {
+    setLoading(true);
+    if (!document.querySelector('#google-maps')) {
+      loadScript(
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&region=EN&language=en&libraries=places,marker&loading=async`,
+        document.querySelector('head'),
+        'google-maps',
+      );
+    }
+    googleLoaded.current = true;
+    setLoading(false);
+  }
+
+  /* Authenticate user */
   useEffect(() =>
   {
     const tokenFromStorage = localStorage.getItem("AssocEase_Token");
@@ -94,6 +124,7 @@ function App() {
           <TopBar currentUser={currentUser} setCurrentUser={setCurrentUser} />
           <Routes>
           <Route path="/Members" element={<Members currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
+          <Route path="/Scheduler" element={<SchedulerComponent currentUser={currentUser}/>} />
           <Route path="/News" element={<News currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           <Route path="/" element={<Home currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           {/* If the user is not logged in and they go to the MyProfile url, they are rerouted to the home page */}

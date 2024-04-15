@@ -9,13 +9,14 @@ Description: This modal is used to create events.
 GitHub: https://github.com/jannejjj/RASP24
 */
 
-import { React } from "react";
+import { React, useState } from "react";
 // Styles
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
 import '../App.css';
 // MUI components
 import Button from "@mui/material/Button";
+import { Input } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -24,9 +25,9 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import AutocompleteInput from '../components/AutocompleteInput';
 
-function CreateEventModal(props)
-{
+function CreateEventModal(props) {
     return (
       <Modal open={props.newEventModal} >
         <Box className='ModalBackground' >
@@ -36,9 +37,9 @@ function CreateEventModal(props)
           <div className='HorizontalSeparator' />
           <form onSubmit={props.saveNewEventOnClick} onChange={props.whenChanging} className='createNewEventForm' >
                 <TextField fullWidth required label={'Title'} inputProps={{ maxLength: 50 }} type="text" id="title" sx={{m: 0.5}} />
-                <TextField fullWidth required label={'Location'} type="text" id="location" sx={{m: 0.5}} />
+                <AutocompleteInput handleLocationChange={props.handleLocationChange} onChange={() => {return null;}} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateTimePicker sx={{m: 0.5}}
+                  <DateTimePicker sx={{m: 0.5, width: '100%'}}
                     onChange={props.handleStartTimeChange}
                     onError={props.handleStartTimeError}
                     label="Select starting time" 
@@ -61,7 +62,7 @@ function CreateEventModal(props)
                     label="Deadline for joining" checkedDeadline={props.checkedDeadline}
                     onChange={props.handleDeadlineSwitch}
                   />
-                  <DateTimePicker sx={{m: 0.5}}
+                  <DateTimePicker sx={{m: 0.5, width: '100%'}}
                     onChange={props.handleJoinDeadlineChange}
                     onError={props.handleJoinDeadlineError}
                     disabled={!props.checkedDeadline}
@@ -79,7 +80,7 @@ function CreateEventModal(props)
                       },
                     }}
                   />
-                  <DateTimePicker sx={{m: 0.5}}
+                  <DateTimePicker sx={{m: 0.5, width: '100%'}}
                     onChange={props.handleEndTimeChange}
                     onError={props.handleEndTimeError}
                     label="Select ending time" 
@@ -97,7 +98,7 @@ function CreateEventModal(props)
                     }}
                   />
                 </LocalizationProvider>
-                <TextField fullWidth multiline required label={'Description'} type="text" id="description" sx={{m: 0.5}} maxRows={10} />
+                <TextField fullWidth multiline required label={'Description'} type="text" id="description" sx={{m: 0.5}} minRows={4} maxRows={10} />
                 <TextField fullWidth required label={'Price'} type="number"  id="price" inputProps={{min:0,step:0.01}} min="0" sx={{m: 0.5}} />
                 <FormControlLabel 
                   control={<Switch />}
@@ -118,6 +119,13 @@ function CreateEventModal(props)
                   onChange={e => props.setTickets(e.target.value)}
                 />
                 <p className='HintParagraphSmall' >Required *</p>
+                <h2>
+                  Upload profile image
+                </h2>
+                <a>The maximum size is 2MB</a>
+                <div>
+                  <Input style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="file" onChange={props.handleImageChange} />
+                </div>
                 <div className='ModalButtonArea'>
                   <Button style={{margin: "10px 5px 0 0"}} color='primary' variant='outlined' fullWidth onClick={props.cancelCreationOnClick} >Cancel</Button>
                   <Button style={{margin: "10px 0 0 5px"}} color='primary' variant='contained' fullWidth type="submit" id="submit">Save</Button>
