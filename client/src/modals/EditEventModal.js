@@ -122,8 +122,7 @@ function EditEventModal(props)
                   inputProps={{min:0}} 
                   id="tickets" 
                   sx={{m: 1}}
-                  value={props.tickets}
-                  onChange={e => props.setTickets(e.target.value)}
+                  defaultValue={props.tickets}
                 />
                 <h2>
                   Upload event image
