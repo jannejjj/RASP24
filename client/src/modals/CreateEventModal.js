@@ -120,7 +120,7 @@ function CreateEventModal(props) {
                 />
                 <p className='HintParagraphSmall' >Required *</p>
                 <h2>
-                  Upload profile image
+                  Upload event image
                 </h2>
                 <a>The maximum size is 2MB</a>
                 <div>
