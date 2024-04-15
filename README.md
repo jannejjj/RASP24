@@ -25,9 +25,8 @@ SSH:
 SECRET="something_here"
 MONGODB_CONN_STRING="mongodb+srv://rasp24:MONGODB_PASSWORD@rasp24.vai1b1r.mongodb.net/?retryWrites=true&w=majority"
 ```
-- The value of SECRET can be anything.
-- MONGODB_CONN_STRING is the url for connecting to the cloud MongoDB. _For evaluation purposes by the TA, if you want to use the cloud MongoDB, the connection string is in the final presentation._
-- You can also enter a local MongoDB address if you don't want to use a cloud one, for example ```mongodb://localhost:27017/assoceasedb```
+- The value of SECRET can be anything, such as "something_here" as shown above
+- MONGODB_CONN_STRING is the url for connecting to MongoDB. _For evaluation purposes by the TA, the cloud MongoDB connection string is in the final submission file._
 
 
 2) Create a .env file in the /client directory. It should contain the following variables:
@@ -37,7 +36,7 @@ REACT_APP_API_KEY="<Your Google Places API key>"
 ```
 - The proxy target is used to route requests correctly to the backend
 - "localhost" in the proxy target should be replaced with "server" if you're using Docker to run the app. 
-- You should have your own Google Places API key. _For evaluation purposes by the TA, the API key is in the final presentation._
+- You should have your own Google Places API key. _For evaluation purposes by the TA, the API key is in the final submission file._
 
 
 
@@ -47,7 +46,7 @@ REACT_APP_API_KEY="<Your Google Places API key>"
 cd RASP24/
 npm install
 npm run dev:server
-(on another terminal window) npm run dev:client
+(in another terminal window) npm run dev:client
 ```
 Or with Docker (requires you to have Docker installed):
 
@@ -56,6 +55,6 @@ cd RASP24/
 docker-compose up --build
 ``` 
 
-If you haven't received any error messages on the consoles, everything is working correctly. The application is then running at localhost:3000
+If you haven't received any error messages on the consoles, everything is working correctly. The application is then running at localhost:3000.
 
 
