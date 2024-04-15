@@ -19,7 +19,6 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 // Modals, components, and commons
 import CreateEventModal from "../modals/CreateEventModal";
-import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
 import toasts from "../common/Toast";
 // Icons
@@ -145,7 +144,7 @@ function Home(props) {
   const resetTickets = () => {
     setTickets("");
     setCheckedTicket(!checkedTicket);
-    newEvent.tickets = 0;
+    newEvent.tickets = undefined;
     setNewEvent(newEvent);
   }
 
@@ -202,20 +201,30 @@ function Home(props) {
     setNewEventModal(false);
   };
 
-  // Triggered if there is an error in the date formatting
+
+  // Triggered if there is an error in the dates
   const handleStartTimeError = (error) => {
-    console.log("Starting time error: " + error);
-    setStartTimeError(true);
+    if(error === null) {
+      setStartTimeError(false);
+    }else{
+      setStartTimeError(true);
+    }
   }
 
   const handleEndTimeError = (error) => {
-    console.log("Ending time error: " + error);
-    setEndTimeError(true);
-  }
+    if (error === null) {
+      setEndTimeError(false);
+    } else {
+      setEndTimeError(true);
+    }
+}
 
   const handleJoinDeadlineError = (error) => {
-    console.log("Join deadline error: " + error);
-    setJoinDeadlineError(true);
+    if (error === null) {
+      setJoinDeadlineError(false);
+    } else {
+      setJoinDeadlineError(true);
+    }
   }
 
   // Fetches events from API
@@ -313,7 +322,7 @@ function Home(props) {
               method: 'POST',
               body: formData
             });
-            if(response.status == 413){
+            if(response.status === 413){
               toasts.showToastMessage("The event was created but the image is too big");
               // Empty the input fields
               setNewEvent({});
@@ -412,7 +421,7 @@ function Home(props) {
           <Typography sx={{ mt: 20 }} variant='h4' align="center">{!events?.length>0 && "No events."}</Typography>
         }
 
-        {(props.currentUser.admin && !loading) &&
+        {(props.currentUser.admin && !loading && pastEvents.length > 0) &&
           <div className="HomePastEvents">
             <div className="ShowPastEventsButton" onClick={ShowPastEventsClick}>
               <h3>{showPastEvents ? "Hide" : "Show"} Past Events</h3>
