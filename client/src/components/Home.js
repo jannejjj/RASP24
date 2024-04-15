@@ -38,7 +38,6 @@ function Details(props) {
 
   const [detailsHistory, setDetailsHistory] = useState(details);
   const [changedDetails, setChangedDetails] = useState(details);
-  const [title, setTitle] = useState("Association Ry");
   const [titleHistory, setTitleHistory] = useState(title);
   const [changedTitle, setChangedTitle] = useState(title);
   const [manageDetails, setManageDetails] = useState(false);
