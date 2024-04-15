@@ -240,6 +240,9 @@ function Home(props) {
             if(checkedTicket) {
               resetTickets();
             }
+            if(checkedDeadline) {
+              handleDeadlineSwitch();
+            }
             if(!selectedFile){
               // Empty the input fields
               setNewEvent({});
@@ -284,9 +287,6 @@ function Home(props) {
               toggleUpdateEvents();
               toasts.showToastSuccessMessage("Event created successfully!");
             }
-          if(checkedDeadline) {
-            handleDeadlineSwitch();
-          }
           } else {
             toasts.showToastMessage("Starting time needs to be before ending time.");
           }
