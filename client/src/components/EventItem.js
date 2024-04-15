@@ -274,9 +274,6 @@ const savingRules = () => {
     setEditedEvent({});
 
     setSelectedFile(null);
-    if(!checkedTicket) {
-      resetTickets();
-    }
     if (ticketSwitchWasToggled) {
       setCheckedTicket(!checkedTicket)
       setTicketSwitchWasToggled(false);
