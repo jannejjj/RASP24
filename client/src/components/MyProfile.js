@@ -688,6 +688,7 @@ function MyProfile(props) {
                       (
                         <EventItem
                         currentUser={props.currentUser}
+                        user={user}
                         event={event}
                         key={index}
                         attending={true}

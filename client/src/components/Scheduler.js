@@ -17,6 +17,7 @@ function SchedulerComponent(props) {
   const [events, setEvents] = useState([{}]);
   const [calendarEvents, setCalendarEvents] = useState([{}]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [user, setUser] = useState();
 
   const traduceEvents = ()=>{
     let temp = [];
@@ -32,7 +33,20 @@ function SchedulerComponent(props) {
     setCalendarEvents(temp);
   };
 
-  // Fetches events from API
+  // Get user data
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(`/users/getData/${props.currentUser.id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      setUser (await response.json()); 
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  // Fetches events and user data from API
   useEffect(() => {
     let mounted = true;
     async function fetchEvents() {
@@ -51,6 +65,7 @@ function SchedulerComponent(props) {
     if (props.currentUser.loggedIn)
     {
       fetchEvents();
+      fetchUserData();
       return () => {
           mounted = false;
       };
@@ -97,7 +112,7 @@ function SchedulerComponent(props) {
             {selectedEvent !== null ? 
               <EventItem
                 currentUser={props.currentUser}
-                user={props.currentUser}
+                user={user}
                 admin={props.currentUser.admin}
                 event={selectedEvent}
                 accordionExpanded={true}
