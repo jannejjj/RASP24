@@ -21,7 +21,7 @@ import Typography from "@mui/material/Typography";
 import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
-import toast from "../common/Toast";
+import toasts from "../common/Toast";
 // Icons
 import { FaUserGroup } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
@@ -38,10 +38,10 @@ function Details(props) {
 
   const [detailsHistory, setDetailsHistory] = useState(details);
   const [changedDetails, setChangedDetails] = useState(details);
+  const [title, setTitle] = useState("LTKY");
   const [titleHistory, setTitleHistory] = useState(title);
   const [changedTitle, setChangedTitle] = useState(title);
   const [manageDetails, setManageDetails] = useState(false);
-  const [title, setTitle] = useState("LTKY");
   const [memberCount, setMemberCount] = useState("...");
 
   // Function to save edits - set the variables to the new values
