@@ -13,7 +13,7 @@ let memberSchema = new Schema ({
     email: {type: String},
     password: {type: String},
     admin: {type: Boolean},
-    role: {type: String},
+    role: {type: String},           //String representing a role, has no influence on the behavior of the app
     membershipPaid: {type: Boolean},
     membershipPaidDate: {type: Date},
     membershipExpirationDate: {type: Date},
