@@ -1,24 +1,67 @@
+/*
+File: Home.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: App.js
+Props and Parameters: currentUser("memberSchema"), admin
+Description: Homepage body
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import { React, useState, useEffect } from "react";
+import { ToastContainer } from 'react-toastify';
+// Styles CSS
 import "../styles/HomePage.css";
 import "../App.css";
+import 'react-toastify/dist/ReactToastify.css';
+// MUI components
 import Button from "@mui/material/Button";
-import { FaUserGroup } from "react-icons/fa6";
+import Typography from "@mui/material/Typography";
+// Modals, components, and commons
 import CreateEventModal from "../modals/CreateEventModal";
 import EditDetailsModal from "../modals/EditDetailsModal";
 import EventItem from "./EventItem";
-import { ToastContainer } from 'react-toastify';
-import toasts from "../common/Toast";
-import 'react-toastify/dist/ReactToastify.css';
-import Typography from "@mui/material/Typography";
+import toast from "../common/Toast";
+// Icons
+import { FaUserGroup } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
+//Styles
+import 'react-toastify/dist/ReactToastify.css';
 
+// The association's information box on top of the homepage
 function Details(props) {
+  // Variables
   const [admin, setAdmin] = useState(props.admin);
   const [details, setDetails] = useState(
     "According to Finnish university legislation, all degree students have to be members of a student union. Students will become members of the student union automatically after they have paid the student union membership fee. Post-graduate students may also join the student union but they have different benefits. There are approximately 5000 members in LTKY, both under-graduate and post-graduate students.\n\nThe symbol of LTKY is the first letter of Hebrew alphabet, Aalef, in red circled by a black gearwheel. As a mathematical symbol Aalef stands for ‘one’ which can be seen as a symbol of unity in LTKY."
   );
+
+  const [detailsHistory, setDetailsHistory] = useState(details);
+  const [changedDetails, setChangedDetails] = useState(details);
+  const [title, setTitle] = useState("Association Ry");
+  const [titleHistory, setTitleHistory] = useState(title);
+  const [changedTitle, setChangedTitle] = useState(title);
+  const [manageDetails, setManageDetails] = useState(false);
   const [title, setTitle] = useState("LTKY");
   const [memberCount, setMemberCount] = useState("...");
+
+  // Function to save edits - set the variables to the new values
+  const saveEditOnClick = () => {
+    setDetailsHistory(changedDetails);
+    setTitleHistory(changedTitle);
+    setDetails(changedDetails);
+    setTitle(changedTitle);
+    setManageDetails(false); // Disable EditDetailsModal
+  };
+
+  // Function to cancel edits - set the variables back to the old ones
+  const cancelEditOnClick = () => {
+    setDetails(detailsHistory);
+    setTitle(titleHistory);
+    setChangedDetails(detailsHistory);
+    setChangedTitle(titleHistory);
+    setManageDetails(false); // Disable EditDetailsModal
+  };
 
   useEffect(() => {
     const fetchMemberCount = async () => {
@@ -54,8 +97,9 @@ function Details(props) {
   );
 }
   
-
+// Events part
 function Home(props) {
+  // Variables
   const [admin, setAdmin] = useState(props.currentUser.admin);
   const [user, setUser ] = useState(null);
   const [newEventModal, setNewEventModal] = useState(false);
@@ -79,6 +123,7 @@ function Home(props) {
     setUpdateEvents(!updateEvents);
   }
 
+  // Get user data
   useEffect(() => {
     const fetchUserData = async () => {
         // Check if props.currentUser.id is not null

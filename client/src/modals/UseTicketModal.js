@@ -1,5 +1,17 @@
-import '../styles/Modals.css';
+/*
+File: UseTicketModal.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: TicketItem.js
+Props and Parameters: openUseModal, setOpenUseModal, useTicket
+Description: Checks that the user definitely wants to use the ticket.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import React from 'react';
+// Styles
+import '../styles/Modals.css';
+// MUI components
 import Button from "@mui/material/Button";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';

@@ -1,23 +1,39 @@
+/*
+File: EventItem.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: Home.js, MyProfile.js
+Props and Parameters: event("eventSchema"), user("memberSchema"), currentUser, admin, key, showToastMessage, showToastSuccessMessage, toggleUpdateEvents
+Description: Event box used on the homepage and in my profile page
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
 import { React, useEffect, useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import dayjs from 'dayjs';
+// Styles
 import "../styles/HomePage.css";
 import '../styles/EventItem.css';
 import "../App.css";
+// MUI components
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
+import { Accordion, AccordionDetails, AccordionSummary, Tooltip } from "@mui/material";
+// Modals, components, and commons
 import EditEventModal from "../modals/EditEventModal";
 import DeleteEventModal from "../modals/DeleteEventModal";
 import ListModal from "../modals/ListModal";
 import PaymentModal from "../modals/PaymentModal";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import EventDetails from "./EventDetails";
 import TicketItem from "./TicketItem";
-import { Accordion, AccordionDetails, AccordionSummary, Tooltip } from "@mui/material";
-import { ToastContainer } from 'react-toastify';
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import toasts from "../common/Toast";
-import dayjs from 'dayjs';
+// Icons
 import PeopleIcon from '@mui/icons-material/People';
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
+// Event box
 function EventItem(props) {
 
   const [editedEvent, setEditedEvent] = useState({});
@@ -55,7 +71,6 @@ function EventItem(props) {
   const [editedTime, setEditedTime] = useState(props.event.time);
   const [editedLocation, setEditedLocation] = useState(props.event.location);
   const [editedDescription, setEditedDescription] = useState(props.event.description);
-
   const [ticketSwitchWasToggled, setTicketSwitchWasToggled] = useState(false);
   const [deadlineSwitchWasToggled, setDeadlineSwitchWasToggled] = useState(false);
 
@@ -64,6 +79,7 @@ function EventItem(props) {
 
   const [loadingLike, setLoadingLike] = useState(true);
   const [loadingTicket, setLoadingTicket] = useState(true);
+
 
   useEffect(() => {
     setLikes(props.event.attendees);
@@ -124,9 +140,8 @@ function EventItem(props) {
 
   // State for event deletion modal
   const [deleteModal, setDeleteModal] = useState(false);
-
-  
-  const openListOnClick = () => {
+ 
+  useEffect(() => { 
     const fetchEventData = async () => {
       try {
         const response = await fetch(`api/event/participants/${props.event._id}`, {
@@ -148,6 +163,42 @@ function EventItem(props) {
       }
     };
     fetchEventData();
+
+  }, [hasTicket]); // If the user buys a ticket, the information is retrieved again
+
+  // Get user's ticket status
+  useEffect(() => {
+    const data = 
+    {
+      userId: props.currentUser.id,
+      eventId: props.event._id
+    };
+
+    fetch('/api/hasTicket', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.hasTicket) {
+        setTicket(data.ticket);
+      }
+      setHasTicket(data.hasTicket);
+    })
+    .catch(error => {
+        console.error('Error fetching ticket status:', error);
+    });
+  }, []);
+
+  // State for event deletion modal
+  const [deleteModal, setDeleteModal] = useState(false);
+
+  
+  const openListOnClick = () => {
     setOpenParticipantsList(true);
   };
   const closeListOnClick = () => {
@@ -357,6 +408,7 @@ const handleJoinDeadlineError = (error) => {
     setSelectedFile(event.target.files[0]);
   };
 
+  // Post like
   const handleEventLike = async () => {
     const body =
     {
@@ -379,6 +431,7 @@ const handleJoinDeadlineError = (error) => {
     setLikes(likes + 1);
   };
 
+  // Cancel like
   const handleCancelEventLike = async () => 
   {
     await fetch("/api/cancel/attendance/" + props.event._id + "/" + props.currentUser.id,
@@ -446,6 +499,7 @@ const handleJoinDeadlineError = (error) => {
     setDeleteModal(false);
   };
 
+  // Delete event
   const confirmDeleteOnClick = () => {
     fetch('/api/event/' + props.event._id, {
       method: 'DELETE',
@@ -495,7 +549,8 @@ const handleJoinDeadlineError = (error) => {
   {
     // Fetches the profile image of the current event 
     fetchEventImage();
-
+ 
+    // Check like
     const confirmLike = () => 
     {
       fetch(`/api/is/attending/${props.event._id}/${props.currentUser.id}` , {

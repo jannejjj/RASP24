@@ -1,13 +1,28 @@
+/*
+File: ListModal.js
+Author: Group 4
+Course: CT10A7011 Running a Software Project - 8.1.2024-19.4.2024
+Used: EventItem.js
+Props and Parameters: eventParticipantsData, openParticipantsList, closeListOnClick
+Description: The modal lists the participants of the event.
+GitHub: https://github.com/jannejjj/RASP24
+*/
+
+import React, { useEffect, useState } from 'react'; // TODO: useless useEffect???
+import { ToastContainer, toast } from 'react-toastify'; // TODO: useless ToastContainer???
+// Styles
 import '../styles/Modals.css';
 import '../styles/HomePage.css';
-import React, { useEffect, useState } from 'react';
-import { Modal, Box, Button } from '@mui/material'; 
-import { ToastContainer, toast } from 'react-toastify';
-import GetMemberEmailsModal from '../modals/GetMemberEmailsModal';
-import EmailIcon from '@mui/icons-material/Email';
+// MUI components
+import { Modal, Box, Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
+// Modals, components, and commons
+import GetMemberEmailsModal from '../modals/GetMemberEmailsModal';
+// Icons
+import EmailIcon from '@mui/icons-material/Email';
+
 
 function ListModal(props) {
   const [getEmailsModal, setGetEmailsModal] = useState(false);
