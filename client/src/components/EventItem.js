@@ -31,7 +31,6 @@ import toasts from "../common/Toast";
 import PeopleIcon from '@mui/icons-material/People';
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 // Event box
 function EventItem(props) {
