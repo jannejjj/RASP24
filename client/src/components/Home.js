@@ -232,6 +232,7 @@ function Home(props) {
     let mounted = true;
     setLoading(true);
 
+    // Future events
     async function fetchEvents() {
         let url = '/api/events';
         let response = await fetch(url, {headers: {
@@ -245,10 +246,30 @@ function Home(props) {
         }
       }
 
+    // Past events
+    async function fetchPastEvents() {
+      setLoadingPastEvents(true)
+      const response = await fetch('/api/old/events', 
+      {
+        headers: 
+        {
+          "Content-type": "application/json",
+          "Authorization": "Bearer " + props.currentUser.token
+        }
+      });
+
+      const dataJson = await response.json();
+      if (dataJson) {
+          setPastEvents(dataJson);
+          setLoadingPastEvents(false);
+      }
+    }
+
     // Only for users that have logged in
     if (props.currentUser.loggedIn)
     {
       fetchEvents();
+      fetchPastEvents();
 
       return () => {
           mounted = false;
@@ -361,23 +382,7 @@ function Home(props) {
       setShowPastEvents(false);
     }
     else
-    {
-      setLoadingPastEvents(true)
-      const response = await fetch('/api/old/events', 
-      {
-        headers: 
-        {
-          "Content-type": "application/json",
-          "Authorization": "Bearer " + props.currentUser.token
-        }
-      });
-
-      const dataJson = await response.json();
-      if (dataJson) {
-          setPastEvents(dataJson);
-          setLoadingPastEvents(false);
-      }
-      
+    {   
       setShowPastEvents(true);
     }
   }
