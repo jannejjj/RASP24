@@ -150,10 +150,6 @@ function Home(props) {
 
   const handleDeadlineSwitch = () => {
     setCheckedDeadline(!checkedDeadline);
-    if(!checkedDeadline) {
-      newEvent.joinDeadline = "";
-    }
-    setNewEvent(newEvent);
   }
 
   //Updates the values for the text fields in event creation
@@ -288,6 +284,7 @@ function Home(props) {
           deadlineCorrect = true;
         } else if (!checkedDeadline) {
           deadlineCorrect = true;
+          newEvent.joinDeadline = undefined;
         }
         if(deadlineCorrect) {
           if(!newEvent.endDate || newEvent.startDate < newEvent.endDate) {
