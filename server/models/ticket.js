@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let ticketSchema = new Schema ({
-    date:{type: Date},
+    date:{type: Date}, // Payment Date
     member:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'member'
