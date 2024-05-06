@@ -3,7 +3,6 @@
 ### Course project for Running a Software Project @ LUT University
 _A proof-of-concept member / event management system for small to midsize associations or groups._
 
-_Doesn't support mobile resolutions as of now._
 
 _Browser/version support is determined by MUI, i.e.:_
 
@@ -31,7 +30,7 @@ SECRET="something_here"
 MONGODB_CONN_STRING="<your MongoDB connection string>"
 ```
 - The value of SECRET can be anything, such as "something_here" as shown above
-- MONGODB_CONN_STRING is the url for connecting to your MongoDB instance. _For evaluation purposes by the TA, a connection string to a pre-made cloud-hosted MongoDB instance is in the final submission file._
+- MONGODB_CONN_STRING is the url for connecting to your MongoDB instance.
 
 
 2) Create a .env file under the /client directory. It should contain the following variables:
@@ -41,7 +40,7 @@ REACT_APP_API_KEY="<Your Google Places API key>"
 ```
 - The proxy target is used to route requests correctly to the backend
 - "localhost" in the proxy target should be replaced with "server" if you want to use Docker to run the app. 
-- You should have your own Google Places API key. _For evaluation purposes by the TA, the API key is in the final submission file._
+- You should have your own Google Places API key.
 
 3) Make sure you save both .env files.
 
